@@ -36,9 +36,9 @@ public class Robot extends LoggedRobot {
         Logger.recordMetadata(
             "GitDirty",
             switch (BuildConstants.DIRTY) {
-            case 0 -> "All changes committed";
-            case 1 -> "Uncommitted changes";
-            default -> "Unknown";
+                case 0 -> "All changes committed";
+                case 1 -> "Uncommitted changes";
+                default -> "Unknown";
             }
         );
 

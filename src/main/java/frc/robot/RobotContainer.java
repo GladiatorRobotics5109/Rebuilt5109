@@ -10,15 +10,17 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.FlywheelsConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.FlywheelsCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -26,6 +28,10 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.flywheels.Flywheels;
+import frc.robot.subsystems.flywheels.FlywheelsIO;
+import frc.robot.subsystems.flywheels.FlywheelsIOSim;
+import frc.robot.subsystems.flywheels.FlywheelsIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
@@ -41,6 +47,7 @@ public class RobotContainer {
     // Subsystems
     private final Drive m_drive;
     private final Vision m_vision;
+    private final Flywheels m_flywheels;
 
     // Controller
     private final CommandPS5Controller m_driverController = new CommandPS5Controller(0);
@@ -68,6 +75,10 @@ public class RobotContainer {
                     new VisionIOLimelight(VisionConstants.kCamera1Name, m_drive::getRotation)
                 );
 
+                m_flywheels = new Flywheels(
+                    new FlywheelsIOTalonFX(FlywheelsConstants.kId, Constants.kCANBusCANivore)
+                );
+
                 break;
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
@@ -79,10 +90,9 @@ public class RobotContainer {
                     new ModuleIOSim(TunerConstants.BackRight)
                 );
 
-                m_vision = new Vision(
-                    m_drive::addVisionMeasurement,
-                    new VisionIO() {}
-                );
+                m_vision = new Vision(m_drive::addVisionMeasurement, new VisionIO() {});
+
+                m_flywheels = new Flywheels(new FlywheelsIOSim());
 
                 break;
             default:
@@ -95,13 +105,17 @@ public class RobotContainer {
                     new ModuleIO() {}
                 );
 
-                m_vision = new Vision(
-                    m_drive::addVisionMeasurement,
-                    new VisionIO() {}
-                );
+                m_vision = new Vision(m_drive::addVisionMeasurement, new VisionIO() {});
+
+                m_flywheels = new Flywheels(new FlywheelsIO() {});
 
                 break;
         }
+
+        RobotState.initDrive(m_drive);
+        RobotState.initVision(m_vision);
+        RobotState.initFlywheels(m_flywheels);
+        RobotState.verifyInit();
 
         // Set up auto routines
         m_autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -131,6 +145,10 @@ public class RobotContainer {
             "Drive SysId (Dynamic Reverse)",
             m_drive.sysIdDynamic(SysIdRoutine.Direction.kReverse)
         );
+
+        if (Robot.isSimulation()) {
+            DriverStation.silenceJoystickConnectionWarning(true);
+        }
 
         // Configure the button bindings
         configureButtonBindings();
@@ -173,12 +191,12 @@ public class RobotContainer {
             .circle()
             .onTrue(
                 Commands.runOnce(
-                    () -> m_drive.setPose(
-                        new Pose2d(m_drive.getPose().getTranslation(), Rotation2d.kZero)
-                    ),
+                    () -> m_drive.setPose(new Pose2d(m_drive.getPose().getTranslation(), Rotation2d.kZero)),
                     m_drive
                 ).ignoringDisable(true)
             );
+
+        m_flywheels.setDefaultCommand(FlywheelsCommands.auto(m_flywheels));
     }
 
     /**

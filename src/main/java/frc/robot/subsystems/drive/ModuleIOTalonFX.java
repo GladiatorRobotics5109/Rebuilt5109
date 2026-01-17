@@ -216,8 +216,8 @@ public class ModuleIOTalonFX implements ModuleIO {
     public void setDriveOpenLoop(double output) {
         driveTalon.setControl(
             switch (constants.DriveMotorClosedLoopOutput) {
-            case Voltage -> voltageRequest.withOutput(output);
-            case TorqueCurrentFOC -> torqueCurrentRequest.withOutput(output);
+                case Voltage -> voltageRequest.withOutput(output);
+                case TorqueCurrentFOC -> torqueCurrentRequest.withOutput(output);
             }
         );
     }
@@ -226,8 +226,8 @@ public class ModuleIOTalonFX implements ModuleIO {
     public void setTurnOpenLoop(double output) {
         turnTalon.setControl(
             switch (constants.SteerMotorClosedLoopOutput) {
-            case Voltage -> voltageRequest.withOutput(output);
-            case TorqueCurrentFOC -> torqueCurrentRequest.withOutput(output);
+                case Voltage -> voltageRequest.withOutput(output);
+                case TorqueCurrentFOC -> torqueCurrentRequest.withOutput(output);
             }
         );
     }
@@ -237,8 +237,8 @@ public class ModuleIOTalonFX implements ModuleIO {
         double velocityRotPerSec = Units.radiansToRotations(velocityRadPerSec);
         driveTalon.setControl(
             switch (constants.DriveMotorClosedLoopOutput) {
-            case Voltage -> velocityVoltageRequest.withVelocity(velocityRotPerSec);
-            case TorqueCurrentFOC -> velocityTorqueCurrentRequest.withVelocity(velocityRotPerSec);
+                case Voltage -> velocityVoltageRequest.withVelocity(velocityRotPerSec);
+                case TorqueCurrentFOC -> velocityTorqueCurrentRequest.withVelocity(velocityRotPerSec);
             }
         );
     }
@@ -247,10 +247,10 @@ public class ModuleIOTalonFX implements ModuleIO {
     public void setTurnPosition(Rotation2d rotation) {
         turnTalon.setControl(
             switch (constants.SteerMotorClosedLoopOutput) {
-            case Voltage -> positionVoltageRequest.withPosition(rotation.getRotations());
-            case TorqueCurrentFOC -> positionTorqueCurrentRequest.withPosition(
-                rotation.getRotations()
-            );
+                case Voltage -> positionVoltageRequest.withPosition(rotation.getRotations());
+                case TorqueCurrentFOC -> positionTorqueCurrentRequest.withPosition(
+                    rotation.getRotations()
+                );
             }
         );
     }
