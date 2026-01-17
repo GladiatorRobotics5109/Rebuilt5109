@@ -15,17 +15,22 @@ import edu.wpi.first.wpilibj.RobotBase;
  * (log replay from a file).
  */
 public final class Constants {
-  public static final Mode simMode = Mode.SIM;
-  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+    public static final Mode kSimMode = Mode.SIM;
+    public static final Mode kCurrentMode = RobotBase.isReal() ? Mode.REAL : kSimMode;
+    public static final boolean kTuningMode = false;
 
-  public static enum Mode {
-    /** Running on a real robot. */
-    REAL,
+    public static final class VisionConstants {
+        public static final String kCamera1Name = "Camera1";
+    }
 
-    /** Running a physics simulator. */
-    SIM,
+    public static enum Mode {
+        /** Running on a real robot. */
+        REAL,
 
-    /** Replaying from a log file. */
-    REPLAY
-  }
+        /** Running a physics simulator. */
+        SIM,
+
+        /** Replaying from a log file. */
+        REPLAY
+    }
 }
