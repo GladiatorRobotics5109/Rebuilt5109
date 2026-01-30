@@ -7,7 +7,7 @@
 
 package frc.robot.subsystems.vision;
 
-import static frc.robot.subsystems.vision.VisionConstants.*;
+import static frc.robot.Constants.VisionConstants.*;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -19,20 +19,26 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.Logger;
 
-public class Vision extends SubsystemBase {
+public class VisionSubsystem extends SubsystemBase {
     private final VisionConsumer consumer;
     private final VisionIO[] io;
     private final VisionIOInputsAutoLogged[] inputs;
     private final Alert[] disconnectedAlerts;
 
-    public Vision(VisionConsumer consumer, VisionIO... io) {
+    public VisionSubsystem(VisionConsumer consumer, Supplier<Rotation2d> rotationSupplier) {
         this.consumer = consumer;
-        this.io = io;
+        this.io = switch (Constants.kCurrentMode) {
+            case REAL -> new VisionIO[] { new VisionIOLimelight(kCamera1Name, rotationSupplier) };
+            default -> new VisionIO[] { new VisionIO() {} };
+        };
 
         // Initialize inputs
         this.inputs = new VisionIOInputsAutoLogged[io.length];
@@ -63,7 +69,7 @@ public class Vision extends SubsystemBase {
     public void periodic() {
         for (int i = 0; i < io.length; i++) {
             io[i].updateInputs(inputs[i]);
-            Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
+            Logger.processInputs("Subsystems/Vision/Camera" + Integer.toString(i), inputs[i]);
         }
 
         // Initialize logging values
@@ -85,10 +91,8 @@ public class Vision extends SubsystemBase {
 
             // Add tag poses
             for (int tagId : inputs[cameraIndex].tagIds) {
-                var tagPose = aprilTagLayout.getTagPose(tagId);
-                if (tagPose.isPresent()) {
-                    tagPoses.add(tagPose.get());
-                }
+                var tagPose = kAprilTagLayout.getTagPose(tagId);
+                tagPose.ifPresent(tagPoses::add);
             }
 
             // Loop over pose observations
@@ -96,15 +100,15 @@ public class Vision extends SubsystemBase {
                 // Check whether to reject pose
                 boolean rejectPose = observation.tagCount() == 0 // Must have at least one tag
                     || (observation.tagCount() == 1
-                        && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
+                        && observation.ambiguity() > kMaxAmbiguity) // Cannot be high ambiguity
                     || Math.abs(observation.pose().getZ())
-                        > maxZError // Must have realistic Z coordinate
+                        > kMaxZError // Must have realistic Z coordinate
 
                     // Must be within the field boundaries
                     || observation.pose().getX() < 0.0
-                    || observation.pose().getX() > aprilTagLayout.getFieldLength()
+                    || observation.pose().getX() > kAprilTagLayout.getFieldLength()
                     || observation.pose().getY() < 0.0
-                    || observation.pose().getY() > aprilTagLayout.getFieldWidth();
+                    || observation.pose().getY() > kAprilTagLayout.getFieldWidth();
 
                 // Add pose to log
                 robotPoses.add(observation.pose());
@@ -122,15 +126,15 @@ public class Vision extends SubsystemBase {
 
                 // Calculate standard deviations
                 double stdDevFactor = Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
-                double linearStdDev = linearStdDevBaseline * stdDevFactor;
-                double angularStdDev = angularStdDevBaseline * stdDevFactor;
+                double linearStdDev = kLinearStdDevBaseline * stdDevFactor;
+                double angularStdDev = kAngularStdDevBaseline * stdDevFactor;
                 if (observation.type() == PoseObservationType.MEGATAG_2) {
-                    linearStdDev *= linearStdDevMegatag2Factor;
-                    angularStdDev *= angularStdDevMegatag2Factor;
+                    linearStdDev *= kLinearStdDevMegatag2Factor;
+                    angularStdDev *= kAngularStdDevMegatag2Factor;
                 }
-                if (cameraIndex < cameraStdDevFactors.length) {
-                    linearStdDev *= cameraStdDevFactors[cameraIndex];
-                    angularStdDev *= cameraStdDevFactors[cameraIndex];
+                if (cameraIndex < kCameraStdDevFactors.length) {
+                    linearStdDev *= kCameraStdDevFactors[cameraIndex];
+                    angularStdDev *= kCameraStdDevFactors[cameraIndex];
                 }
 
                 // Send vision observation

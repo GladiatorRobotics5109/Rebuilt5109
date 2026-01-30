@@ -41,6 +41,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.RobotState;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
@@ -48,7 +49,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Drive extends SubsystemBase {
+public class DriveSubsystem extends SubsystemBase {
     // TunerConstants doesn't include these constants, so they are declared locally
     static final double ODOMETRY_FREQUENCY = TunerConstants.kCANBus.isNetworkFD() ? 250.0 : 100.0;
     public static final double DRIVE_BASE_RADIUS = Math.max(
@@ -107,18 +108,33 @@ public class Drive extends SubsystemBase {
         Pose2d.kZero
     );
 
-    public Drive(
-        GyroIO gyroIO,
-        ModuleIO flModuleIO,
-        ModuleIO frModuleIO,
-        ModuleIO blModuleIO,
-        ModuleIO brModuleIO
-    ) {
-        this.gyroIO = gyroIO;
-        modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
-        modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
-        modules[2] = new Module(blModuleIO, 2, TunerConstants.BackLeft);
-        modules[3] = new Module(brModuleIO, 3, TunerConstants.BackRight);
+    public DriveSubsystem() {
+        switch (Constants.kCurrentMode) {
+            case REAL:
+                this.gyroIO = new GyroIOPigeon2();
+                modules[0] = new Module(new ModuleIOTalonFX(TunerConstants.FrontLeft), 0, TunerConstants.FrontLeft);
+                modules[1] = new Module(new ModuleIOTalonFX(TunerConstants.FrontRight), 1, TunerConstants.FrontRight);
+                modules[2] = new Module(new ModuleIOTalonFX(TunerConstants.BackLeft), 2, TunerConstants.BackLeft);
+                modules[3] = new Module(new ModuleIOTalonFX(TunerConstants.BackRight), 3, TunerConstants.BackRight);
+
+                break;
+            case SIM:
+                this.gyroIO = new GyroIO() {};
+                modules[0] = new Module(new ModuleIOSim(TunerConstants.FrontLeft), 0, TunerConstants.FrontLeft);
+                modules[1] = new Module(new ModuleIOSim(TunerConstants.FrontRight), 1, TunerConstants.FrontRight);
+                modules[2] = new Module(new ModuleIOSim(TunerConstants.BackLeft), 2, TunerConstants.BackLeft);
+                modules[3] = new Module(new ModuleIOSim(TunerConstants.BackRight), 3, TunerConstants.BackRight);
+
+                break;
+            default:
+                this.gyroIO = new GyroIO() {};
+                modules[0] = new Module(new ModuleIO() {}, 0, TunerConstants.FrontLeft);
+                modules[1] = new Module(new ModuleIO() {}, 1, TunerConstants.FrontRight);
+                modules[2] = new Module(new ModuleIO() {}, 2, TunerConstants.BackLeft);
+                modules[3] = new Module(new ModuleIO() {}, 3, TunerConstants.BackRight);
+
+                break;
+        }
 
         // Usage reporting for swerve template
         HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_AdvantageKit);
@@ -143,12 +159,12 @@ public class Drive extends SubsystemBase {
         Pathfinding.setPathfinder(new LocalADStarAK());
         PathPlannerLogging.setLogActivePathCallback(
             (activePath) -> {
-                Logger.recordOutput("Odometry/Trajectory", activePath.toArray(new Pose2d[0]));
+                Logger.recordOutput("RobotState/Drive/Odometry/Trajectory", activePath.toArray(new Pose2d[0]));
             }
         );
         PathPlannerLogging.setLogTargetPoseCallback(
             (targetPose) -> {
-                Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+                Logger.recordOutput("RobotState/Drive/Odometry/TrajectorySetpoint", targetPose);
             }
         );
 
@@ -158,7 +174,7 @@ public class Drive extends SubsystemBase {
                 null,
                 null,
                 null,
-                (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())
+                (state) -> Logger.recordOutput("RobotState/Drive/SysIdState", state.toString())
             ),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)),
@@ -172,7 +188,7 @@ public class Drive extends SubsystemBase {
     public void periodic() {
         odometryLock.lock(); // Prevents odometry updates while reading data
         gyroIO.updateInputs(gyroInputs);
-        Logger.processInputs("Drive/Gyro", gyroInputs);
+        Logger.processInputs("Subsystems/Drive/Gyro", gyroInputs);
         for (var module : modules) {
             module.periodic();
         }
@@ -187,8 +203,8 @@ public class Drive extends SubsystemBase {
 
         // Log empty setpoint states when disabled
         if (DriverStation.isDisabled()) {
-            Logger.recordOutput("SwerveStates/Setpoints", new SwerveModuleState[] {});
-            Logger.recordOutput("SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
+            Logger.recordOutput("RobotState/Drive/ModuleSetpoints", new SwerveModuleState[] {});
+            Logger.recordOutput("RobotState/Drive/ModuleSetpointsOptimized", new SwerveModuleState[] {});
         }
 
         // Update odometry
@@ -225,6 +241,8 @@ public class Drive extends SubsystemBase {
 
         // Update gyro alert
         gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.kCurrentMode != Mode.SIM);
+
+        RobotState.getInstance().updateDrive(getPose(), getChassisSpeeds());
     }
 
     /**
@@ -239,8 +257,8 @@ public class Drive extends SubsystemBase {
         SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, TunerConstants.kSpeedAt12Volts);
 
         // Log unoptimized setpoints and setpoint speeds
-        Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
-        Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
+        Logger.recordOutput("RobotState/Drive/ModuleSetpoints", setpointStates);
+        Logger.recordOutput("RobotState/Drive/DesiredChassisSpeeds", discreteSpeeds);
 
         // Send setpoints to modules
         for (int i = 0; i < 4; i++) {
@@ -248,7 +266,7 @@ public class Drive extends SubsystemBase {
         }
 
         // Log optimized setpoints (runSetpoint mutates each state)
-        Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
+        Logger.recordOutput("RobotState/Drive/ModuleSetpointsOptimized", setpointStates);
     }
 
     /** Runs the drive in a straight line with the specified drive output. */
@@ -309,7 +327,7 @@ public class Drive extends SubsystemBase {
 
     /** Returns the measured chassis speeds of the robot. */
     @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
-    private ChassisSpeeds getChassisSpeeds() { return kinematics.toChassisSpeeds(getModuleStates()); }
+    public ChassisSpeeds getChassisSpeeds() { return kinematics.toChassisSpeeds(getModuleStates()); }
 
     /** Returns the position of each module in radians. */
     public double[] getWheelRadiusCharacterizationPositions() {
