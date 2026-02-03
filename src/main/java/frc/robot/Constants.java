@@ -9,13 +9,8 @@ package frc.robot;
 
 import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
-import edu.wpi.first.math.interpolation.Interpolator;
-import edu.wpi.first.math.interpolation.InverseInterpolator;
+import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.FieldConstants.AprilTagLayoutType;
@@ -32,6 +27,7 @@ public final class Constants {
     public static final Mode kSimMode = Mode.SIM;
     public static final Mode kCurrentMode = RobotBase.isReal() ? Mode.REAL : kSimMode;
     public static final boolean kTuningMode = true;
+    public static final boolean kSimShouldUseKeyboard = kCurrentMode == Mode.SIM && true;
 
     public static final CANBus kCANBusRio = CANBus.roboRIO();
     public static final CANBus kCANBusCANivore = new CANBus("CANivore");
@@ -59,7 +55,7 @@ public final class Constants {
         public static final double kGearRatio = 1.0;
         public static final boolean kInverted = false;
 
-        public static final double kShootRPM = 6000;
+        public static final double kShootRPM = 5500;
         public static final double kIdleRPM = 1000;
 
         public static final double kIdleDistThresholdMeters = 5.0;
@@ -91,6 +87,12 @@ public final class Constants {
         public static final double kP = 0.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
+
+        public static final Translation3d kRobotToTurret = new Translation3d(
+            Units.inchesToMeters(5.368740),
+            0.0,
+            Units.inchesToMeters(14.867584)
+        );
     }
 
     public static final class HoodConstants {
@@ -112,7 +114,7 @@ public final class Constants {
         public static final AprilTagFieldLayout kAprilTagLayout = AprilTagLayoutType.OFFICIAL.getLayout();;
 
         // Robot to camera transforms
-        public static Transform3d robotToCamera1 = new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
+        public static Transform3d kRobotToCamera1 = new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
 
         // Basic filtering thresholds
         public static final double kMaxAmbiguity = 0.3;
@@ -138,16 +140,15 @@ public final class Constants {
     public static final class AimingConstants {
         public static final double kDriveLookaheadTime = 0.1;
 
-        public static final double kPitchCoefficient = 1;
-        public static final double kPitchExponent = 1;
+        public static final InterpolatingDoubleTreeMap kHubFlywheelsRPMs = new InterpolatingDoubleTreeMap();
+        public static final InterpolatingDoubleTreeMap kShuttleFlywheelsRPMs = new InterpolatingDoubleTreeMap();
 
-        public static final InterpolatingTreeMap<Double, Double> kFlywheelsRPMs = new InterpolatingTreeMap<>(
-            InverseInterpolator.forDouble(),
-            Interpolator.forDouble()
-        );
+        public static final InterpolatingDoubleTreeMap kHubHoodPitch = new InterpolatingDoubleTreeMap();
+        public static final InterpolatingDoubleTreeMap kShuttleHoodPitch = new InterpolatingDoubleTreeMap();
+
         static {
-            kFlywheelsRPMs.put(1.0, 3000.0);
-            kFlywheelsRPMs.put(6.0, 5500.0);
+            kHubFlywheelsRPMs.put(1.0, 3000.0);
+            kHubFlywheelsRPMs.put(6.0, 5500.0);
         }
 
         public static final Translation2d kShuttleBlueTop = new Translation2d(
