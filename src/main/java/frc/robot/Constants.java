@@ -47,13 +47,13 @@ public final class Constants {
     public static final class FlywheelsConstants {
         public static final String kLogPath = "Subsystems/Flywheels";
 
-        public static final int kId = 0;
+        public static final int kId = 4;
         public static final double kStatorCurrentLimit = 0.0;
         public static final boolean kStatorCurrentLimitEnable = false;
         public static final double kSupplyCurrentLimit = 40.0;
-        public static final boolean kSupplyCurrentLimitEnable = true;
+        public static final boolean kSupplyCurrentLimitEnable = false;
         public static final double kGearRatio = 1.0;
-        public static final boolean kInverted = false;
+        public static final boolean kInverted = true;
 
         public static final double kShootRPM = 5500;
         public static final double kIdleRPM = 1000;
@@ -61,10 +61,10 @@ public final class Constants {
         public static final double kIdleDistThresholdMeters = 5.0;
         public static final double kIdleDistDebounce = 0.5;
 
-        public static final double kS = 0.0;
-        public static final double kV = 0.019;
+        public static final double kS = 0.19;
+        public static final double kV = 0.018;
         public static final double kA = 0.0;
-        public static final double kBangBangTolerance = Units.rotationsPerMinuteToRadiansPerSecond(200);
+        public static final double kBangBangTolerance = Units.rotationsPerMinuteToRadiansPerSecond(75);
 
         public static final double kSimMOI = 0.0004475;
 

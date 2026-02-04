@@ -29,6 +29,7 @@ import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.Visualizer;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -152,10 +153,15 @@ public class RobotContainer {
         );
     }
 
+    private LoggedTunableNumber m_velocity = new LoggedTunableNumber("Flywheels Velocity", 0.0);
+
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
      * @return the command to run in autonomous
      */
-    public Command getAutonomousCommand() { return m_autoChooser.get(); }
+    public Command getAutonomousCommand() {
+        // return m_autoChooser.get();
+        return FlywheelsCommands.setVelocity(m_flywheels, () -> m_velocity.getAsDouble());
+    }
 }

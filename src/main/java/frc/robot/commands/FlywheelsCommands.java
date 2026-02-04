@@ -7,6 +7,8 @@ import frc.robot.subsystems.flywheels.FlywheelsSubsystem;
 
 import static frc.robot.Constants.FlywheelsConstants.*;
 
+import java.util.function.DoubleSupplier;
+
 public class FlywheelsCommands {
     public static Command autoAim(FlywheelsSubsystem flywheels) {
         return Commands.startEnd(
@@ -14,5 +16,9 @@ public class FlywheelsCommands {
             flywheels::stop,
             flywheels
         ).withName("Flywheels::autoAim");
+    }
+
+    public static Command setVelocity(FlywheelsSubsystem flywheels, DoubleSupplier velocity) {
+        return Commands.startEnd(() -> flywheels.runVelocity(velocity), flywheels::stop, flywheels);
     }
 }

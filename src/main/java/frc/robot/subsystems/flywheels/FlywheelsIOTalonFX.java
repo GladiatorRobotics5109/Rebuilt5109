@@ -10,13 +10,19 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.util.TolerancedBangBang;
 
 import static frc.robot.Constants.FlywheelsConstants.*;
+
+import org.littletonrobotics.junction.Logger;
 
 public class FlywheelsIOTalonFX implements FlywheelsIO {
     private final TalonFX m_motor;
@@ -34,6 +40,11 @@ public class FlywheelsIOTalonFX implements FlywheelsIO {
     private final Debouncer m_connectedDebounce = new Debouncer(0.5, DebounceType.kFalling);
 
     private TalonFXConfiguration m_config = new TalonFXConfiguration();
+
+    private final TolerancedBangBang m_bang = new TolerancedBangBang(kBangBangTolerance);
+    private final SimpleMotorFeedforward m_ff = new SimpleMotorFeedforward(kS, kV, kA);
+    private double m_desiredVelocity;
+    private boolean m_hasDesiredVelocity;
 
     public FlywheelsIOTalonFX(int id, CANBus canbus) {
         m_motor = new TalonFX(id, canbus);
@@ -102,6 +113,18 @@ public class FlywheelsIOTalonFX implements FlywheelsIO {
         inputs.statorCurrentAmps = m_statorCurrent.getValue().in(Units.Amps);
         inputs.supplyCurrentAmps = m_supplyCurrent.getValue().in(Units.Amp);
         inputs.tempCelsius = m_temp.getValue().in(Units.Celsius);
+
+        if (m_hasDesiredVelocity) {
+            double bang = 12 * m_bang.calculate(inputs.velocityRadPerSec, m_desiredVelocity);
+            Logger.recordOutput("TestCurrentVelocity", inputs.velocityRadPerSec);
+            Logger.recordOutput("TestDesiredVelocity", m_desiredVelocity);
+            Logger.recordOutput("TestBang", bang);
+            Logger.recordOutput("TestDelta", m_desiredVelocity - inputs.velocityRadPerSec);
+            Logger.recordOutput("TestTolerance", kBangBangTolerance);
+
+            double volts = bang + m_ff.calculate(m_desiredVelocity);
+            setVoltage(MathUtil.clamp(volts, -12.0, 12.0));
+        }
     }
 
     @Override
@@ -111,7 +134,10 @@ public class FlywheelsIOTalonFX implements FlywheelsIO {
 
     @Override
     public void setVelocity(double velocityRadPerSec) {
-        m_motor.setControl(m_velocityVoltage.withVelocity(velocityRadPerSec));
+        // m_motor.setControl(m_velocityVoltage.withVelocity(velocityRadPerSec));
+        m_desiredVelocity = velocityRadPerSec;
+        m_hasDesiredVelocity = true;
+
     }
 
     @Override
