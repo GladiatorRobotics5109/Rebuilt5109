@@ -8,8 +8,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -19,16 +17,20 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Mode;
+import frc.robot.RobotState.FuelStrategy;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FlywheelsCommands;
 import frc.robot.commands.IndexerCommands;
 import frc.robot.commands.TurretCommands;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.flywheels.FlywheelsSubsystem;
+import frc.robot.subsystems.hood.HoodSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
-import frc.robot.util.fuelsim.FuelSim;
+import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.Visualizer;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -44,6 +46,8 @@ public class RobotContainer {
     private final FlywheelsSubsystem m_flywheels;
     private final TurretSubsystem m_turret;
     private final IndexerSubsystem m_indexer;
+    private final HoodSubsystem m_hood;
+    private final IntakeSubsystem m_intake;
 
     // Controller
     private final CommandPS5Controller m_driverController = new CommandPS5Controller(0);
@@ -60,6 +64,8 @@ public class RobotContainer {
         m_flywheels = new FlywheelsSubsystem();
         m_turret = new TurretSubsystem();
         m_indexer = new IndexerSubsystem();
+        m_hood = new HoodSubsystem();
+        m_intake = new IntakeSubsystem();
 
         // Set up auto routines
         m_autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -68,24 +74,18 @@ public class RobotContainer {
         m_flywheels.setDefaultCommand(FlywheelsCommands.autoAim(m_flywheels));
         m_turret.setDefaultCommand(TurretCommands.autoAim(m_turret));
 
-        if (Constants.kCurrentMode == Mode.SIM) {
-            DriverStation.silenceJoystickConnectionWarning(true);
-
+        if (Constants.kCurrentMode == Mode.SIM && Constants.kSimShouldUseKeyboard) {
             m_driverControllerSim = new CommandGenericHID(0);
-            configureButtonBindingsSim();
-
-            FuelSim.getInstance().spawnStartingFuel();
-            FuelSim.getInstance().registerRobot(
-                Units.inchesToMeters(28),
-                Units.inchesToMeters(24),
-                Units.inchesToMeters(5.25),
-                m_drive::getPose,
-                m_drive::getChassisSpeeds
-            );
-            FuelSim.getInstance().start();
+            configureButtonBindingsKeyboard();
         }
         else {
             configureButtonBindings();
+        }
+
+        if (Constants.kCurrentMode == Mode.SIM) {
+            DriverStation.silenceJoystickConnectionWarning(true);
+
+            Visualizer.init(m_drive, m_flywheels);
         }
     }
 
@@ -106,37 +106,23 @@ public class RobotContainer {
             )
         );
 
-        // Lock to 0° when A button is held
-        m_driverController
-            .cross()
-            .whileTrue(
-                DriveCommands.joystickDriveAtAngle(
-                    m_drive,
-                    () -> -m_driverController.getLeftY(),
-                    () -> -m_driverController.getLeftX(),
-                    () -> Rotation2d.kZero
+        m_driverController.circle().whileTrue(IndexerCommands.index(m_indexer));
+        m_driverController.triangle().onTrue(
+            Commands.runOnce(
+                () -> RobotState.getInstance().setFuelStrategy(
+                    RobotState.getInstance().getFuelStrategy() == FuelStrategy.HUB
+                        ? FuelStrategy.SHUTTLE_AUTO
+                        : FuelStrategy.HUB
                 )
-            );
-
-        // Switch to X pattern when X button is pressed
-        m_driverController.square().onTrue(Commands.runOnce(m_drive::stopWithX, m_drive));
-
-        // Reset gyro to 0° when B button is pressed
-        m_driverController
-            .circle()
-            .onTrue(
-                Commands.runOnce(
-                    () -> m_drive.setPose(new Pose2d(m_drive.getPose().getTranslation(), Rotation2d.kZero)),
-                    m_drive
-                ).ignoringDisable(true)
-            );
+            )
+        );
     }
 
-    private void configureButtonBindingsSim() {
+    private void configureButtonBindingsKeyboard() {
         m_drive.setDefaultCommand(DriveCommands.keyboardDrive(m_drive, m_driverControllerSim.getHID()));
 
         // Simulate shooting 3 balls
-        m_driverControllerSim.button(3).whileTrue(IndexerCommands.indexSim(m_indexer, m_flywheels));
+        m_driverControllerSim.button(3).whileTrue(IndexerCommands.index(m_indexer));
     }
 
     private void buildAutoChooser() {
@@ -167,10 +153,15 @@ public class RobotContainer {
         );
     }
 
+    private LoggedTunableNumber m_velocity = new LoggedTunableNumber("Flywheels Velocity", 0.0);
+
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
      * @return the command to run in autonomous
      */
-    public Command getAutonomousCommand() { return m_autoChooser.get(); }
+    public Command getAutonomousCommand() {
+        // return m_autoChooser.get();
+        return FlywheelsCommands.setVelocity(m_flywheels, () -> m_velocity.getAsDouble());
+    }
 }
