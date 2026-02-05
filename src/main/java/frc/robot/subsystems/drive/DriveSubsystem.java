@@ -110,14 +110,14 @@ public class DriveSubsystem extends SubsystemBase {
 
     public DriveSubsystem() {
         switch (Constants.kCurrentMode) {
-            // case REAL:
-            //     this.gyroIO = new GyroIOPigeon2();
-            //     modules[0] = new Module(new ModuleIOTalonFX(TunerConstants.FrontLeft), 0, TunerConstants.FrontLeft);
-            //     modules[1] = new Module(new ModuleIOTalonFX(TunerConstants.FrontRight), 1, TunerConstants.FrontRight);
-            //     modules[2] = new Module(new ModuleIOTalonFX(TunerConstants.BackLeft), 2, TunerConstants.BackLeft);
-            //     modules[3] = new Module(new ModuleIOTalonFX(TunerConstants.BackRight), 3, TunerConstants.BackRight);
+            case REAL:
+                this.gyroIO = new GyroIOPigeon2();
+                modules[0] = new Module(new ModuleIOTalonFX(TunerConstants.FrontLeft), 0, TunerConstants.FrontLeft);
+                modules[1] = new Module(new ModuleIOTalonFX(TunerConstants.FrontRight), 1, TunerConstants.FrontRight);
+                modules[2] = new Module(new ModuleIOTalonFX(TunerConstants.BackLeft), 2, TunerConstants.BackLeft);
+                modules[3] = new Module(new ModuleIOTalonFX(TunerConstants.BackRight), 3, TunerConstants.BackRight);
 
-            //     break;
+                break;
             case SIM:
                 this.gyroIO = new GyroIO() {};
                 modules[0] = new Module(new ModuleIOSim(TunerConstants.FrontLeft), 0, TunerConstants.FrontLeft);
