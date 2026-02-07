@@ -12,7 +12,7 @@ import java.util.function.DoubleSupplier;
 public class FlywheelsCommands {
     public static Command autoAim(FlywheelsSubsystem flywheels) {
         return Commands.startEnd(
-            () -> flywheels.runVelocity(RobotState.getInstance().getAimingParameters()::flywheelsRPM),
+            () -> flywheels.runVelocity(() -> RobotState.getInstance().getAimingParameters().flywheelsRPM()),
             flywheels::stop,
             flywheels
         ).withName("Flywheels::autoAim");
