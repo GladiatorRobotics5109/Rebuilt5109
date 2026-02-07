@@ -60,9 +60,13 @@ public class RobotContainer {
     public RobotContainer() {
         RobotState.init();
         m_drive = new DriveSubsystem();
-        m_vision = new VisionSubsystem(m_drive::addVisionMeasurement, m_drive::getRotation);
-        m_flywheels = new FlywheelsSubsystem();
         m_turret = new TurretSubsystem();
+        m_vision = new VisionSubsystem(
+            m_drive::addVisionMeasurement,
+            m_turret::addVisionMeasurement,
+            m_drive::getRotation
+        );
+        m_flywheels = new FlywheelsSubsystem();
         m_indexer = new IndexerSubsystem();
         m_hood = new HoodSubsystem();
         m_intake = new IntakeSubsystem();

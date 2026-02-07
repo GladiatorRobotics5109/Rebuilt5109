@@ -87,6 +87,9 @@ public final class Constants {
         public static final double kP = 0.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
+        
+        public static final double kS = 0.0;
+        public static final double kV = 0.0;
 
         public static final Translation3d kRobotToTurret = new Translation3d(
             Units.inchesToMeters(5.368740),

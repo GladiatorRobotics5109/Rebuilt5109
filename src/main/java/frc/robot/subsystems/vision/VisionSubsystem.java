@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,21 +29,51 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class VisionSubsystem extends SubsystemBase {
-    private final VisionConsumer consumer;
+    private final VisionConsumer driveConsumer;
+    private final TurretVisionConsumer turretConsumer;
     private final VisionIO[] io;
     private final VisionIOInputsAutoLogged[] inputs;
     private final Alert[] disconnectedAlerts;
 
-    public VisionSubsystem(VisionConsumer consumer, Supplier<Rotation2d> rotationSupplier) {
-        this.consumer = consumer;
-        this.io = switch (Constants.kCurrentMode) {
-            case REAL -> new VisionIO[] { new VisionIOLimelight(kCamera1Name, rotationSupplier) };
-            default -> new VisionIO[] { new VisionIO() {} };
-        };
+    private final VisionIO turretIO;
+    private final VisionIOInputsAutoLogged turretInputs;
+
+    public VisionSubsystem(
+        VisionConsumer driveConsumer,
+        TurretVisionConsumer turretConsumer,
+        Supplier<Rotation2d> rotationSupplier
+    ) {
+        this.driveConsumer = driveConsumer;
+        this.turretConsumer = turretConsumer;
+        switch (Constants.kCurrentMode) {
+            case REAL:
+                this.turretIO = new VisionIOLimelight(kCamera1Name, rotationSupplier);
+                this.io = new VisionIO[] { this.turretIO };
+
+                break;
+            case SIM:
+                this.turretIO = new VisionIOPhotonVisionSim(
+                    kCamera1Name,
+                    kRobotToCamera1,
+                    RobotState.getInstance()::getPose
+                );
+                this.io = new VisionIO[] { this.turretIO };
+
+                break;
+            default:
+                this.turretIO = new VisionIO() {};
+                this.io = new VisionIO[] { this.turretIO };
+
+                break;
+        }
+        ;
+
+        this.turretInputs = new VisionIOInputsAutoLogged();
 
         // Initialize inputs
         this.inputs = new VisionIOInputsAutoLogged[io.length];
-        for (int i = 0; i < inputs.length; i++) {
+        this.inputs[0] = this.turretInputs;
+        for (int i = 1; i < inputs.length; i++) {
             inputs[i] = new VisionIOInputsAutoLogged();
         }
 
@@ -138,11 +169,19 @@ public class VisionSubsystem extends SubsystemBase {
                 }
 
                 // Send vision observation
-                consumer.accept(
+                driveConsumer.accept(
                     observation.pose().toPose2d(),
                     observation.timestamp(),
                     VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev)
                 );
+
+                if (inputs[cameraIndex] == this.turretInputs) {
+                    turretConsumer.accept(
+                        observation.pose(),
+                        observation.timestamp(),
+                        VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev)
+                    );
+                }
             }
 
             // Log camera metadata
@@ -188,5 +227,10 @@ public class VisionSubsystem extends SubsystemBase {
             double timestampSeconds,
             Matrix<N3, N1> visionMeasurementStdDevs
         );
+    }
+    
+    @FunctionalInterface
+    public static interface TurretVisionConsumer {
+        public void accept(Pose3d turretPose, double timestampSeconds, Matrix<N3, N1> visionMeasurementStdDevs);
     }
 }
