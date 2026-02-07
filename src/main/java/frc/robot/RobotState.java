@@ -1,11 +1,18 @@
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.Constants.AimingConstants;
 import frc.robot.Constants.FlywheelsConstants;
 import frc.robot.Constants.HoodConstants;
+import frc.robot.FieldConstants.Hub;
+import frc.robot.FieldConstants.LinesHorizontal;
+import frc.robot.util.AllianceFlip;
 import lombok.AccessLevel;
 import lombok.Getter;
 
@@ -59,10 +66,10 @@ public class RobotState {
         if (m_latestAimingParameters != null)
             return m_latestAimingParameters;
 
-        m_latestAimingParameters = new AimingParameters(Rotation2d.kZero, 0, Rotation2d.kZero);
-        return m_latestAimingParameters;
+        // m_latestAimingParameters = new AimingParameters(Rotation2d.kZero, 0, Rotation2d.kZero);
+        // return m_latestAimingParameters;
 
-        /* Translation2d target = switch (m_fuelStrategy) {
+        Translation2d target = switch (m_fuelStrategy) {
             case HUB -> AllianceFlip.apply(Hub.topCenterPoint).toTranslation2d();
             case SHUTTLE_AUTO -> {
                 if (m_pose.getY() >= LinesHorizontal.center) {
@@ -113,7 +120,6 @@ public class RobotState {
         Logger.recordOutput("RobotState/LatestAimingParameters", m_latestAimingParameters);
 
         return m_latestAimingParameters;
-        */
     }
 
     public void updateDrive(Pose2d pose, ChassisSpeeds velocity) {

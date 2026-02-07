@@ -27,7 +27,7 @@ public final class Constants {
     public static final Mode kSimMode = Mode.SIM;
     public static final Mode kCurrentMode = RobotBase.isReal() ? Mode.REAL : kSimMode;
     public static final boolean kTuningMode = true;
-    public static final boolean kSimShouldUseKeyboard = kCurrentMode == Mode.SIM && true;
+    public static final boolean kSimShouldUseKeyboard = kCurrentMode == Mode.SIM && false;
 
     public static final CANBus kCANBusRio = CANBus.roboRIO();
     public static final CANBus kCANBusCANivore = new CANBus("CANivore");
@@ -149,6 +149,11 @@ public final class Constants {
         static {
             kHubFlywheelsRPMs.put(1.0, 3000.0);
             kHubFlywheelsRPMs.put(6.0, 5500.0);
+
+            kShuttleFlywheelsRPMs.put(1.0, 5500.0);
+
+            kHubHoodPitch.put(1.0, HoodConstants.kMaxAngle.getRadians());
+            kShuttleHoodPitch.put(1.0, HoodConstants.kMinAngle.getRadians());
         }
 
         public static final Translation2d kShuttleBlueTop = new Translation2d(

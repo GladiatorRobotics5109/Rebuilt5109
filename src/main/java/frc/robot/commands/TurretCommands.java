@@ -8,7 +8,7 @@ import frc.robot.subsystems.turret.TurretSubsystem;
 public class TurretCommands {
     public static Command autoAim(TurretSubsystem turret) {
         return Commands.startEnd(
-            () -> turret.runPosition(RobotState.getInstance().getAimingParameters()::turretPosition),
+            () -> turret.runPosition(() -> RobotState.getInstance().getAimingParameters().turretPosition()),
             turret::stop,
             turret
         ).withName("TurretCommands::autoAim");
