@@ -1,36 +1,171 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.flywheels.Flywheels;
-import frc.robot.subsystems.vision.Vision;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import frc.robot.Constants.FlywheelsConstants;
+import frc.robot.Constants.HoodConstants;
+import lombok.AccessLevel;
+import lombok.Getter;
 
+import org.littletonrobotics.junction.Logger;
+
+@Getter
 public class RobotState {
-    private static Drive s_drive;
-    private static Vision s_vision;
-    private static Flywheels s_flywheels;
+    private static RobotState s_instance;
 
-    public static void initDrive(Drive drive) { s_drive = drive; }
-
-    public static void initVision(Vision vision) { s_vision = vision; }
-
-    public static void initFlywheels(Flywheels flywheels) { s_flywheels = flywheels; }
-
-    public static void verifyInit() {
-        if (s_drive == null) {
-            DriverStation.reportWarning("Drive state has not been initialized!", true);
-        }
-        if (s_vision == null) {
-            DriverStation.reportWarning("Vision state has not been initialized!", true);
-        }
-        if (s_flywheels == null) {
-            DriverStation.reportWarning("Flywheels state has not been initialized!", true);
-        }
+    public static void init() {
+        s_instance = new RobotState();
     }
 
-    public static Pose2d getPose() { return s_drive.getPose(); }
+    public static RobotState getInstance() { return s_instance; }
 
-    public static Rotation2d getRotation() { return s_drive.getRotation(); }
+    private FuelStrategy m_fuelStrategy = FuelStrategy.HUB;
+
+    @Getter(AccessLevel.NONE)
+    private AimingParameters m_latestAimingParameters;
+    private final Debouncer m_idleDebouncer = new Debouncer(
+        FlywheelsConstants.kIdleDistDebounce,
+        DebounceType.kFalling
+    );
+
+    // -- Drive State --
+
+    private Pose2d m_pose;
+    private ChassisSpeeds m_velocityFieldRelative;
+    private ChassisSpeeds m_velocity;
+
+    public Rotation2d getRotation() { return m_pose.getRotation(); }
+
+    // -- Flywheels State --
+
+    private double m_flywheelsRPM;
+
+    // -- Turret State --
+
+    /** Robot relative turret position */
+    private Rotation2d m_turretPosition;
+    /** Field relative turret position */
+    private Rotation2d m_turretHeading;
+
+    // -- Hood State --
+    private Rotation2d m_hoodAngle = HoodConstants.kMaxAngle; // TODO: Change this when hood subsystem is written
+
+    // -- Indexer State --
+    private boolean m_indexing;
+
+    public AimingParameters getAimingParameters() {
+        if (m_latestAimingParameters != null)
+            return m_latestAimingParameters;
+
+        m_latestAimingParameters = new AimingParameters(Rotation2d.kZero, 0, Rotation2d.kZero);
+        return m_latestAimingParameters;
+
+        /* Translation2d target = switch (m_fuelStrategy) {
+            case HUB -> AllianceFlip.apply(Hub.topCenterPoint).toTranslation2d();
+            case SHUTTLE_AUTO -> {
+                if (m_pose.getY() >= LinesHorizontal.center) {
+                    yield DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                        ? AimingConstants.kShuttleBlueTop
+                        : AimingConstants.kShuttleRedTop;
+                }
+                else {
+                    yield DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                        ? AimingConstants.kShuttleBlueBottom
+                        : AimingConstants.kShuttleRedBottom;
+                }
+            }
+        };
+
+        Pose2d predicted = new Pose2d(
+            m_pose.getX() + m_velocityFieldRelative.vxMetersPerSecond * AimingConstants.kDriveLookaheadTime,
+            m_pose.getY() + m_velocityFieldRelative.vyMetersPerSecond * AimingConstants.kDriveLookaheadTime,
+            Rotation2d.fromRadians(
+                m_pose.getRotation().getRadians()
+                    + m_velocityFieldRelative.omegaRadiansPerSecond * AimingConstants.kDriveLookaheadTime
+            )
+        );
+
+        Translation2d delta = target.minus(predicted.getTranslation());
+        Rotation2d targetPosition = delta.getAngle().minus(predicted.getRotation());
+        double dist = delta.getNorm();
+        Rotation2d pitch = Rotation2d.fromRadians(
+            MathUtil.clamp(
+                m_fuelStrategy == FuelStrategy.HUB
+                    ? AimingConstants.kHubHoodPitch.get(dist)
+                    : AimingConstants.kShuttleHoodPitch.get(dist),
+                HoodConstants.kMinAngle.getRadians(),
+                HoodConstants.kMaxAngle.getRadians()
+            )
+        );
+        double flywheelsRPM;
+        if (m_fuelStrategy == FuelStrategy.HUB) {
+            flywheelsRPM = m_idleDebouncer.calculate(dist < FlywheelsConstants.kIdleDistThresholdMeters)
+                ? AimingConstants.kHubFlywheelsRPMs.get(dist)
+                : FlywheelsConstants.kIdleRPM;
+        }
+        else {
+            flywheelsRPM = AimingConstants.kShuttleFlywheelsRPMs.get(dist);
+        }
+
+        m_latestAimingParameters = new AimingParameters(targetPosition, flywheelsRPM, pitch);
+        Logger.recordOutput("RobotState/LatestAimingParameters", m_latestAimingParameters);
+
+        return m_latestAimingParameters;
+        */
+    }
+
+    public void updateDrive(Pose2d pose, ChassisSpeeds velocity) {
+        m_latestAimingParameters = null;
+
+        m_pose = pose;
+        m_velocity = velocity;
+        m_velocityFieldRelative = ChassisSpeeds.fromRobotRelativeSpeeds(velocity, pose.getRotation());
+
+    }
+
+    public void updateFlywheels(double flywheelsRPM) {
+        m_flywheelsRPM = flywheelsRPM;
+    }
+
+    public void updateTurret(Rotation2d turretPosition) {
+        m_turretPosition = turretPosition;
+
+        m_turretHeading = getRotation().plus(m_turretPosition);
+    }
+
+    public void updateIndexer(boolean indexing) {
+        m_indexing = indexing;
+    }
+
+    public void setFuelStrategy(FuelStrategy strategy) {
+        m_latestAimingParameters = null;
+
+        m_fuelStrategy = strategy;
+    }
+
+    public void log() {
+        Logger.recordOutput("RobotState/FuelStrategy", m_fuelStrategy);
+
+        Logger.recordOutput("RobotState/Drive/Pose", m_pose);
+        Logger.recordOutput("RobotState/Drive/VelocityFieldRelative", m_velocityFieldRelative);
+        Logger.recordOutput("RobotState/Drive/Velocity", m_velocity);
+
+        Logger.recordOutput("RobotState/Flywheels/FlywheelsRPM", m_flywheelsRPM);
+
+        Logger.recordOutput("RobotState/Turret/TurretPosition", m_turretPosition);
+        Logger.recordOutput("RobotState/Turret/TurretHeading", m_turretHeading);
+
+        Logger.recordOutput("RobotState/Hood/HoodAngle", m_hoodAngle);
+
+        Logger.recordOutput("RobotState/Indexer/Indexing", m_indexing);
+    }
+
+    public enum FuelStrategy {
+        HUB,
+        SHUTTLE_AUTO
+    }
+
+    public record AimingParameters(Rotation2d turretPosition, double flywheelsRPM, Rotation2d hoodAngle) {}
 }

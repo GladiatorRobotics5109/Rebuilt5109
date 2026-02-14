@@ -163,7 +163,7 @@ public class ModuleIOTalonFXS implements ModuleIO {
 
         // Configure periodic frames
         BaseStatusSignal.setUpdateFrequencyForAll(
-            Drive.ODOMETRY_FREQUENCY,
+            DriveSubsystem.ODOMETRY_FREQUENCY,
             drivePosition,
             turnPosition
         );

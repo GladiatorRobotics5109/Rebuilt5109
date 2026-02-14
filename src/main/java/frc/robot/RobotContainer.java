@@ -8,33 +8,29 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.FlywheelsConstants;
-import frc.robot.Constants.VisionConstants;
+import frc.robot.Constants.Mode;
+import frc.robot.RobotState.FuelStrategy;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FlywheelsCommands;
-import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
-import frc.robot.subsystems.drive.ModuleIO;
-import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.flywheels.Flywheels;
-import frc.robot.subsystems.flywheels.FlywheelsIO;
-import frc.robot.subsystems.flywheels.FlywheelsIOSim;
-import frc.robot.subsystems.flywheels.FlywheelsIOTalonFX;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.commands.IndexerCommands;
+import frc.robot.commands.TurretCommands;
+import frc.robot.subsystems.drive.DriveSubsystem;
+import frc.robot.subsystems.flywheels.FlywheelsSubsystem;
+import frc.robot.subsystems.hood.HoodSubsystem;
+import frc.robot.subsystems.indexer.IndexerSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.turret.TurretSubsystem;
+import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.Visualizer;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -45,81 +41,91 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
     // Subsystems
-    private final Drive m_drive;
-    private final Vision m_vision;
-    private final Flywheels m_flywheels;
+    private final DriveSubsystem m_drive;
+    private final VisionSubsystem m_vision;
+    private final FlywheelsSubsystem m_flywheels;
+    private final TurretSubsystem m_turret;
+    private final IndexerSubsystem m_indexer;
+    private final HoodSubsystem m_hood;
+    private final IntakeSubsystem m_intake;
 
     // Controller
     private final CommandPS5Controller m_driverController = new CommandPS5Controller(0);
+    private CommandGenericHID m_driverControllerSim;
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> m_autoChooser;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        switch (Constants.kCurrentMode) {
-            case REAL:
-                // Real robot, instantiate hardware IO implementations
-                // ModuleIOTalonFX is intended for modules with TalonFX drive, TalonFX turn, and
-                // a CANcoder
-                m_drive = new Drive(
-                    new GyroIOPigeon2(),
-                    new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                    new ModuleIOTalonFX(TunerConstants.FrontRight),
-                    new ModuleIOTalonFX(TunerConstants.BackLeft),
-                    new ModuleIOTalonFX(TunerConstants.BackRight)
-                );
-
-                m_vision = new Vision(
-                    m_drive::addVisionMeasurement,
-                    new VisionIOLimelight(VisionConstants.kCamera1Name, m_drive::getRotation)
-                );
-
-                m_flywheels = new Flywheels(
-                    new FlywheelsIOTalonFX(FlywheelsConstants.kId, Constants.kCANBusCANivore)
-                );
-
-                break;
-            case SIM:
-                // Sim robot, instantiate physics sim IO implementations
-                m_drive = new Drive(
-                    new GyroIO() {},
-                    new ModuleIOSim(TunerConstants.FrontLeft),
-                    new ModuleIOSim(TunerConstants.FrontRight),
-                    new ModuleIOSim(TunerConstants.BackLeft),
-                    new ModuleIOSim(TunerConstants.BackRight)
-                );
-
-                m_vision = new Vision(m_drive::addVisionMeasurement, new VisionIO() {});
-
-                m_flywheels = new Flywheels(new FlywheelsIOSim());
-
-                break;
-            default:
-                // Replayed robot, disable IO implementations
-                m_drive = new Drive(
-                    new GyroIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {}
-                );
-
-                m_vision = new Vision(m_drive::addVisionMeasurement, new VisionIO() {});
-
-                m_flywheels = new Flywheels(new FlywheelsIO() {});
-
-                break;
-        }
-
-        RobotState.initDrive(m_drive);
-        RobotState.initVision(m_vision);
-        RobotState.initFlywheels(m_flywheels);
-        RobotState.verifyInit();
+        RobotState.init();
+        m_drive = new DriveSubsystem();
+        m_vision = new VisionSubsystem(m_drive::addVisionMeasurement, m_drive::getRotation);
+        m_flywheels = new FlywheelsSubsystem();
+        m_turret = new TurretSubsystem();
+        m_indexer = new IndexerSubsystem();
+        m_hood = new HoodSubsystem();
+        m_intake = new IntakeSubsystem();
 
         // Set up auto routines
         m_autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+        buildAutoChooser();
 
+        m_flywheels.setDefaultCommand(FlywheelsCommands.autoAim(m_flywheels));
+        m_turret.setDefaultCommand(TurretCommands.autoAim(m_turret));
+
+        if (Constants.kCurrentMode == Mode.SIM && Constants.kSimShouldUseKeyboard) {
+            m_driverControllerSim = new CommandGenericHID(0);
+            configureButtonBindingsKeyboard();
+        }
+        else {
+            configureButtonBindings();
+        }
+
+        if (Constants.kCurrentMode == Mode.SIM) {
+            DriverStation.silenceJoystickConnectionWarning(true);
+
+            Visualizer.init(m_drive, m_flywheels);
+        }
+    }
+
+    /**
+     * Use this method to define your button->command mappings. Buttons can be created by
+     * instantiating a {@link GenericHID} or one of its subclasses ({@link
+     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     */
+    private void configureButtonBindings() {
+        // Default command, normal field-relative drive
+        m_drive.setDefaultCommand(
+            DriveCommands.joystickDrive(
+                m_drive,
+                () -> -m_driverController.getLeftY(),
+                () -> -m_driverController.getLeftX(),
+                () -> -m_driverController.getRightX()
+            )
+        );
+
+        m_driverController.circle().whileTrue(IndexerCommands.index(m_indexer));
+        m_driverController.triangle().onTrue(
+            Commands.runOnce(
+                () -> RobotState.getInstance().setFuelStrategy(
+                    RobotState.getInstance().getFuelStrategy() == FuelStrategy.HUB
+                        ? FuelStrategy.SHUTTLE_AUTO
+                        : FuelStrategy.HUB
+                )
+            )
+        );
+    }
+
+    private void configureButtonBindingsKeyboard() {
+        m_drive.setDefaultCommand(DriveCommands.keyboardDrive(m_drive, m_driverControllerSim.getHID()));
+
+        // Simulate shooting 3 balls
+        m_driverControllerSim.button(3).whileTrue(IndexerCommands.index(m_indexer));
+    }
+
+    private void buildAutoChooser() {
         // Set up SysId routines
         m_autoChooser.addOption(
             "Drive Wheel Radius Characterization",
@@ -145,64 +151,17 @@ public class RobotContainer {
             "Drive SysId (Dynamic Reverse)",
             m_drive.sysIdDynamic(SysIdRoutine.Direction.kReverse)
         );
-
-        if (Robot.isSimulation()) {
-            DriverStation.silenceJoystickConnectionWarning(true);
-        }
-
-        // Configure the button bindings
-        configureButtonBindings();
     }
 
-    /**
-     * Use this method to define your button->command mappings. Buttons can be created by
-     * instantiating a {@link GenericHID} or one of its subclasses ({@link
-     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-     */
-    private void configureButtonBindings() {
-        // Default command, normal field-relative drive
-        m_drive.setDefaultCommand(
-            DriveCommands.joystickDrive(
-                m_drive,
-                () -> -m_driverController.getLeftY(),
-                () -> -m_driverController.getLeftX(),
-                () -> -m_driverController.getRightX()
-            )
-        );
-
-        // Lock to 0° when A button is held
-        m_driverController
-            .cross()
-            .whileTrue(
-                DriveCommands.joystickDriveAtAngle(
-                    m_drive,
-                    () -> -m_driverController.getLeftY(),
-                    () -> -m_driverController.getLeftX(),
-                    () -> Rotation2d.kZero
-                )
-            );
-
-        // Switch to X pattern when X button is pressed
-        m_driverController.square().onTrue(Commands.runOnce(m_drive::stopWithX, m_drive));
-
-        // Reset gyro to 0° when B button is pressed
-        m_driverController
-            .circle()
-            .onTrue(
-                Commands.runOnce(
-                    () -> m_drive.setPose(new Pose2d(m_drive.getPose().getTranslation(), Rotation2d.kZero)),
-                    m_drive
-                ).ignoringDisable(true)
-            );
-
-        m_flywheels.setDefaultCommand(FlywheelsCommands.auto(m_flywheels));
-    }
+    private LoggedTunableNumber m_velocity = new LoggedTunableNumber("Flywheels Velocity", 0.0);
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
      * @return the command to run in autonomous
      */
-    public Command getAutonomousCommand() { return m_autoChooser.get(); }
+    public Command getAutonomousCommand() {
+        // return m_autoChooser.get();
+        return FlywheelsCommands.setVelocity(m_flywheels, () -> m_velocity.getAsDouble());
+    }
 }

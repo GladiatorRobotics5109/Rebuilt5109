@@ -1,33 +1,27 @@
-package frc.robot.subsystems.flywheels;
+package frc.robot.subsystems.turret;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
-
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.util.TolerancedBangBang;
 
-import static frc.robot.Constants.FlywheelsConstants.*;
+import static frc.robot.Constants.TurretConstants.*;
 
-import org.littletonrobotics.junction.Logger;
+public class TurretIOTalonFX implements TurretIO {
+    private TalonFX m_motor;
 
-public class FlywheelsIOTalonFX implements FlywheelsIO {
-    private final TalonFX m_motor;
-
-    private final VelocityVoltage m_velocityVoltage = new VelocityVoltage(0.0);
+    private final PositionVoltage m_positionVoltage = new PositionVoltage(0.0);
     private final VoltageOut m_voltageOut = new VoltageOut(0.0);
 
     private final StatusSignal<Angle> m_position;
@@ -41,12 +35,7 @@ public class FlywheelsIOTalonFX implements FlywheelsIO {
 
     private TalonFXConfiguration m_config = new TalonFXConfiguration();
 
-    private final TolerancedBangBang m_bang = new TolerancedBangBang(kBangBangTolerance);
-    private final SimpleMotorFeedforward m_ff = new SimpleMotorFeedforward(kS, kV, kA);
-    private double m_desiredVelocity;
-    private boolean m_hasDesiredVelocity;
-
-    public FlywheelsIOTalonFX(int id, CANBus canbus) {
+    public TurretIOTalonFX(int id, CANBus canbus) {
         m_motor = new TalonFX(id, canbus);
 
         m_config.CurrentLimits.StatorCurrentLimit = kStatorCurrentLimit;
@@ -55,9 +44,9 @@ public class FlywheelsIOTalonFX implements FlywheelsIO {
         m_config.CurrentLimits.SupplyCurrentLimit = kSupplyCurrentLimit;
         m_config.CurrentLimits.SupplyCurrentLimitEnable = kSupplyCurrentLimitEnable;
 
-        // m_config.Slot0.kP = kP;
-        // m_config.Slot0.kI = kI;
-        // m_config.Slot0.kD = kD;
+        m_config.Slot0.kP = kP;
+        m_config.Slot0.kI = kI;
+        m_config.Slot0.kD = kD;
 
         m_config.Feedback.SensorToMechanismRatio = kGearRatio;
 
@@ -96,7 +85,7 @@ public class FlywheelsIOTalonFX implements FlywheelsIO {
     }
 
     @Override
-    public void updateInputs(FlywheelsIOInputs inputs) {
+    public void updateInputs(TurretIO.TurretIOInputs inputs) {
         StatusCode status = BaseStatusSignal.refreshAll(
             m_position,
             m_velocity,
@@ -113,18 +102,11 @@ public class FlywheelsIOTalonFX implements FlywheelsIO {
         inputs.statorCurrentAmps = m_statorCurrent.getValue().in(Units.Amps);
         inputs.supplyCurrentAmps = m_supplyCurrent.getValue().in(Units.Amp);
         inputs.tempCelsius = m_temp.getValue().in(Units.Celsius);
+    }
 
-        if (m_hasDesiredVelocity) {
-            double bang = 12 * m_bang.calculate(inputs.velocityRadPerSec, m_desiredVelocity);
-            Logger.recordOutput("TestCurrentVelocity", inputs.velocityRadPerSec);
-            Logger.recordOutput("TestDesiredVelocity", m_desiredVelocity);
-            Logger.recordOutput("TestBang", bang);
-            Logger.recordOutput("TestDelta", m_desiredVelocity - inputs.velocityRadPerSec);
-            Logger.recordOutput("TestTolerance", kBangBangTolerance);
-
-            double volts = bang + m_ff.calculate(m_desiredVelocity);
-            setVoltage(MathUtil.clamp(volts, -12.0, 12.0));
-        }
+    @Override
+    public void setPosition(double positionRad) {
+        m_motor.setControl(m_positionVoltage.withPosition(positionRad));
     }
 
     @Override
@@ -133,28 +115,20 @@ public class FlywheelsIOTalonFX implements FlywheelsIO {
     }
 
     @Override
-    public void setVelocity(double velocityRadPerSec) {
-        // m_motor.setControl(m_velocityVoltage.withVelocity(velocityRadPerSec));
-        m_desiredVelocity = velocityRadPerSec;
-        m_hasDesiredVelocity = true;
-
-    }
-
-    @Override
     public void setPID(double p, double i, double d) {
-        // m_config.Slot0.kP = kP;
-        // m_config.Slot0.kI = kI;
-        // m_config.Slot0.kD = kD;
+        m_config.Slot0.kP = kP;
+        m_config.Slot0.kI = kI;
+        m_config.Slot0.kD = kD;
 
-        // StatusCode result = m_motor.getConfigurator().apply(m_config);
-        // if (!result.isOK()) {
-        //     DriverStation.reportWarning(
-        //         "Failed to apply flywheels configs!\nName: "
-        //             + result.getName()
-        //             + "\nDescription: "
-        //             + result.getDescription(),
-        //         true
-        //     );
-        // }
+        StatusCode result = m_motor.getConfigurator().apply(m_config);
+        if (!result.isOK()) {
+            DriverStation.reportWarning(
+                "Failed to apply flywheels configs!\nName: "
+                    + result.getName()
+                    + "\nDescription: "
+                    + result.getDescription(),
+                true
+            );
+        }
     }
 }
