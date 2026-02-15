@@ -109,7 +109,7 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
-        public static final String kCamera1Name = "Camera1";
+        public static final String kCamera1Name = "limelight-one";
 
         public static final AprilTagFieldLayout kAprilTagLayout = AprilTagLayoutType.OFFICIAL.getLayout();;
 
