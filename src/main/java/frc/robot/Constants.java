@@ -88,10 +88,11 @@ public final class Constants {
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
-        public static final Translation3d kRobotToTurret = new Translation3d(
-            Units.inchesToMeters(5.368740),
+        public static final Transform3d kRobotToTurret = new Transform3d(
+            Units.inchesToMeters(7.247244),
             0.0,
-            Units.inchesToMeters(14.867584)
+            Units.inchesToMeters(13.375000),
+            Rotation3d.kZero
         );
     }
 
@@ -114,7 +115,12 @@ public final class Constants {
         public static final AprilTagFieldLayout kAprilTagLayout = AprilTagLayoutType.OFFICIAL.getLayout();;
 
         // Robot to camera transforms
-        public static Transform3d kRobotToCamera1 = new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
+        public static Transform3d kTurretToCamera1 = new Transform3d(
+            Units.inchesToMeters(7.225597),
+            0.0,
+            Units.inchesToMeters(3.168515),
+            new Rotation3d(0.0, Units.degreesToRadians(-10), 0.0)
+        );
 
         // Basic filtering thresholds
         public static final double kMaxAmbiguity = 0.3;
@@ -129,12 +135,12 @@ public final class Constants {
         // (Adjust to trust some cameras more than others)
         public static final double[] kCameraStdDevFactors = new double[] {
             1.0, // Camera 0
-            1.0 // Camera 1
         };
 
         // Multipliers to apply for MegaTag 2 observations
         public static final double kLinearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
-        public static final double kAngularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
+        public static final double kAngularStdDevMegatag2Factor = 0.5; // No rotation data available
+        // public static final double kAngularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
     }
 
     public static final class AimingConstants {

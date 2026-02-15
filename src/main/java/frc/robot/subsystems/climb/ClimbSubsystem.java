@@ -8,7 +8,7 @@ public class ClimbSubsystem {
 
     public ClimbSubsystem() {
         m_io = switch (Constants.kCurrentMode) {
-            case REAL -> new ClimbIOTalonFX();
+            // case REAL -> new ClimbIOTalonFX();
             case SIM -> new ClimbIOSim();
             default -> new ClimbIO() {};
         };

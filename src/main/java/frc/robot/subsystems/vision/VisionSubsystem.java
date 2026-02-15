@@ -14,6 +14,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
@@ -33,10 +34,18 @@ public class VisionSubsystem extends SubsystemBase {
     private final VisionIOInputsAutoLogged[] inputs;
     private final Alert[] disconnectedAlerts;
 
-    public VisionSubsystem(VisionConsumer consumer, Supplier<Rotation2d> rotationSupplier) {
+    public VisionSubsystem(
+        VisionConsumer consumer,
+        Supplier<Rotation2d> rotationSupplier,
+        Supplier<Transform3d> robotToTurretCamera
+    ) {
         this.consumer = consumer;
         this.io = switch (Constants.kCurrentMode) {
-            case REAL -> new VisionIO[] { new VisionIOLimelight(kCamera1Name, rotationSupplier) };
+            case REAL -> new VisionIO[] { new VisionIOTurretLimelight(
+                kCamera1Name,
+                rotationSupplier,
+                robotToTurretCamera
+            ) };
             // case SIM -> new VisionIO[] { new VisionIOLimelight(kCamera1Name, rotationSupplier) };
             default -> new VisionIO[] { new VisionIO() {} };
         };

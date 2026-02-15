@@ -8,6 +8,9 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -29,6 +32,7 @@ import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.util.Conversions;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.Visualizer;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -60,12 +64,18 @@ public class RobotContainer {
     public RobotContainer() {
         RobotState.init();
         m_drive = new DriveSubsystem();
-        m_vision = new VisionSubsystem(m_drive::addVisionMeasurement, m_drive::getRotation);
-        m_flywheels = new FlywheelsSubsystem();
         m_turret = new TurretSubsystem();
+        m_vision = new VisionSubsystem(
+            m_drive::addVisionMeasurement,
+            m_drive::getRotation,
+            () -> Conversions.robotToTurretCamera(m_turret.getPosition())
+        );
+        m_flywheels = new FlywheelsSubsystem();
         m_indexer = new IndexerSubsystem();
         m_hood = new HoodSubsystem();
         m_intake = new IntakeSubsystem();
+
+        m_drive.setPose(new Pose2d(14.384, 6.552, Rotation2d.kZero));
 
         // Set up auto routines
         m_autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

@@ -30,7 +30,7 @@ public class FlywheelsSubsystem extends SubsystemBase {
 
     public FlywheelsSubsystem() {
         m_io = switch (Constants.kCurrentMode) {
-            case REAL -> new FlywheelsIOTalonFX(kId, Constants.kCANBusRio);
+            // case REAL -> new FlywheelsIOTalonFX(kId, Constants.kCANBusRio);
             case SIM -> new FlywheelsIOSim();
             default -> new FlywheelsIO() {};
         };

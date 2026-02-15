@@ -22,7 +22,7 @@ public class TurretSubsystem extends SubsystemBase {
 
     public TurretSubsystem() {
         m_io = switch (Constants.kCurrentMode) {
-            case REAL -> new TurretIOTalonFX(kId, Constants.kCANBusCANivore);
+            // case REAL -> new TurretIOTalonFX(kId, Constants.kCANBusCANivore);
             case SIM -> new TurretIOSim();
             default -> new TurretIO() {};
         };
@@ -45,6 +45,8 @@ public class TurretSubsystem extends SubsystemBase {
     public void stop() {
         runVoltage(0.0);
     }
+
+    public Rotation2d getPosition() { return new Rotation2d(m_inputs.positionRad); }
 
     @Override
     public void periodic() {
