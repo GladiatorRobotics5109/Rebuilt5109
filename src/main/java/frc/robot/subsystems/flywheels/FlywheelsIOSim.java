@@ -1,8 +1,6 @@
 package frc.robot.subsystems.flywheels;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.BangBangController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
@@ -13,12 +11,6 @@ import static frc.robot.Constants.FlywheelsConstants.*;
 
 public class FlywheelsIOSim implements FlywheelsIO {
     private final DCMotorSim m_motor;
-
-    private final BangBangController m_bang = new BangBangController(kBangBangTolerance);
-    private final SimpleMotorFeedforward m_ff = new SimpleMotorFeedforward(kS, kV, kA);
-    private double m_desiredVelocity;
-    private boolean m_hasDesiredVelocity;
-    private double m_appliedVolts;
 
     public FlywheelsIOSim() {
         m_motor = new DCMotorSim(
@@ -32,33 +24,16 @@ public class FlywheelsIOSim implements FlywheelsIO {
         m_motor.update(Robot.defaultPeriodSecs);
 
         inputs.connected = true;
-        inputs.positionRad = m_motor.getAngularPositionRad();
-        inputs.velocityRadPerSec = m_motor.getAngularVelocityRadPerSec();
+        inputs.positionRot = m_motor.getAngularPositionRotations();
+        inputs.velocityRPM = m_motor.getAngularVelocityRPM();
         inputs.appliedVolts = m_motor.getInputVoltage();
         inputs.statorCurrentAmps = Math.abs(m_motor.getCurrentDrawAmps());
 
-        if (m_hasDesiredVelocity) {
-            double volts = 12 * m_bang.calculate(inputs.velocityRadPerSec, m_desiredVelocity)
-                + m_ff.calculate(m_desiredVelocity);
-            m_motor.setInputVoltage(MathUtil.clamp(volts, -12.0, 12.0));
-        }
     }
 
     @Override
     public void setVoltage(double volts) {
-        m_hasDesiredVelocity = false;
         m_motor.setInputVoltage(MathUtil.clamp(volts, -12.0, 12.0));
-    }
-
-    @Override
-    public void setVelocity(double velocityRadPerSec) {
-        m_desiredVelocity = velocityRadPerSec;
-        m_hasDesiredVelocity = true;
-    }
-
-    @Override
-    public void setPID(double p, double i, double d) {
-        // m_pid.setPID(p, i, d);
     }
 
     public void simulateShot() {

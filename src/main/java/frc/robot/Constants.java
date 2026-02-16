@@ -64,7 +64,7 @@ public final class Constants {
         public static final double kS = 0.19;
         public static final double kV = 0.018;
         public static final double kA = 0.0;
-        public static final double kBangBangTolerance = Units.rotationsPerMinuteToRadiansPerSecond(75);
+        public static final double kBangBangTolerance = 75;
 
         public static final double kSimMOI = 0.0004475;
 

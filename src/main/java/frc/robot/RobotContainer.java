@@ -29,7 +29,6 @@ import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
-import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.Visualizer;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -59,6 +58,7 @@ public class RobotContainer {
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         RobotState.init();
+
         m_drive = new DriveSubsystem();
         m_vision = new VisionSubsystem(m_drive::addVisionMeasurement, m_drive::getRotation);
         m_flywheels = new FlywheelsSubsystem();
@@ -68,7 +68,7 @@ public class RobotContainer {
         m_intake = new IntakeSubsystem();
 
         // Set up auto routines
-        m_autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+        m_autoChooser = new LoggedDashboardChooser<>("Auto Chooser", AutoBuilder.buildAutoChooser());
         buildAutoChooser();
 
         m_flywheels.setDefaultCommand(FlywheelsCommands.autoAim(m_flywheels));
@@ -121,7 +121,6 @@ public class RobotContainer {
     private void configureButtonBindingsKeyboard() {
         m_drive.setDefaultCommand(DriveCommands.keyboardDrive(m_drive, m_driverControllerSim.getHID()));
 
-        // Simulate shooting 3 balls
         m_driverControllerSim.button(3).whileTrue(IndexerCommands.index(m_indexer));
     }
 
@@ -153,15 +152,10 @@ public class RobotContainer {
         );
     }
 
-    private LoggedTunableNumber m_velocity = new LoggedTunableNumber("Flywheels Velocity", 0.0);
-
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
      * @return the command to run in autonomous
      */
-    public Command getAutonomousCommand() {
-        // return m_autoChooser.get();
-        return FlywheelsCommands.setVelocity(m_flywheels, () -> m_velocity.getAsDouble());
-    }
+    public Command getAutonomousCommand() { return m_autoChooser.get(); }
 }

@@ -16,6 +16,7 @@ import frc.robot.util.AllianceFlip;
 import lombok.AccessLevel;
 import lombok.Getter;
 
+import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 
 @Getter
@@ -32,6 +33,7 @@ public class RobotState {
 
     @Getter(AccessLevel.NONE)
     private AimingParameters m_latestAimingParameters;
+    @Getter(AccessLevel.NONE)
     private final Debouncer m_idleDebouncer = new Debouncer(
         FlywheelsConstants.kIdleDistDebounce,
         DebounceType.kFalling
@@ -42,12 +44,16 @@ public class RobotState {
     private Pose2d m_pose;
     private ChassisSpeeds m_velocityFieldRelative;
     private ChassisSpeeds m_velocity;
+    @Setter
+    private ChassisSpeeds m_desiredVelocity;
 
     public Rotation2d getRotation() { return m_pose.getRotation(); }
 
     // -- Flywheels State --
 
-    private double m_flywheelsRPM;
+    private double m_flywheelsVelocity;
+    private double m_flywheelsDesiredVelocity;
+    private boolean m_flywheelsHasDesiredVelocity;
 
     // -- Turret State --
 
@@ -131,8 +137,10 @@ public class RobotState {
 
     }
 
-    public void updateFlywheels(double flywheelsRPM) {
-        m_flywheelsRPM = flywheelsRPM;
+    public void updateFlywheels(double velocity, double desiredVelocity, boolean hasDesiredVelocity) {
+        m_flywheelsVelocity = velocity;
+        m_flywheelsDesiredVelocity = desiredVelocity;
+        m_flywheelsHasDesiredVelocity = hasDesiredVelocity;
     }
 
     public void updateTurret(Rotation2d turretPosition) {
@@ -152,20 +160,23 @@ public class RobotState {
     }
 
     public void log() {
-        Logger.recordOutput("RobotState/FuelStrategy", m_fuelStrategy);
+        Logger.recordOutput("FuelStrategy", m_fuelStrategy);
 
-        Logger.recordOutput("RobotState/Drive/Pose", m_pose);
-        Logger.recordOutput("RobotState/Drive/VelocityFieldRelative", m_velocityFieldRelative);
-        Logger.recordOutput("RobotState/Drive/Velocity", m_velocity);
+        Logger.recordOutput("Subsystems/Drive/Pose", m_pose);
+        Logger.recordOutput("Subsystems/Drive/VelocityFieldRelative", m_velocityFieldRelative);
+        Logger.recordOutput("Subsystems/Drive/Velocity", m_velocity);
+        Logger.recordOutput("Subsystems/Drive/DesiredVelocity", m_desiredVelocity);
 
-        Logger.recordOutput("RobotState/Flywheels/FlywheelsRPM", m_flywheelsRPM);
+        Logger.recordOutput("Subsystems/Flywheels/Velocity", m_flywheelsVelocity);
+        Logger.recordOutput("Subsystems/Flywheels/DesiredVelocity", m_flywheelsDesiredVelocity);
+        Logger.recordOutput("Subsystems/Flywheels/HasDesiredVeloicty", m_flywheelsHasDesiredVelocity);
 
-        Logger.recordOutput("RobotState/Turret/TurretPosition", m_turretPosition);
-        Logger.recordOutput("RobotState/Turret/TurretHeading", m_turretHeading);
+        Logger.recordOutput("Subsystems/Turret/TurretPosition", m_turretPosition);
+        Logger.recordOutput("Subsystems/Turret/TurretHeading", m_turretHeading);
 
-        Logger.recordOutput("RobotState/Hood/HoodAngle", m_hoodAngle);
+        Logger.recordOutput("Subsystems/Hood/HoodAngle", m_hoodAngle);
 
-        Logger.recordOutput("RobotState/Indexer/Indexing", m_indexing);
+        Logger.recordOutput("Subsystems/Indexer/Indexing", m_indexing);
     }
 
     public enum FuelStrategy {

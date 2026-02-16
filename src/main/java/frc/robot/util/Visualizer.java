@@ -36,7 +36,7 @@ public class Visualizer {
         new Trigger(RobotState.getInstance()::isIndexing).whileTrue(Commands.repeatingSequence(Commands.runOnce(() -> {
             Pose2d robot = RobotState.getInstance().getPose();
             ChassisSpeeds speeds = RobotState.getInstance().getVelocityFieldRelative();
-            double flywheelsRPM = RobotState.getInstance().getFlywheelsRPM();
+            double flywheelsRPM = RobotState.getInstance().getFlywheelsVelocity();
             Rotation2d turretHeading = RobotState.getInstance().getTurretPosition();
             Rotation2d shooterAngle = RobotState.getInstance().getHoodAngle();
 
