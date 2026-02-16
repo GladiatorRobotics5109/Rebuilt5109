@@ -30,7 +30,7 @@ public final class Constants {
     public static final boolean kSimShouldUseKeyboard = kCurrentMode == Mode.SIM && false;
 
     public static final CANBus kCANBusRio = CANBus.roboRIO();
-    public static final CANBus kCANBusCANivore = new CANBus("CANivore");
+    public static final CANBus kCANBusCANivore = new CANBus("drivetrain");
 
     public static final class DriveCommandsConstants {
         public static final double kDeadband = 0.1;

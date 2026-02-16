@@ -18,7 +18,7 @@ public class IndexerSubsystem extends SubsystemBase {
 
     public IndexerSubsystem() {
         m_io = switch (Constants.kCurrentMode) {
-            case REAL -> new IndexerIOTalonFX();
+            //case REAL -> new IndexerIOTalonFX();
             case SIM -> new IndexerIOSim();
             default -> new IndexerIO() {};
         };
