@@ -19,9 +19,7 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
-import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -112,14 +110,14 @@ public class DriveSubsystem extends SubsystemBase {
 
     public DriveSubsystem() {
         switch (Constants.kCurrentMode) {
-            // case REAL:
-            //     this.gyroIO = new GyroIOPigeon2();
-            //     modules[0] = new Module(new ModuleIOTalonFX(TunerConstants.FrontLeft), 0, TunerConstants.FrontLeft);
-            //     modules[1] = new Module(new ModuleIOTalonFX(TunerConstants.FrontRight), 1, TunerConstants.FrontRight);
-            //     modules[2] = new Module(new ModuleIOTalonFX(TunerConstants.BackLeft), 2, TunerConstants.BackLeft);
-            //     modules[3] = new Module(new ModuleIOTalonFX(TunerConstants.BackRight), 3, TunerConstants.BackRight);
+            case REAL:
+                this.gyroIO = new GyroIOPigeon2();
+                modules[0] = new Module(new ModuleIOTalonFX(TunerConstants.FrontLeft), 0, TunerConstants.FrontLeft);
+                modules[1] = new Module(new ModuleIOTalonFX(TunerConstants.FrontRight), 1, TunerConstants.FrontRight);
+                modules[2] = new Module(new ModuleIOTalonFX(TunerConstants.BackLeft), 2, TunerConstants.BackLeft);
+                modules[3] = new Module(new ModuleIOTalonFX(TunerConstants.BackRight), 3, TunerConstants.BackRight);
 
-            //     break;
+                break;
             case SIM:
                 this.gyroIO = new GyroIO() {};
                 modules[0] = new Module(new ModuleIOSim(TunerConstants.FrontLeft), 0, TunerConstants.FrontLeft);
@@ -370,8 +368,7 @@ public class DriveSubsystem extends SubsystemBase {
         poseEstimator.addVisionMeasurement(
             visionRobotPoseMeters,
             timestampSeconds,
-            // visionMeasurementStdDevs
-            MatBuilder.fill(Nat.N3(), Nat.N1(), 0.95, 0.95, 8.0)
+            visionMeasurementStdDevs
         );
     }
 
