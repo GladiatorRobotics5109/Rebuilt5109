@@ -19,7 +19,9 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -368,7 +370,8 @@ public class DriveSubsystem extends SubsystemBase {
         poseEstimator.addVisionMeasurement(
             visionRobotPoseMeters,
             timestampSeconds,
-            visionMeasurementStdDevs
+            // visionMeasurementStdDevs
+            MatBuilder.fill(Nat.N3(), Nat.N1(), 0.95, 0.95, 8.0)
         );
     }
 
