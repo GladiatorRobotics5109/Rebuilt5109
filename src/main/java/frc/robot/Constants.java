@@ -106,6 +106,19 @@ public final class Constants {
         public static final String kLogPath = "Subsystems/Indexer";
 
         public static final double kIndexVoltage = 12.0;
+
+        public static final int kId = 20;
+        public static final double kGearRatio = 3.0;
+        public static final boolean kInverted = false;
+
+        public static final double kStatorCurrentLimit = 60.0;
+        public static final boolean kStatorCurrentLimitEnable = true;
+
+        public static final double kSupplyCurrentLimit = 40.0;
+        public static final boolean kSupplyCurrentLimitEnable = true;
+
+        public static final double kSimMOI = 0.0002;
+
     }
 
     public static final class VisionConstants {
