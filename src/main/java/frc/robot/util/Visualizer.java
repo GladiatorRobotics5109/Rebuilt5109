@@ -65,7 +65,9 @@ public class Visualizer {
         Pose2d robot = RobotState.getInstance().getPose();
         return new Pose3d(
             new Translation3d(robot.getX(), robot.getY(), 0).plus(
-                TurretConstants.kRobotToTurret.rotateBy(new Rotation3d(0, 0, robot.getRotation().getRadians()))
+                TurretConstants.kRobotToTurret.getTranslation().rotateBy(
+                    new Rotation3d(0, 0, robot.getRotation().getRadians())
+                )
             ),
             new Rotation3d(
                 0,

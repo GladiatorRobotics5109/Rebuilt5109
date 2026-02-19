@@ -22,6 +22,7 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
@@ -32,6 +33,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -40,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.FieldConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.RobotState;
 import frc.robot.generated.TunerConstants;
@@ -367,6 +370,14 @@ public class DriveSubsystem extends SubsystemBase {
             visionRobotPoseMeters,
             timestampSeconds,
             visionMeasurementStdDevs
+        );
+
+        Pose3d tag = FieldConstants.AprilTagLayoutType.OFFICIAL.getLayout().getTagPose(13).get();
+        Logger.recordOutput("DeltaX", tag.getX() - visionRobotPoseMeters.getX());
+        Logger.recordOutput("DeltaY", tag.getY() - visionRobotPoseMeters.getY());
+        Logger.recordOutput(
+            "DeltaRot",
+            Units.radiansToDegrees(tag.getRotation().getZ() - visionRobotPoseMeters.getRotation().getRadians())
         );
     }
 

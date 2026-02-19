@@ -46,6 +46,8 @@ public class TurretSubsystem extends SubsystemBase {
         runVoltage(0.0);
     }
 
+    public Rotation2d getPosition() { return new Rotation2d(m_inputs.positionRad); }
+
     @Override
     public void periodic() {
         m_io.updateInputs(m_inputs);
