@@ -27,7 +27,7 @@ public final class Constants {
     public static final Mode kSimMode = Mode.SIM;
     public static final Mode kCurrentMode = RobotBase.isReal() ? Mode.REAL : kSimMode;
     public static final boolean kTuningMode = true;
-    public static final boolean kSimShouldUseKeyboard = kCurrentMode == Mode.SIM && false;
+    public static final boolean kSimShouldUseKeyboard = kCurrentMode == Mode.SIM && true;
 
     public static final CANBus kCANBusRio = CANBus.roboRIO();
     public static final CANBus kCANBusCANivore = new CANBus("drivetrain");
@@ -81,13 +81,14 @@ public final class Constants {
         public static final boolean kStatorCurrentLimitEnable = false;
         public static final double kSupplyCurrentLimit = 40.0;
         public static final boolean kSupplyCurrentLimitEnable = true;
-        public static final double kGearRatio = 1.0;
+        public static final double kGearRatio = (48.0 / 10.0) * (100.0 / 10.0);
         public static final boolean kInverted = false;
 
         public static final double kP = 0.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
+        // Defined as origin of the robot to the bottom edge of the moving turret assembly
         public static final Transform3d kRobotToTurret = new Transform3d(
             Units.inchesToMeters(7.247244),
             0.0,
@@ -110,6 +111,7 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
+        public static final String kLogPath = "Subsystems/Vision";
         public static final String kCamera1Name = "limelight-one";
 
         public static final AprilTagFieldLayout kAprilTagLayout = AprilTagLayoutType.OFFICIAL.getLayout();;

@@ -46,7 +46,11 @@ public class VisionSubsystem extends SubsystemBase {
                 rotationSupplier,
                 robotToTurretCamera
             ) };
-            // case SIM -> new VisionIO[] { new VisionIOLimelight(kCamera1Name, rotationSupplier) };
+            case SIM -> new VisionIO[] { new VisionIOTurretLimelight(
+                kCamera1Name,
+                rotationSupplier,
+                robotToTurretCamera
+            ) };
             default -> new VisionIO[] { new VisionIO() {} };
         };
 

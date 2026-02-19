@@ -7,16 +7,14 @@
 
 package frc.robot.subsystems.vision;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.util.LimelightHelpers;
 
 import java.util.HashSet;
@@ -39,7 +37,7 @@ public class VisionIOTurretLimelight implements VisionIO {
     private final DoubleArraySubscriber megatag2Subscriber;
 
     private final String name;
-    private final Supplier<Transform3d> robotTocamera;
+    private final Supplier<Transform3d> robotToCamera;
 
     /**
      * Creates a new VisionIOLimelight.
@@ -53,7 +51,7 @@ public class VisionIOTurretLimelight implements VisionIO {
         Supplier<Transform3d> robotToCamera
     ) {
         this.name = name;
-        this.robotTocamera = robotToCamera;
+        this.robotToCamera = robotToCamera;
         var table = NetworkTableInstance.getDefault().getTable(name);
         this.rotationSupplier = rotationSupplier;
         orientationPublisher = table.getDoubleArrayTopic("robot_orientation_set").publish();
@@ -68,8 +66,7 @@ public class VisionIOTurretLimelight implements VisionIO {
 
     @Override
     public void updateInputs(VisionIOInputs inputs) {
-        // Update connection status based on whether an update has been seen in the last
-        // 250ms
+        // Update connection status based on whether an update has been seen in the last 250ms
         inputs.connected = ((RobotController.getFPGATime() - latencySubscriber.getLastChange()) / 1000) < 250;
 
         // Update target observation
@@ -82,8 +79,10 @@ public class VisionIOTurretLimelight implements VisionIO {
         // orientationPublisher.accept(
         //     new double[] { rotationSupplier.get().getDegrees(), 0.0, 0.0, 0.0, 0.0, 0.0 }
         // );
-        Transform3d robotToCamera = this.robotTocamera.get();
-        Logger.recordOutput("TEST", robotToCamera);
+        Transform3d robotToCamera = this.robotToCamera.get();
+        Logger.recordOutput(VisionConstants.kLogPath + "/RobotToCamera", robotToCamera);
+        // Pose3d robotPose = Conversions.toPose3d(RobotState.getInstance().getPose());
+        // Logger.recordOutput(VisionConstants.kLogPath + "/CameraPose", robotPose.plus(robotToCamera));
         LimelightHelpers.setCameraPose_RobotSpace(
             name,
             robotToCamera.getX(),
