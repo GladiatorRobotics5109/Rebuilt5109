@@ -110,6 +110,50 @@ public final class Constants {
         public static final double kIndexVoltage = 12.0;
     }
 
+    public static final class IntakeConstants {
+        public static final String kLogPath = "Subsystems/Intake";
+
+        public static final int kRollersId = 27;
+        public static final int kPivotId = 26;
+
+        public static final double kRollersStatorCurrentLimit = 0.0;
+        public static final boolean kRollersStatorCurrentLimitEnable = false;
+
+        public static final double kRollersSupplyCurrentLimit = 0.0;
+        public static final boolean kRollersSupplyCurrentLimitEnable = false;
+
+        public static final double kPivotStatorCurrentLimit = 0.0;
+        public static final boolean kPivotStatorCurrentLimitEnable = false;
+
+        public static final double kPivotSupplyCurrentLimit = 0.0;
+        public static final boolean kPivotSupplyCurrentLimitEnable = false;
+
+        public static final double kPivotGearRatio = 9 * 5 * 2;
+
+        public static final boolean kPivotInvert = false;
+        public static final boolean kPivotBrake = true;
+
+        public static final double kPivotP = 60; // V / rot
+        public static final double kPivotI = 0.0;
+        public static final double kPivotD = 0.0;
+
+        public static final double kPivotS = 0.0;
+        public static final double kPivotV = 0.0;
+
+        public static final double kRollersGearRatio = 3;
+
+        public static final boolean kRollersInvert = true;
+        public static final boolean kRollersBrake = true;
+
+        public static final Rotation2d kPivotMaxPosition = Rotation2d.fromDegrees(90);
+        public static final Rotation2d kPivotMinPosition = Rotation2d.fromDegrees(-10);
+        public static final Rotation2d kPivotStartingPosition = Rotation2d.kZero;
+        public static final Rotation2d kPivotDeployedPosition = Rotation2d.fromDegrees(82);
+        public static final Rotation2d kPivotStowedPosition = kPivotStartingPosition;
+
+        public static final double kRollersIntakeVoltage = 12;
+    }
+
     public static final class VisionConstants {
         public static final String kLogPath = "Subsystems/Vision";
         public static final String kCamera1Name = "limelight-one";

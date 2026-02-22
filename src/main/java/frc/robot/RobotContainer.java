@@ -15,23 +15,22 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Mode;
 import frc.robot.RobotState.FuelStrategy;
-import frc.robot.commands.DriveCommands;
-import frc.robot.commands.FlywheelsCommands;
-import frc.robot.commands.IndexerCommands;
-import frc.robot.commands.TurretCommands;
+import frc.robot.commands.*;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.flywheels.FlywheelsSubsystem;
 import frc.robot.subsystems.hood.HoodSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem.IntakeState;
 import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.Conversions;
 import frc.robot.util.Visualizer;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -51,7 +50,7 @@ public class RobotContainer {
     private final IntakeSubsystem m_intake;
 
     // Controller
-    private final CommandPS5Controller m_driverController = new CommandPS5Controller(0);
+    private final CommandPS4Controller m_driverController = new CommandPS4Controller(0);
     private CommandGenericHID m_driverControllerSim;
 
     // Dashboard inputs
@@ -120,6 +119,25 @@ public class RobotContainer {
                         ? FuelStrategy.SHUTTLE_AUTO
                         : FuelStrategy.HUB
                 )
+            )
+        );
+
+        m_driverController.R2().and(() -> (m_driverController.getR2Axis() + 1) / 2.0 > 0.05).whileTrue(
+            IntakeCommands.testRollers(m_intake, () -> {
+                double val = Math.pow((m_driverController.getR2Axis() + 1) / 2.0, 2);
+                Logger.recordOutput("VAL", val);
+                return 12 * val;
+            })
+        );
+
+        m_driverController.povUp().whileTrue(IntakeCommands.testPivot(m_intake, () -> -2));
+        m_driverController.povDown().whileTrue(IntakeCommands.testPivot(m_intake, () -> 2));
+
+        m_driverController.L1().onTrue(
+            Commands.either(
+                IntakeCommands.deploy(m_intake),
+                IntakeCommands.stow(m_intake),
+                () -> m_intake.getState() != IntakeState.DEPLOYED
             )
         );
     }
