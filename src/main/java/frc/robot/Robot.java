@@ -66,7 +66,7 @@ public class Robot extends LoggedRobot {
                 Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
                 break;
         }
-        
+
         LoggedPowerDistribution.getInstance(0, ModuleType.kRev);
 
         // Start AdvantageKit logger

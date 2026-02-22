@@ -4,7 +4,22 @@
  "type":"Swerve",
  "variables":{
   "expressions":{},
-  "poses":{}
+  "poses":{
+   "LeftShootPose":{
+    "x":{
+     "exp":"2.496748447418213 m",
+     "val":2.496748447418213
+    },
+    "y":{
+     "exp":"6.320784568786621 m",
+     "val":6.320784568786621
+    },
+    "heading":{
+     "exp":"-0.9097531579442097 rad",
+     "val":-0.9097531579442096
+    }
+   }
+  }
  },
  "config":{
   "frontLeft":{
