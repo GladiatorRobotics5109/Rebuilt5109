@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.AutoLog;
+
 import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.*;
@@ -95,11 +97,19 @@ public final class Constants {
         );
     }
 
+
     public static final class HoodConstants {
         public static final String kLogPath = "Subsystems/Hood";
 
         public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20);
         public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(55);
+    }
+
+    public static final class IntakeConstants {
+        public static final String kLogPath = "Subsystems/Intake";
+
+        public static final double kPivotVoltage = 6.0;
+        public static final double kRollerVoltage = 12.0;
     }
 
     public static final class IndexerConstants {
