@@ -69,7 +69,7 @@ public final class Constants {
         public static final double kSimMOI = 0.0004475;
 
         public static final double kSimShooterWheelRadius = Units.inchesToMeters(2);
-        public static final double kSimShooterEfficiency = 0.30;
+        public static final double kSimShooterEfficiency = 0.365;
         public static final double kSimShootRate = 5;
     }
 
@@ -157,12 +157,13 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap kShuttleHoodPitch = new InterpolatingDoubleTreeMap();
 
         static {
-            kHubFlywheelsRPMs.put(1.0, 3000.0);
-            kHubFlywheelsRPMs.put(6.0, 5500.0);
-
+            kHubFlywheelsRPMs.put(1.4, 2250.0);
+            kHubFlywheelsRPMs.put(4.1, 4050.0);
+            
             kShuttleFlywheelsRPMs.put(1.0, 5500.0);
 
             kHubHoodPitch.put(1.0, HoodConstants.kMaxAngle.getRadians());
+            
             kShuttleHoodPitch.put(1.0, HoodConstants.kMinAngle.getRadians());
         }
 
