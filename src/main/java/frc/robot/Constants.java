@@ -100,6 +100,37 @@ public final class Constants {
 
         public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20);
         public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(55);
+
+        // TO-DO: CHANGE THE GEAR RATIO
+
+        public static final int kId = 50;
+        public static final double kStatorCurrentLimit = 0.0;
+        public static final boolean kStatorCurrentLimitEnable = false;
+        public static final double kSupplyCurrentLimit = 40.0;
+        public static final boolean kSupplyCurrentLimitEnable = true;
+        public static final double kGearRatio = 4.0;
+        public static final boolean kInverted = false;
+
+        public static final double kP = 0.0;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+
+
+        public static final double kMaxVelocityRadPerSec = 0.0;
+        public static final double kMaxAcelRadPerSecSq = 0.0;
+
+        public static final double kS = 0.0;
+        public static final double kG = 0.0;
+        public static final double kV = 0.0;
+        
+        public static final double kSimMOI = 0.002;
+
+        // These are the constants used for the distance to angle relationship
+
+        public static final double kSlope = Math.toRadians(0.0);
+        public static final double kIntercept = Math.toRadians(25.0);
+
+        public static final double kToleranceRad = Math.toRadians(1.0);
     }
 
     public static final class IndexerConstants {
