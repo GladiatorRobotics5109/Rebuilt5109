@@ -64,7 +64,7 @@ public class HoodSubsystem extends SubsystemBase {
         Logger.processInputs(kLogPath, m_inputs);
         
         if(DriverStation.isDisabled()) {
-            m_io.setPosiiont(m_inputs.positionRad);
+            m_io.setPosition(m_inputs.positionRad);
             return;
         }
 
