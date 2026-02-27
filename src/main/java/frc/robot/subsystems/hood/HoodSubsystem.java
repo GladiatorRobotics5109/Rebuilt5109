@@ -14,9 +14,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotState;
-import frc.robot.subsystems.flywheels.FlywheelsIO;
-import frc.robot.subsystems.flywheels.FlywheelsIOSim;
-import frc.robot.subsystems.flywheels.FlywheelsIOTalonFX;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 

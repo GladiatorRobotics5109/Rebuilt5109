@@ -114,6 +114,18 @@ public class HoodIOTalonFX implements HoodIO {
     @Override
     public void setPosition(double positionRad) {
         m_motor.setControl(m_motionMagic.withPosition(Units.Radians.of(positionRad)));
+<<<<<<< HEAD
+=======
+    }
+
+    @Override
+    public void setPID(double p, double i, double d) {
+        m_config.Slot0.kP = kP;
+        m_config.Slot0.kI = kI;
+        m_config.Slot0.kD = kD;
+
+        m_motor.getConfigurator().apply(m_config);
+>>>>>>> 791e2fda97d0e477f1a7d32c8a9c663fa50fec77
     }
 
     @Override
