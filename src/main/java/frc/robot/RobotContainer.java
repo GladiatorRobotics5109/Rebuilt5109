@@ -9,20 +9,21 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.Mode;
+import frc.robot.FieldConstants.LeftTrench;
+import frc.robot.FieldConstants.RightTrench;
 import frc.robot.RobotState.FuelStrategy;
-import frc.robot.commands.DriveCommands;
-import frc.robot.commands.FlywheelsCommands;
-import frc.robot.commands.IndexerCommands;
-import frc.robot.commands.TurretCommands;
+import frc.robot.commands.*;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.flywheels.FlywheelsSubsystem;
 import frc.robot.subsystems.hood.HoodSubsystem;
@@ -77,16 +78,12 @@ public class RobotContainer {
         m_autoChooser = new LoggedDashboardChooser<>("Auto Chooser", AutoBuilder.buildAutoChooser());
         buildAutoChooser();
 
-        m_flywheels.setDefaultCommand(FlywheelsCommands.autoAim(m_flywheels));
-        m_turret.setDefaultCommand(TurretCommands.autoAim(m_turret));
-
         if (Constants.kCurrentMode == Mode.SIM && Constants.kSimShouldUseKeyboard) {
             m_driverControllerSim = new CommandGenericHID(0);
-            configureButtonBindingsKeyboard();
+            configureBindingsKeyboard();
         }
-        else {
-            configureButtonBindings();
-        }
+
+        configureBindings();
 
         if (Constants.kCurrentMode == Mode.SIM) {
             DriverStation.silenceJoystickConnectionWarning(true);
@@ -95,13 +92,7 @@ public class RobotContainer {
         }
     }
 
-    /**
-     * Use this method to define your button->command mappings. Buttons can be created by
-     * instantiating a {@link GenericHID} or one of its subclasses ({@link
-     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-     */
-    private void configureButtonBindings() {
+    private void configureBindings() {
         // Default command, normal field-relative drive
         m_drive.setDefaultCommand(
             DriveCommands.joystickDrive(
@@ -111,6 +102,9 @@ public class RobotContainer {
                 () -> -m_driverController.getRightX()
             )
         );
+
+        m_flywheels.setDefaultCommand(FlywheelsCommands.autoAim(m_flywheels));
+        m_turret.setDefaultCommand(TurretCommands.autoAim(m_turret));
 
         m_driverController.circle().whileTrue(IndexerCommands.index(m_indexer));
         m_driverController.triangle().onTrue(
@@ -122,9 +116,37 @@ public class RobotContainer {
                 )
             )
         );
+
+        // Automatically stow the hood when the robot gets close to the trench so that we don't hit it
+        new Trigger(
+            () -> {
+                Pose2d pose = RobotState.getInstance().getPose();
+                ChassisSpeeds vel = RobotState.getInstance().getVelocityFieldRelative();
+
+                final double[] positions = new double[] {
+                    LeftTrench.openingTopLeft.getX(),
+                    LeftTrench.openingTopRight.getX(),
+                    LeftTrench.oppOpeningTopLeft.getX(),
+                    LeftTrench.oppOpeningTopRight.getX(),
+                    RightTrench.openingTopLeft.getX(),
+                    RightTrench.openingTopRight.getX(),
+                    RightTrench.oppOpeningTopLeft.getX(),
+                    RightTrench.oppOpeningTopRight.getX()
+                };
+
+                for (double x : positions) {
+                    double delta = pose.getX() - x;
+                    if (Math.abs(delta) < HoodConstants.kHoodAutoStowThreshold
+                        && Math.signum(vel.vxMetersPerSecond) == Math.signum(delta))
+                        return true;
+                }
+
+                return false;
+            }
+        ).whileTrue(HoodCommands.stow(m_hood));
     }
 
-    private void configureButtonBindingsKeyboard() {
+    private void configureBindingsKeyboard() {
         m_drive.setDefaultCommand(DriveCommands.keyboardDrive(m_drive, m_driverControllerSim.getHID()));
 
         m_driverControllerSim.button(3).whileTrue(IndexerCommands.index(m_indexer));

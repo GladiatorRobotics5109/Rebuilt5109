@@ -41,11 +41,11 @@ public class RobotState {
 
     // -- Drive State --
 
-    private Pose2d m_pose;
-    private ChassisSpeeds m_velocityFieldRelative;
-    private ChassisSpeeds m_velocity;
+    private Pose2d m_pose = Pose2d.kZero;
+    private ChassisSpeeds m_velocityFieldRelative = new ChassisSpeeds();
+    private ChassisSpeeds m_velocity = new ChassisSpeeds();
     @Setter
-    private ChassisSpeeds m_desiredVelocity;
+    private ChassisSpeeds m_desiredVelocity = new ChassisSpeeds();
 
     public Rotation2d getRotation() { return m_pose.getRotation(); }
 
