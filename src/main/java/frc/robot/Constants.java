@@ -1,10 +1,3 @@
-// Copyright (c) 2021-2026 Littleton Robotics
-// http://github.com/Mechanical-Advantage
-//
-// Use of this source code is governed by a BSD
-// license that can be found in the LICENSE file
-// at the root directory of this project.
-
 package frc.robot;
 
 import com.ctre.phoenix6.CANBus;
@@ -30,7 +23,10 @@ public final class Constants {
     public static final boolean kSimShouldUseKeyboard = kCurrentMode == Mode.SIM && true;
 
     public static final CANBus kCANBusRio = CANBus.roboRIO();
-    public static final CANBus kCANBusCANivore = new CANBus("CANivore");
+    public static final CANBus kCANBusCANivore = new CANBus("drivetrain");
+
+    /** Whether to schedule the auto aim commands as each subsystem's default command */
+    public static final boolean kEnableAutoAimAsDefault = true;
 
     public static final class DriveCommandsConstants {
         public static final double kDeadband = 0.1;
@@ -64,12 +60,12 @@ public final class Constants {
         public static final double kS = 0.19;
         public static final double kV = 0.018;
         public static final double kA = 0.0;
-        public static final double kBangBangTolerance = Units.rotationsPerMinuteToRadiansPerSecond(75);
+        public static final double kBangBangTolerance = 75;
 
         public static final double kSimMOI = 0.0004475;
 
         public static final double kSimShooterWheelRadius = Units.inchesToMeters(2);
-        public static final double kSimShooterEfficiency = 0.30;
+        public static final double kSimShooterEfficiency = 0.365;
         public static final double kSimShootRate = 5;
     }
 
@@ -81,17 +77,26 @@ public final class Constants {
         public static final boolean kStatorCurrentLimitEnable = false;
         public static final double kSupplyCurrentLimit = 40.0;
         public static final boolean kSupplyCurrentLimitEnable = true;
-        public static final double kGearRatio = 1.0;
+        public static final double kGearRatio = (48.0 / 10.0) * (100.0 / 10.0);
         public static final boolean kInverted = false;
 
         public static final double kP = 0.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
-        public static final Translation3d kRobotToTurret = new Translation3d(
-            Units.inchesToMeters(5.368740),
+        public static final double kS = 0.0;
+        public static final double kV = 0.0;
+        public static final double kA = 0.0;
+
+        public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 0.0;
+        public static final double kMotionMagicCruiseVelocityRadPerSec = 0.0;
+
+        // Defined as origin of the robot to the bottom edge of the moving turret assembly
+        public static final Transform3d kRobotToTurret = new Transform3d(
+            Units.inchesToMeters(7.247244),
             0.0,
-            Units.inchesToMeters(14.867584)
+            Units.inchesToMeters(13.375000),
+            Rotation3d.kZero
         );
     }
 
@@ -100,21 +105,70 @@ public final class Constants {
 
         public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20);
         public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(55);
+
+        public static final double kHoodAutoStowThreshold = Units.inchesToMeters(20);
+
+        // TO-DO: CHANGE THE GEAR RATIO
+
+        public static final int kId = 50;
+        public static final double kStatorCurrentLimit = 0.0;
+        public static final boolean kStatorCurrentLimitEnable = false;
+        public static final double kSupplyCurrentLimit = 40.0;
+        public static final boolean kSupplyCurrentLimitEnable = true;
+        public static final double kGearRatio = 4.0;
+        public static final boolean kInverted = false;
+
+        public static final double kP = 0.0;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+
+        public static final double kMotionMagicCruiseVelocityRadPerSec = 0.0;
+        public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 0.0;
+
+        public static final double kS = 0.0;
+        public static final double kV = 0.0;
+        public static final double kA = 0.0;
+        public static final double kG = 0.0;
+
+        public static final double kSimMOI = 0.002;
+
+        public static final double kToleranceRad = Math.toRadians(1.0);
     }
 
     public static final class IndexerConstants {
         public static final String kLogPath = "Subsystems/Indexer";
 
         public static final double kIndexVoltage = 12.0;
+
+        public static final int kId = 20;
+        public static final double kGearRatio = 3.0;
+        public static final boolean kInverted = false;
+
+        public static final double kStatorCurrentLimit = 60.0;
+        public static final boolean kStatorCurrentLimitEnable = true;
+
+        public static final double kSupplyCurrentLimit = 40.0;
+        public static final boolean kSupplyCurrentLimitEnable = true;
+
+        public static final double kSimMOI = 0.0002;
+
+        public static final double kS = 0.0;
+        public static final double kV = 0.0;
     }
 
     public static final class VisionConstants {
-        public static final String kCamera1Name = "Camera1";
+        public static final String kLogPath = "Subsystems/Vision";
+        public static final String kCamera1Name = "limelight-one";
 
         public static final AprilTagFieldLayout kAprilTagLayout = AprilTagLayoutType.OFFICIAL.getLayout();;
 
         // Robot to camera transforms
-        public static Transform3d kRobotToCamera1 = new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
+        public static Transform3d kTurretToCamera1 = new Transform3d(
+            Units.inchesToMeters(7.225597),
+            0.0,
+            Units.inchesToMeters(3.168515),
+            new Rotation3d(0.0, Units.degreesToRadians(-10), 0.0)
+        );
 
         // Basic filtering thresholds
         public static final double kMaxAmbiguity = 0.3;
@@ -129,12 +183,12 @@ public final class Constants {
         // (Adjust to trust some cameras more than others)
         public static final double[] kCameraStdDevFactors = new double[] {
             1.0, // Camera 0
-            1.0 // Camera 1
         };
 
         // Multipliers to apply for MegaTag 2 observations
         public static final double kLinearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
-        public static final double kAngularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
+        public static final double kAngularStdDevMegatag2Factor = 0.5; // No rotation data available
+        // public static final double kAngularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
     }
 
     public static final class AimingConstants {
@@ -147,8 +201,14 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap kShuttleHoodPitch = new InterpolatingDoubleTreeMap();
 
         static {
-            kHubFlywheelsRPMs.put(1.0, 3000.0);
-            kHubFlywheelsRPMs.put(6.0, 5500.0);
+            kHubFlywheelsRPMs.put(1.4, 2250.0);
+            kHubFlywheelsRPMs.put(4.1, 4050.0);
+
+            kShuttleFlywheelsRPMs.put(1.0, 5500.0);
+
+            kHubHoodPitch.put(1.0, HoodConstants.kMaxAngle.getRadians());
+
+            kShuttleHoodPitch.put(1.0, HoodConstants.kMinAngle.getRadians());
         }
 
         public static final Translation2d kShuttleBlueTop = new Translation2d(

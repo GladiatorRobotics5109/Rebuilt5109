@@ -1,0 +1,142 @@
+{
+  "hubs": [
+    {
+      "x": 0,
+      "y": 33,
+      "width": 1208,
+      "height": 778,
+      "state": {
+        "sidebar": {
+          "width": 344,
+          "expanded": [
+            "/RealOutputs",
+            "/Flywheels",
+            "/NetworkInputs",
+            "/NetworkInputs/Subsystems",
+            "/NetworkInputs/Subsystems/Flywheels/PID",
+            "/Subsystems",
+            "/Drive",
+            "/NetworkInputs/Subsystems/Flywheels",
+            "/RealOutputs/RobotState",
+            "/RealOutputs/Subsystems/Flywheels",
+            "/RealOutputs/Subsystems/Turret",
+            "/RealOutputs/SwerveChassisSpeeds/Measured",
+            "/RealOutputs/SwerveStates/Measured",
+            "/RealOutputs/RobotState/Turret",
+            "/RealOutputs/Visualizer",
+            "/RealOutputs/RobotState/LatestAimingParameters",
+            "/RealOutputs/RobotState/LatestAimingParameters/targetPosition",
+            "/RealOutputs/test",
+            "/RealOutputs/Fuel Simulation/Fuels",
+            "/RealOutputs/Fuel Simulation/Fuels/0",
+            "/RealOutputs/Fuel Simulation/Fuels/1",
+            "/RealOutputs/RobotState/Drive/Pose/translation",
+            "/RealOutputs/RobotState/LatestAimingParameters/hoodAngle",
+            "/RealOutputs/RobotState/LatestAimingParameters/turretPosition",
+            "/RealOutputs/TurretPoseTest",
+            "/RealOutputs/TurretVelocityTest",
+            "/RealOutputs/TurretPoseTest/translation",
+            "/Subsystems/Vision/Camera0/LatestTargetObservation",
+            "/Subsystems/Vision/Camera0/PoseObservations",
+            "/Subsystems/Vision/Camera0/LatestTargetObservation/tx",
+            "/Subsystems/Vision/Camera0/LatestTargetObservation/ty",
+            "/Subsystems/Vision/Camera0/TagIds",
+            "/RealOutputs/Subsystems",
+            "/RealOutputs/Subsystems/Drive",
+            "/PowerDistribution/ChannelCurrent",
+            "/RealOutputs/Subsystems/Intake",
+            "/Subsystems/Intake"
+          ]
+        },
+        "tabs": {
+          "selected": 3,
+          "tabs": [
+            {
+              "type": 0,
+              "title": "",
+              "controller": null,
+              "controllerUUID": "hqr3alqxa1xmq9shj58y1vrk22bytwar",
+              "renderer": "",
+              "controlsHeight": 0
+            },
+            {
+              "type": 3,
+              "title": "3D Field",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "cone",
+                    "logKey": "/RealOutputs/Visualizer/TurretPosition",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff0000",
+                      "position": "back"
+                    }
+                  },
+                  {
+                    "type": "gamePiece",
+                    "logKey": "/RealOutputs/Fuel Simulation/Fuels",
+                    "logType": "Translation3d[]",
+                    "visible": true,
+                    "options": {
+                      "variant": "Fuel"
+                    }
+                  },
+                  {
+                    "type": "robot",
+                    "logKey": "/RealOutputs/Subsystems/Drive/Pose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "KitBot"
+                    }
+                  }
+                ],
+                "game": "FRC:2026 Field"
+              },
+              "controllerUUID": "69a53g3adkkwk3ax7vp98yyv65fzedpa",
+              "renderer": {
+                "cameraIndex": -2,
+                "orbitFov": 50,
+                "cameraPosition": [
+                  0.814355155884934,
+                  1.2259975034622594,
+                  -0.7274583783600217
+                ],
+                "cameraTarget": [
+                  0,
+                  0.5,
+                  0
+                ]
+              },
+              "controlsHeight": 261
+            },
+            {
+              "type": 5,
+              "title": "Console",
+              "controller": "/RealOutputs/Console",
+              "controllerUUID": "y3it0duad5fa5piqhplxodni7n6lflwy",
+              "renderer": {
+                "highlight": false
+              },
+              "controlsHeight": 0
+            },
+            {
+              "type": 5,
+              "title": "Command Log",
+              "controller": "/RealOutputs/CommandLog",
+              "controllerUUID": "ts160m84jkxnqi30olg2fgjlkqci3oe4",
+              "renderer": {
+                "highlight": false
+              },
+              "controlsHeight": 0
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "satellites": [],
+  "version": "26.0.0"
+}

@@ -6,8 +6,8 @@ public interface FlywheelsIO {
     @AutoLog
     class FlywheelsIOInputs {
         public boolean connected = false;
-        public double positionRad = 0.0;
-        public double velocityRadPerSec = 0.0;
+        public double positionRot = 0.0;
+        public double velocityRPM = 0.0;
         public double appliedVolts = 0.0;
         public double statorCurrentAmps = 0.0;
         public double supplyCurrentAmps = 0.0;
@@ -17,8 +17,4 @@ public interface FlywheelsIO {
     default void updateInputs(FlywheelsIOInputs inputs) {}
 
     default void setVoltage(double volts) {}
-
-    default void setVelocity(double velocityRadPerSec) {}
-
-    default void setPID(double p, double i, double d) {}
 }

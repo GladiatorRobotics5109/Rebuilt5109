@@ -10,17 +10,17 @@ public class LoggedTunablePID {
     public LoggedTunablePID(String key) {
         m_key = key;
 
-        m_p = new LoggedTunableNumber(key + "/p");
-        m_i = new LoggedTunableNumber(key + "/i");
-        m_d = new LoggedTunableNumber(key + "/d");
+        m_p = new LoggedTunableNumber(key + "/kP");
+        m_i = new LoggedTunableNumber(key + "/kI");
+        m_d = new LoggedTunableNumber(key + "/kD");
     }
 
     public LoggedTunablePID(String key, double p, double i, double d) {
         m_key = key;
 
-        m_p = new LoggedTunableNumber(key + "/p", p);
-        m_i = new LoggedTunableNumber(key + "/i", i);
-        m_d = new LoggedTunableNumber(key + "/d", d);
+        m_p = new LoggedTunableNumber(key + "/kP", p);
+        m_i = new LoggedTunableNumber(key + "/kI", i);
+        m_d = new LoggedTunableNumber(key + "/kD", d);
     }
 
     public boolean hasChanged(int id) {

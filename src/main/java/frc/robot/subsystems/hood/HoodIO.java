@@ -16,5 +16,13 @@ public interface HoodIO {
 
     default void updateInputs(HoodIOInputs inputs) {}
 
-    default void setPosition(double positionRad) {}
+    default void runVoltage(double volts) {}
+
+    default void runPosition(double positionRad) {}
+
+    default void setPID(double p, double i, double d) {}
+
+    default void setFF(double s, double v, double a, double g) {}
+
+    default void setMotionMagic(double cruiseVelocityRadPerSec, double accelerationRadPerSecSq) {}
 }

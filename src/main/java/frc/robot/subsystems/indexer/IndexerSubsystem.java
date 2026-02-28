@@ -5,24 +5,27 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotState;
 import lombok.Getter;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import static frc.robot.Constants.IndexerConstants.*;
 
 public class IndexerSubsystem extends SubsystemBase {
     private final IndexerIO m_io;
-    private final IndexerIOInputsAutoLogged m_inputs;
+    private final IndexerIOInputsAutoLogged m_inputs = new IndexerIOInputsAutoLogged();
 
     @Getter
+    @AutoLogOutput(key = kLogPath + "/Indexing")
     private boolean m_indexing;
 
     public IndexerSubsystem() {
         m_io = switch (Constants.kCurrentMode) {
-            case REAL -> new IndexerIOTalonFX();
+            case REAL -> new IndexerIOTalonFX(kId, Constants.kCANBusRio);
             case SIM -> new IndexerIOSim();
             default -> new IndexerIO() {};
         };
-        m_inputs = new IndexerIOInputsAutoLogged();
+
     }
 
     public void runVoltage(double volts) {

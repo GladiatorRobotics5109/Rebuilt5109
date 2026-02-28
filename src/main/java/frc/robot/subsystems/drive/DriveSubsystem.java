@@ -22,6 +22,7 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
@@ -32,6 +33,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -40,13 +42,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.FieldConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.RobotState;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -159,12 +161,12 @@ public class DriveSubsystem extends SubsystemBase {
         Pathfinding.setPathfinder(new LocalADStarAK());
         PathPlannerLogging.setLogActivePathCallback(
             (activePath) -> {
-                Logger.recordOutput("RobotState/Drive/Odometry/Trajectory", activePath.toArray(new Pose2d[0]));
+                Logger.recordOutput("Subsystems/Drive/Trajectory", activePath.toArray(new Pose2d[0]));
             }
         );
         PathPlannerLogging.setLogTargetPoseCallback(
             (targetPose) -> {
-                Logger.recordOutput("RobotState/Drive/Odometry/TrajectorySetpoint", targetPose);
+                Logger.recordOutput("Subsystems/Drive/TrajectorySetpoint", targetPose);
             }
         );
 
@@ -174,7 +176,7 @@ public class DriveSubsystem extends SubsystemBase {
                 null,
                 null,
                 null,
-                (state) -> Logger.recordOutput("RobotState/Drive/SysIdState", state.toString())
+                (state) -> Logger.recordOutput("Subsystems/Drive/SysIdState", state.toString())
             ),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)),
@@ -203,8 +205,8 @@ public class DriveSubsystem extends SubsystemBase {
 
         // Log empty setpoint states when disabled
         if (DriverStation.isDisabled()) {
-            Logger.recordOutput("RobotState/Drive/ModuleSetpoints", new SwerveModuleState[] {});
-            Logger.recordOutput("RobotState/Drive/ModuleSetpointsOptimized", new SwerveModuleState[] {});
+            Logger.recordOutput("Subsystems/Drive/ModuleSetpoints", new SwerveModuleState[] {});
+            Logger.recordOutput("Subsystems/Drive/ModuleSetpointsOptimized", new SwerveModuleState[] {});
         }
 
         // Update odometry
@@ -257,8 +259,8 @@ public class DriveSubsystem extends SubsystemBase {
         SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, TunerConstants.kSpeedAt12Volts);
 
         // Log unoptimized setpoints and setpoint speeds
-        Logger.recordOutput("RobotState/Drive/ModuleSetpoints", setpointStates);
-        Logger.recordOutput("RobotState/Drive/DesiredChassisSpeeds", discreteSpeeds);
+        Logger.recordOutput("Subsystems/Drive/DesiredModuleStates", setpointStates);
+        RobotState.getInstance().setDesiredVelocity(discreteSpeeds);
 
         // Send setpoints to modules
         for (int i = 0; i < 4; i++) {
@@ -266,7 +268,7 @@ public class DriveSubsystem extends SubsystemBase {
         }
 
         // Log optimized setpoints (runSetpoint mutates each state)
-        Logger.recordOutput("RobotState/Drive/ModuleSetpointsOptimized", setpointStates);
+        Logger.recordOutput("Subsystems/Drive/DesiredModuleStatesOptimized", setpointStates);
     }
 
     /** Runs the drive in a straight line with the specified drive output. */
@@ -307,7 +309,6 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     /** Returns the module states (turn angles and drive velocities) for all of the modules. */
-    @AutoLogOutput(key = "SwerveStates/Measured")
     private SwerveModuleState[] getModuleStates() {
         SwerveModuleState[] states = new SwerveModuleState[4];
         for (int i = 0; i < 4; i++) {
@@ -326,8 +327,9 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     /** Returns the measured chassis speeds of the robot. */
-    @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
-    public ChassisSpeeds getChassisSpeeds() { return kinematics.toChassisSpeeds(getModuleStates()); }
+    public ChassisSpeeds getChassisSpeeds() {
+        return kinematics.toChassisSpeeds(getModuleStates());
+    }
 
     /** Returns the position of each module in radians. */
     public double[] getWheelRadiusCharacterizationPositions() {
@@ -348,7 +350,6 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     /** Returns the current odometry pose. */
-    @AutoLogOutput(key = "Odometry/Robot")
     public Pose2d getPose() { return poseEstimator.getEstimatedPosition(); }
 
     /** Returns the current odometry rotation. */
@@ -369,6 +370,14 @@ public class DriveSubsystem extends SubsystemBase {
             visionRobotPoseMeters,
             timestampSeconds,
             visionMeasurementStdDevs
+        );
+
+        Pose3d tag = FieldConstants.AprilTagLayoutType.OFFICIAL.getLayout().getTagPose(13).get();
+        Logger.recordOutput("DeltaX", tag.getX() - visionRobotPoseMeters.getX());
+        Logger.recordOutput("DeltaY", tag.getY() - visionRobotPoseMeters.getY());
+        Logger.recordOutput(
+            "DeltaRot",
+            Units.radiansToDegrees(tag.getRotation().getZ() - visionRobotPoseMeters.getRotation().getRadians())
         );
     }
 

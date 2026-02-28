@@ -1,14 +1,22 @@
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.Constants.AimingConstants;
 import frc.robot.Constants.FlywheelsConstants;
 import frc.robot.Constants.HoodConstants;
+import frc.robot.FieldConstants.Hub;
+import frc.robot.FieldConstants.LinesHorizontal;
+import frc.robot.util.AllianceFlip;
 import lombok.AccessLevel;
 import lombok.Getter;
 
+import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 
 @Getter
@@ -25,6 +33,7 @@ public class RobotState {
 
     @Getter(AccessLevel.NONE)
     private AimingParameters m_latestAimingParameters;
+    @Getter(AccessLevel.NONE)
     private final Debouncer m_idleDebouncer = new Debouncer(
         FlywheelsConstants.kIdleDistDebounce,
         DebounceType.kFalling
@@ -32,15 +41,19 @@ public class RobotState {
 
     // -- Drive State --
 
-    private Pose2d m_pose;
-    private ChassisSpeeds m_velocityFieldRelative;
-    private ChassisSpeeds m_velocity;
+    private Pose2d m_pose = Pose2d.kZero;
+    private ChassisSpeeds m_velocityFieldRelative = new ChassisSpeeds();
+    private ChassisSpeeds m_velocity = new ChassisSpeeds();
+    @Setter
+    private ChassisSpeeds m_desiredVelocity = new ChassisSpeeds();
 
     public Rotation2d getRotation() { return m_pose.getRotation(); }
 
     // -- Flywheels State --
 
-    private double m_flywheelsRPM;
+    private double m_flywheelsVelocity;
+    private double m_flywheelsDesiredVelocity;
+    private boolean m_flywheelsHasDesiredVelocity;
 
     // -- Turret State --
 
@@ -50,7 +63,7 @@ public class RobotState {
     private Rotation2d m_turretHeading;
 
     // -- Hood State --
-    private Rotation2d m_hoodAngle = HoodConstants.kMaxAngle; // TODO: Change this when hood subsystem is written
+    private Rotation2d m_hoodAngle;
 
     // -- Indexer State --
     private boolean m_indexing;
@@ -59,12 +72,12 @@ public class RobotState {
         if (m_latestAimingParameters != null)
             return m_latestAimingParameters;
 
-        m_latestAimingParameters = new AimingParameters(Rotation2d.kZero, 0, Rotation2d.kZero);
-        return m_latestAimingParameters;
+        // m_latestAimingParameters = new AimingParameters(Rotation2d.kZero, 0, Rotation2d.kZero);
+        // return m_latestAimingParameters;
 
-        /* Translation2d target = switch (m_fuelStrategy) {
+        Translation2d target = switch (m_fuelStrategy) {
             case HUB -> AllianceFlip.apply(Hub.topCenterPoint).toTranslation2d();
-            case SHUTTLE_AUTO -> {
+            case SHUTTLE -> {
                 if (m_pose.getY() >= LinesHorizontal.center) {
                     yield DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
                         ? AimingConstants.kShuttleBlueTop
@@ -113,7 +126,6 @@ public class RobotState {
         Logger.recordOutput("RobotState/LatestAimingParameters", m_latestAimingParameters);
 
         return m_latestAimingParameters;
-        */
     }
 
     public void updateDrive(Pose2d pose, ChassisSpeeds velocity) {
@@ -125,14 +137,20 @@ public class RobotState {
 
     }
 
-    public void updateFlywheels(double flywheelsRPM) {
-        m_flywheelsRPM = flywheelsRPM;
+    public void updateFlywheels(double velocity, double desiredVelocity, boolean hasDesiredVelocity) {
+        m_flywheelsVelocity = velocity;
+        m_flywheelsDesiredVelocity = desiredVelocity;
+        m_flywheelsHasDesiredVelocity = hasDesiredVelocity;
     }
 
     public void updateTurret(Rotation2d turretPosition) {
         m_turretPosition = turretPosition;
 
         m_turretHeading = getRotation().plus(m_turretPosition);
+    }
+
+    public void updateHood(Rotation2d hoodAngle) {
+        m_hoodAngle = hoodAngle;
     }
 
     public void updateIndexer(boolean indexing) {
@@ -146,25 +164,28 @@ public class RobotState {
     }
 
     public void log() {
-        Logger.recordOutput("RobotState/FuelStrategy", m_fuelStrategy);
+        Logger.recordOutput("FuelStrategy", m_fuelStrategy);
 
-        Logger.recordOutput("RobotState/Drive/Pose", m_pose);
-        Logger.recordOutput("RobotState/Drive/VelocityFieldRelative", m_velocityFieldRelative);
-        Logger.recordOutput("RobotState/Drive/Velocity", m_velocity);
+        Logger.recordOutput("Subsystems/Drive/Pose", m_pose);
+        Logger.recordOutput("Subsystems/Drive/VelocityFieldRelative", m_velocityFieldRelative);
+        Logger.recordOutput("Subsystems/Drive/Velocity", m_velocity);
+        Logger.recordOutput("Subsystems/Drive/DesiredVelocity", m_desiredVelocity);
 
-        Logger.recordOutput("RobotState/Flywheels/FlywheelsRPM", m_flywheelsRPM);
+        Logger.recordOutput("Subsystems/Flywheels/Velocity", m_flywheelsVelocity);
+        Logger.recordOutput("Subsystems/Flywheels/DesiredVelocity", m_flywheelsDesiredVelocity);
+        Logger.recordOutput("Subsystems/Flywheels/HasDesiredVeloicty", m_flywheelsHasDesiredVelocity);
 
-        Logger.recordOutput("RobotState/Turret/TurretPosition", m_turretPosition);
-        Logger.recordOutput("RobotState/Turret/TurretHeading", m_turretHeading);
+        Logger.recordOutput("Subsystems/Turret/TurretPosition", m_turretPosition);
+        Logger.recordOutput("Subsystems/Turret/TurretHeading", m_turretHeading);
 
-        Logger.recordOutput("RobotState/Hood/HoodAngle", m_hoodAngle);
+        Logger.recordOutput("Subsystems/Hood/HoodAngle", m_hoodAngle);
 
-        Logger.recordOutput("RobotState/Indexer/Indexing", m_indexing);
+        Logger.recordOutput("Subsystems/Indexer/Indexing", m_indexing);
     }
 
     public enum FuelStrategy {
         HUB,
-        SHUTTLE_AUTO
+        SHUTTLE
     }
 
     public record AimingParameters(Rotation2d turretPosition, double flywheelsRPM, Rotation2d hoodAngle) {}

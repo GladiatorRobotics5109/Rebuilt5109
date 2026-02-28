@@ -14,6 +14,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
@@ -33,10 +34,18 @@ public class VisionSubsystem extends SubsystemBase {
     private final VisionIOInputsAutoLogged[] inputs;
     private final Alert[] disconnectedAlerts;
 
-    public VisionSubsystem(VisionConsumer consumer, Supplier<Rotation2d> rotationSupplier) {
+    public VisionSubsystem(
+        VisionConsumer consumer,
+        Supplier<Rotation2d> rotationSupplier,
+        Supplier<Transform3d> robotToTurretCamera
+    ) {
         this.consumer = consumer;
         this.io = switch (Constants.kCurrentMode) {
-            case REAL -> new VisionIO[] { new VisionIOLimelight(kCamera1Name, rotationSupplier) };
+            case REAL -> new VisionIO[] { new VisionIOTurretLimelight(
+                kCamera1Name,
+                rotationSupplier,
+                robotToTurretCamera
+            ) };
             default -> new VisionIO[] { new VisionIO() {} };
         };
 
@@ -147,19 +156,19 @@ public class VisionSubsystem extends SubsystemBase {
 
             // Log camera metadata
             Logger.recordOutput(
-                "Vision/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
+                "Subsystems/Vision/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
                 tagPoses.toArray(new Pose3d[0])
             );
             Logger.recordOutput(
-                "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
+                "Subsystems/Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
                 robotPoses.toArray(new Pose3d[0])
             );
             Logger.recordOutput(
-                "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesAccepted",
+                "Subsystems/Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesAccepted",
                 robotPosesAccepted.toArray(new Pose3d[0])
             );
             Logger.recordOutput(
-                "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
+                "Subsystems/Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
                 robotPosesRejected.toArray(new Pose3d[0])
             );
             allTagPoses.addAll(tagPoses);
@@ -169,14 +178,14 @@ public class VisionSubsystem extends SubsystemBase {
         }
 
         // Log summary data
-        Logger.recordOutput("Vision/Summary/TagPoses", allTagPoses.toArray(new Pose3d[0]));
-        Logger.recordOutput("Vision/Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[0]));
+        Logger.recordOutput("Subsystems/Vision/Summary/TagPoses", allTagPoses.toArray(new Pose3d[0]));
+        Logger.recordOutput("Subsystems/Vision/Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[0]));
         Logger.recordOutput(
-            "Vision/Summary/RobotPosesAccepted",
+            "Subsystems/Vision/Summary/RobotPosesAccepted",
             allRobotPosesAccepted.toArray(new Pose3d[0])
         );
         Logger.recordOutput(
-            "Vision/Summary/RobotPosesRejected",
+            "Subsystems/Vision/Summary/RobotPosesRejected",
             allRobotPosesRejected.toArray(new Pose3d[0])
         );
     }

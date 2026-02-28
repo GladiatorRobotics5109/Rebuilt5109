@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -22,16 +23,26 @@ public class AllianceFlip {
     }
 
     public Translation3d apply(Translation3d t) {
-        return shouldFlip()
-            ? new Translation3d(
-                FieldConstants.fieldLength - t.getX(),
-                FieldConstants.fieldWidth - t.getY(),
-                t.getZ()
-            )
-            : t;
+        return shouldFlip() ? flip(t) : t;
+    }
+
+    public Translation2d apply(Translation2d t) {
+        return shouldFlip() ? flip(t) : t;
     }
 
     public double flipX(double x) {
         return FieldConstants.fieldLength - x;
+    }
+
+    public Translation3d flip(Translation3d t) {
+        return new Translation3d(
+            FieldConstants.fieldLength - t.getX(),
+            FieldConstants.fieldWidth - t.getY(),
+            t.getZ()
+        );
+    }
+
+    public Translation2d flip(Translation2d t) {
+        return new Translation2d(FieldConstants.fieldLength - t.getX(), FieldConstants.fieldWidth - t.getY());
     }
 }
