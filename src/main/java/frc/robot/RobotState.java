@@ -140,6 +140,10 @@ public class RobotState {
 
         m_turretHeading = getRotation().plus(m_turretPosition);
     }
+    
+    public void updateHood(Rotation2d hoodAngle) {
+        m_hoodAngle = hoodAngle;
+    }
 
     public void updateIndexer(boolean indexing) {
         m_indexing = indexing;

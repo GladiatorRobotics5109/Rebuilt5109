@@ -4,7 +4,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface IndexerIO {
     @AutoLog
-    public class IndexerIOInputs {
+    class IndexerIOInputs {
         public boolean connected = false;
         public double positionRad = 0.0;
         public double velocityRadPerSec = 0.0;
