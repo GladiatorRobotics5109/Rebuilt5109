@@ -1,10 +1,3 @@
-// Copyright (c) 2021-2026 Littleton Robotics
-// http://github.com/Mechanical-Advantage
-//
-// Use of this source code is governed by a BSD
-// license that can be found in the LICENSE file
-// at the root directory of this project.
-
 package frc.robot;
 
 import com.ctre.phoenix6.CANBus;
@@ -104,12 +97,56 @@ public final class Constants {
         public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(55);
 
         public static final double kHoodAutoStowThreshold = Units.inchesToMeters(20);
+
+        // TO-DO: CHANGE THE GEAR RATIO
+
+        public static final int kId = 50;
+        public static final double kStatorCurrentLimit = 0.0;
+        public static final boolean kStatorCurrentLimitEnable = false;
+        public static final double kSupplyCurrentLimit = 40.0;
+        public static final boolean kSupplyCurrentLimitEnable = true;
+        public static final double kGearRatio = 4.0;
+        public static final boolean kInverted = false;
+
+        public static final double kP = 0.0;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+
+
+        public static final double kMaxVelocityRadPerSec = 0.0;
+        public static final double kMaxAcelRadPerSecSq = 0.0;
+
+        public static final double kS = 0.0;
+        public static final double kG = 0.0;
+        public static final double kV = 0.0;
+        
+        public static final double kSimMOI = 0.002;
+
+        // These are the constants used for the distance to angle relationship
+
+        public static final double kSlope = Math.toRadians(0.0);
+        public static final double kIntercept = Math.toRadians(25.0);
+
+        public static final double kToleranceRad = Math.toRadians(1.0);
     }
 
     public static final class IndexerConstants {
         public static final String kLogPath = "Subsystems/Indexer";
 
         public static final double kIndexVoltage = 12.0;
+
+        public static final int kId = 20;
+        public static final double kGearRatio = 3.0;
+        public static final boolean kInverted = false;
+
+        public static final double kStatorCurrentLimit = 60.0;
+        public static final boolean kStatorCurrentLimitEnable = true;
+
+        public static final double kSupplyCurrentLimit = 40.0;
+        public static final boolean kSupplyCurrentLimitEnable = true;
+
+        public static final double kSimMOI = 0.0002;
+
     }
 
     public static final class VisionConstants {
