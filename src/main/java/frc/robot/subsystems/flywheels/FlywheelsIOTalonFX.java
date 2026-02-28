@@ -43,10 +43,6 @@ public class FlywheelsIOTalonFX implements FlywheelsIO {
         m_config.CurrentLimits.SupplyCurrentLimit = kSupplyCurrentLimit;
         m_config.CurrentLimits.SupplyCurrentLimitEnable = kSupplyCurrentLimitEnable;
 
-        // m_config.Slot0.kP = kP;
-        // m_config.Slot0.kI = kI;
-        // m_config.Slot0.kD = kD;
-
         m_config.Feedback.SensorToMechanismRatio = kGearRatio;
 
         m_config.MotorOutput.Inverted = kInverted

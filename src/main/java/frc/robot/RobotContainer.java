@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
@@ -33,6 +34,7 @@ import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.Conversions;
 import frc.robot.util.Visualizer;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -75,6 +77,7 @@ public class RobotContainer {
         m_intake = new IntakeSubsystem();
 
         // Set up auto routines
+        AutoCommands.init(m_drive, m_turret, m_flywheels, m_indexer);
         m_autoChooser = new LoggedDashboardChooser<>("Auto Chooser", AutoBuilder.buildAutoChooser());
         buildAutoChooser();
 
@@ -90,10 +93,19 @@ public class RobotContainer {
 
             Visualizer.init(m_drive, m_flywheels);
         }
+
+        CommandScheduler.getInstance().onCommandInitialize(
+            command -> Logger.recordOutput("CommandLog", "INIT: " + command.getName())
+        );
+        CommandScheduler.getInstance().onCommandFinish(
+            command -> Logger.recordOutput("CommandLog", "END: " + command.getName())
+        );
+        CommandScheduler.getInstance().onCommandInterrupt(
+            command -> Logger.recordOutput("CommandLog", "INTERRUPT: " + command.getName())
+        );
     }
 
     private void configureBindings() {
-        // Default command, normal field-relative drive
         m_drive.setDefaultCommand(
             DriveCommands.joystickDrive(
                 m_drive,
@@ -103,15 +115,18 @@ public class RobotContainer {
             )
         );
 
-        m_flywheels.setDefaultCommand(FlywheelsCommands.autoAim(m_flywheels));
-        m_turret.setDefaultCommand(TurretCommands.autoAim(m_turret));
+        if (Constants.kEnableAutoAimAsDefault) {
+            m_flywheels.setDefaultCommand(FlywheelsCommands.autoAim(m_flywheels));
+            m_turret.setDefaultCommand(TurretCommands.autoAim(m_turret));
+            m_hood.setDefaultCommand(HoodCommands.autoAim(m_hood));
+        }
 
         m_driverController.circle().whileTrue(IndexerCommands.index(m_indexer));
         m_driverController.triangle().onTrue(
             Commands.runOnce(
                 () -> RobotState.getInstance().setFuelStrategy(
                     RobotState.getInstance().getFuelStrategy() == FuelStrategy.HUB
-                        ? FuelStrategy.SHUTTLE_AUTO
+                        ? FuelStrategy.SHUTTLE
                         : FuelStrategy.HUB
                 )
             )

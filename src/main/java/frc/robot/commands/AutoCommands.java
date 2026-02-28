@@ -15,6 +15,7 @@ public class AutoCommands {
         FlywheelsSubsystem flywheels,
         IndexerSubsystem indexer
     ) {
-        NamedCommands.registerCommand("Shoot", IndexerCommands.index(indexer));
+        NamedCommands.registerCommand("StartShoot", IndexerCommands.index(indexer));
+        NamedCommands.registerCommand("EndShoot", IndexerCommands.stop(indexer));
     }
 }

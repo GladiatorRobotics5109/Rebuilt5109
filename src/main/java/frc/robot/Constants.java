@@ -25,6 +25,9 @@ public final class Constants {
     public static final CANBus kCANBusRio = CANBus.roboRIO();
     public static final CANBus kCANBusCANivore = new CANBus("drivetrain");
 
+    /** Whether to schedule the auto aim commands as each subsystem's default command */
+    public static final boolean kEnableAutoAimAsDefault = true;
+
     public static final class DriveCommandsConstants {
         public static final double kDeadband = 0.1;
         public static final double kAngleP = 5.0;
@@ -81,6 +84,13 @@ public final class Constants {
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
+        public static final double kS = 0.0;
+        public static final double kV = 0.0;
+        public static final double kA = 0.0;
+
+        public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 0.0;
+        public static final double kMotionMagicCruiseVelocityRadPerSec = 0.0;
+
         // Defined as origin of the robot to the bottom edge of the moving turret assembly
         public static final Transform3d kRobotToTurret = new Transform3d(
             Units.inchesToMeters(7.247244),
@@ -112,20 +122,15 @@ public final class Constants {
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
-
-        public static final double kMaxVelocityRadPerSec = 0.0;
-        public static final double kMaxAcelRadPerSecSq = 0.0;
+        public static final double kMotionMagicCruiseVelocityRadPerSec = 0.0;
+        public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 0.0;
 
         public static final double kS = 0.0;
-        public static final double kG = 0.0;
         public static final double kV = 0.0;
-        
+        public static final double kA = 0.0;
+        public static final double kG = 0.0;
+
         public static final double kSimMOI = 0.002;
-
-        // These are the constants used for the distance to angle relationship
-
-        public static final double kSlope = Math.toRadians(0.0);
-        public static final double kIntercept = Math.toRadians(25.0);
 
         public static final double kToleranceRad = Math.toRadians(1.0);
     }
@@ -147,6 +152,8 @@ public final class Constants {
 
         public static final double kSimMOI = 0.0002;
 
+        public static final double kS = 0.0;
+        public static final double kV = 0.0;
     }
 
     public static final class VisionConstants {
@@ -196,11 +203,11 @@ public final class Constants {
         static {
             kHubFlywheelsRPMs.put(1.4, 2250.0);
             kHubFlywheelsRPMs.put(4.1, 4050.0);
-            
+
             kShuttleFlywheelsRPMs.put(1.0, 5500.0);
 
             kHubHoodPitch.put(1.0, HoodConstants.kMaxAngle.getRadians());
-            
+
             kShuttleHoodPitch.put(1.0, HoodConstants.kMinAngle.getRadians());
         }
 

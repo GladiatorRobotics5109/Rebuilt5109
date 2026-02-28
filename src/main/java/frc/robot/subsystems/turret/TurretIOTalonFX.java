@@ -5,7 +5,7 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -15,13 +15,14 @@ import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.util.Conversions;
 
 import static frc.robot.Constants.TurretConstants.*;
 
 public class TurretIOTalonFX implements TurretIO {
     private TalonFX m_motor;
 
-    private final PositionVoltage m_positionVoltage = new PositionVoltage(0.0);
+    private final MotionMagicVoltage m_motionMagic = new MotionMagicVoltage(0.0);
     private final VoltageOut m_voltageOut = new VoltageOut(0.0);
 
     private final StatusSignal<Angle> m_position;
@@ -47,6 +48,17 @@ public class TurretIOTalonFX implements TurretIO {
         m_config.Slot0.kP = kP;
         m_config.Slot0.kI = kI;
         m_config.Slot0.kD = kD;
+
+        m_config.Slot0.kS = kS;
+        m_config.Slot0.kV = kV;
+        m_config.Slot0.kA = kA;
+
+        m_config.MotionMagic.MotionMagicAcceleration = Conversions.radiansToRotations(
+            kMotionMagicCruiseAccelerationRadPerSecSq
+        );
+        m_config.MotionMagic.MotionMagicCruiseVelocity = Conversions.radiansToRotations(
+            kMotionMagicCruiseVelocityRadPerSec
+        );
 
         m_config.Feedback.SensorToMechanismRatio = kGearRatio;
 
@@ -106,7 +118,7 @@ public class TurretIOTalonFX implements TurretIO {
 
     @Override
     public void setPosition(double positionRad) {
-        m_motor.setControl(m_positionVoltage.withPosition(positionRad));
+        m_motor.setControl(m_motionMagic.withPosition(Units.Radians.of(positionRad)));
     }
 
     @Override
@@ -116,14 +128,49 @@ public class TurretIOTalonFX implements TurretIO {
 
     @Override
     public void setPID(double p, double i, double d) {
-        m_config.Slot0.kP = kP;
-        m_config.Slot0.kI = kI;
-        m_config.Slot0.kD = kD;
+        m_config.Slot0.kP = p;
+        m_config.Slot0.kI = i;
+        m_config.Slot0.kD = d;
 
         StatusCode result = m_motor.getConfigurator().apply(m_config);
         if (!result.isOK()) {
             DriverStation.reportWarning(
-                "Failed to apply flywheels configs!\nName: "
+                "Failed to apply turret configs!\nName: "
+                    + result.getName()
+                    + "\nDescription: "
+                    + result.getDescription(),
+                true
+            );
+        }
+    }
+
+    @Override
+    public void setFF(double s, double v, double a) {
+        m_config.Slot0.kS = s;
+        m_config.Slot0.kV = v;
+        m_config.Slot0.kA = a;
+
+        StatusCode result = m_motor.getConfigurator().apply(m_config);
+        if (!result.isOK()) {
+            DriverStation.reportWarning(
+                "Failed to apply turret configs!\nName: "
+                    + result.getName()
+                    + "\nDescription: "
+                    + result.getDescription(),
+                true
+            );
+        }
+    }
+
+    @Override
+    public void setMotionMagic(double cruiseVelocityRadPerSec, double accelerationRadPerSecSq) {
+        m_config.MotionMagic.MotionMagicCruiseVelocity = Conversions.radiansToRotations(cruiseVelocityRadPerSec);
+        m_config.MotionMagic.MotionMagicAcceleration = Conversions.radiansToRotations(accelerationRadPerSecSq);
+
+        StatusCode result = m_motor.getConfigurator().apply(m_config);
+        if (!result.isOK()) {
+            DriverStation.reportWarning(
+                "Failed to apply turret configs!\nName: "
                     + result.getName()
                     + "\nDescription: "
                     + result.getDescription(),

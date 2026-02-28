@@ -63,7 +63,7 @@ public class RobotState {
     private Rotation2d m_turretHeading;
 
     // -- Hood State --
-    private Rotation2d m_hoodAngle = HoodConstants.kMaxAngle; // TODO: Change this when hood subsystem is written
+    private Rotation2d m_hoodAngle;
 
     // -- Indexer State --
     private boolean m_indexing;
@@ -77,7 +77,7 @@ public class RobotState {
 
         Translation2d target = switch (m_fuelStrategy) {
             case HUB -> AllianceFlip.apply(Hub.topCenterPoint).toTranslation2d();
-            case SHUTTLE_AUTO -> {
+            case SHUTTLE -> {
                 if (m_pose.getY() >= LinesHorizontal.center) {
                     yield DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
                         ? AimingConstants.kShuttleBlueTop
@@ -148,7 +148,7 @@ public class RobotState {
 
         m_turretHeading = getRotation().plus(m_turretPosition);
     }
-    
+
     public void updateHood(Rotation2d hoodAngle) {
         m_hoodAngle = hoodAngle;
     }
@@ -185,7 +185,7 @@ public class RobotState {
 
     public enum FuelStrategy {
         HUB,
-        SHUTTLE_AUTO
+        SHUTTLE
     }
 
     public record AimingParameters(Rotation2d turretPosition, double flywheelsRPM, Rotation2d hoodAngle) {}

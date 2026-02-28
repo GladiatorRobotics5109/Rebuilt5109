@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.VisionConstants;
 import lombok.experimental.UtilityClass;
@@ -25,5 +26,9 @@ public class Conversions {
             0.0,
             new Rotation3d(pose2d.getRotation())
         );
+    }
+
+    public double radiansToRotations(double rad) {
+        return Units.radiansToRotations(rad);
     }
 }
