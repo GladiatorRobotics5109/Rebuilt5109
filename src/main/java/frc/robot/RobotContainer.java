@@ -8,20 +8,23 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.Mode;
+import frc.robot.FieldConstants.LeftTrench;
+import frc.robot.FieldConstants.RightTrench;
 import frc.robot.RobotState.FuelStrategy;
-import frc.robot.commands.DriveCommands;
-import frc.robot.commands.FlywheelsCommands;
-import frc.robot.commands.IndexerCommands;
-import frc.robot.commands.TurretCommands;
+import frc.robot.commands.*;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.flywheels.FlywheelsSubsystem;
 import frc.robot.subsystems.hood.HoodSubsystem;
@@ -29,8 +32,9 @@ import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
-import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.Conversions;
 import frc.robot.util.Visualizer;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -59,44 +63,49 @@ public class RobotContainer {
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         RobotState.init();
+
         m_drive = new DriveSubsystem();
-        m_vision = new VisionSubsystem(m_drive::addVisionMeasurement, m_drive::getRotation);
-        m_flywheels = new FlywheelsSubsystem();
         m_turret = new TurretSubsystem();
+        m_vision = new VisionSubsystem(
+            m_drive::addVisionMeasurement,
+            m_drive::getRotation,
+            () -> Conversions.robotToTurretCamera(m_turret.getPosition())
+        );
+        m_flywheels = new FlywheelsSubsystem();
         m_indexer = new IndexerSubsystem();
         m_hood = new HoodSubsystem();
         m_intake = new IntakeSubsystem();
 
         // Set up auto routines
-        m_autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+        AutoCommands.init(m_drive, m_turret, m_flywheels, m_indexer);
+        m_autoChooser = new LoggedDashboardChooser<>("Auto Chooser", AutoBuilder.buildAutoChooser());
         buildAutoChooser();
-
-        m_flywheels.setDefaultCommand(FlywheelsCommands.autoAim(m_flywheels));
-        m_turret.setDefaultCommand(TurretCommands.autoAim(m_turret));
 
         if (Constants.kCurrentMode == Mode.SIM && Constants.kSimShouldUseKeyboard) {
             m_driverControllerSim = new CommandGenericHID(0);
-            configureButtonBindingsKeyboard();
+            configureBindingsKeyboard();
         }
-        else {
-            configureButtonBindings();
-        }
+
+        configureBindings();
 
         if (Constants.kCurrentMode == Mode.SIM) {
             DriverStation.silenceJoystickConnectionWarning(true);
 
             Visualizer.init(m_drive, m_flywheels);
         }
+
+        CommandScheduler.getInstance().onCommandInitialize(
+            command -> Logger.recordOutput("CommandLog", "INIT: " + command.getName())
+        );
+        CommandScheduler.getInstance().onCommandFinish(
+            command -> Logger.recordOutput("CommandLog", "END: " + command.getName())
+        );
+        CommandScheduler.getInstance().onCommandInterrupt(
+            command -> Logger.recordOutput("CommandLog", "INTERRUPT: " + command.getName())
+        );
     }
 
-    /**
-     * Use this method to define your button->command mappings. Buttons can be created by
-     * instantiating a {@link GenericHID} or one of its subclasses ({@link
-     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-     */
-    private void configureButtonBindings() {
-        // Default command, normal field-relative drive
+    private void configureBindings() {
         m_drive.setDefaultCommand(
             DriveCommands.joystickDrive(
                 m_drive,
@@ -106,22 +115,55 @@ public class RobotContainer {
             )
         );
 
+        if (Constants.kEnableAutoAimAsDefault) {
+            m_flywheels.setDefaultCommand(FlywheelsCommands.autoAim(m_flywheels));
+            m_turret.setDefaultCommand(TurretCommands.autoAim(m_turret));
+            m_hood.setDefaultCommand(HoodCommands.autoAim(m_hood));
+        }
+
         m_driverController.circle().whileTrue(IndexerCommands.index(m_indexer));
         m_driverController.triangle().onTrue(
             Commands.runOnce(
                 () -> RobotState.getInstance().setFuelStrategy(
                     RobotState.getInstance().getFuelStrategy() == FuelStrategy.HUB
-                        ? FuelStrategy.SHUTTLE_AUTO
+                        ? FuelStrategy.SHUTTLE
                         : FuelStrategy.HUB
                 )
             )
         );
+
+        // Automatically stow the hood when the robot gets close to the trench so that we don't hit it
+        new Trigger(
+            () -> {
+                Pose2d pose = RobotState.getInstance().getPose();
+                ChassisSpeeds vel = RobotState.getInstance().getVelocityFieldRelative();
+
+                final double[] positions = new double[] {
+                    LeftTrench.openingTopLeft.getX(),
+                    LeftTrench.openingTopRight.getX(),
+                    LeftTrench.oppOpeningTopLeft.getX(),
+                    LeftTrench.oppOpeningTopRight.getX(),
+                    RightTrench.openingTopLeft.getX(),
+                    RightTrench.openingTopRight.getX(),
+                    RightTrench.oppOpeningTopLeft.getX(),
+                    RightTrench.oppOpeningTopRight.getX()
+                };
+
+                for (double x : positions) {
+                    double delta = pose.getX() - x;
+                    if (Math.abs(delta) < HoodConstants.kHoodAutoStowThreshold
+                        && Math.signum(vel.vxMetersPerSecond) == Math.signum(delta))
+                        return true;
+                }
+
+                return false;
+            }
+        ).whileTrue(HoodCommands.stow(m_hood));
     }
 
-    private void configureButtonBindingsKeyboard() {
+    private void configureBindingsKeyboard() {
         m_drive.setDefaultCommand(DriveCommands.keyboardDrive(m_drive, m_driverControllerSim.getHID()));
 
-        // Simulate shooting 3 balls
         m_driverControllerSim.button(3).whileTrue(IndexerCommands.index(m_indexer));
     }
 
@@ -153,15 +195,10 @@ public class RobotContainer {
         );
     }
 
-    private LoggedTunableNumber m_velocity = new LoggedTunableNumber("Flywheels Velocity", 0.0);
-
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
      * @return the command to run in autonomous
      */
-    public Command getAutonomousCommand() {
-        // return m_autoChooser.get();
-        return FlywheelsCommands.setVelocity(m_flywheels, () -> m_velocity.getAsDouble());
-    }
+    public Command getAutonomousCommand() { return m_autoChooser.get(); }
 }

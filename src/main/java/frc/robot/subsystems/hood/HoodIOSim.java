@@ -10,7 +10,6 @@ import frc.robot.Robot;
 import edu.wpi.first.math.MathUtil;
 
 public class HoodIOSim implements HoodIO {
-
     private final DCMotorSim m_motor;
 
     private final PIDController m_pid = new PIDController(kP, kI, kD);
@@ -44,7 +43,7 @@ public class HoodIOSim implements HoodIO {
     }
 
     @Override
-    public void setPosition(double positionRad) {
+    public void runPosition(double positionRad) {
         m_desiredPositionRad = positionRad;
         m_hasDesiredPosition = true;
     }
@@ -52,10 +51,6 @@ public class HoodIOSim implements HoodIO {
     @Override
     public void setPID(double p, double i, double d) {
         m_pid.setPID(p, i, d);
-        m_pid.setTolerance(kToleranceRad); 
+        m_pid.setTolerance(kToleranceRad);
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 791e2fda97d0e477f1a7d32c8a9c663fa50fec77

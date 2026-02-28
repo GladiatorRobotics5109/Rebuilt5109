@@ -57,7 +57,7 @@ public class IndexerIOTalonFX implements IndexerIO {
         StatusCode result = m_motor.getConfigurator().apply(m_config);
         if (!result.isOK()) {
             DriverStation.reportWarning(
-                "Failed to apply flywheels configs!\nName: "
+                "Failed to apply indexer configs!\nName: "
                     + result.getName()
                     + "\nDescription: "
                     + result.getDescription(),
@@ -109,4 +109,3 @@ public class IndexerIOTalonFX implements IndexerIO {
         m_motor.setControl(m_voltageOut.withOutput(volts));
     }
 }
-

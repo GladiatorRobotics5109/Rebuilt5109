@@ -1,14 +1,14 @@
 package frc.robot.subsystems.flywheels;
 
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.RobotState;
+import frc.robot.util.TolerancedBangBang;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.function.DoubleSupplier;
@@ -16,17 +16,16 @@ import java.util.function.DoubleSupplier;
 import static frc.robot.Constants.FlywheelsConstants.*;
 
 public class FlywheelsSubsystem extends SubsystemBase {
-    // private final LoggedTunablePID m_pid = new LoggedTunablePID(kLogPath + "/PID", kP, kI, kD);
-
     private final FlywheelsIO m_io;
     private final FlywheelsIOInputsAutoLogged m_inputs = new FlywheelsIOInputsAutoLogged();
 
-    private DoubleSupplier m_desiredVelocity;
+    private final TolerancedBangBang m_bang = new TolerancedBangBang(kBangBangTolerance);
+    private final SimpleMotorFeedforward m_ff = new SimpleMotorFeedforward(kS, kV, kA);
 
+    private DoubleSupplier m_desiredVelocity;
     @Accessors(fluent = true)
     @Getter
-    @AutoLogOutput(key = kLogPath + "/HasDesiredVelocity")
-    public boolean m_hasDesiredVelocity;
+    private boolean m_hasDesiredVelocity;
 
     public FlywheelsSubsystem() {
         m_io = switch (Constants.kCurrentMode) {
@@ -41,9 +40,7 @@ public class FlywheelsSubsystem extends SubsystemBase {
         m_hasDesiredVelocity = true;
     }
 
-    public void runVelocity(double velocityRPM) {
-        runVelocity(() -> velocityRPM);
-    }
+    public void runVelocity(double velocityRPM) { runVelocity(() -> velocityRPM); }
 
     public void runVoltage(double volts) {
         m_hasDesiredVelocity = false;
@@ -52,9 +49,7 @@ public class FlywheelsSubsystem extends SubsystemBase {
         m_io.setVoltage(volts);
     }
 
-    public void stop() {
-        runVoltage(0.0);
-    }
+    public void stop() { runVoltage(0.0); }
 
     /**
      * Simulates what shooting a ball is like. Should not be called on the real robot.
@@ -71,21 +66,18 @@ public class FlywheelsSubsystem extends SubsystemBase {
         Logger.processInputs(kLogPath, m_inputs);
 
         if (DriverStation.isDisabled()) {
-            m_io.setVelocity(0.0);
+            stop();
         }
 
-        // if (m_pid.hasChanged(hashCode())) {
-        //     m_io.setPID(m_pid.getP(), m_pid.getI(), m_pid.getD());
-        // }
-
+        double desired = m_desiredVelocity.getAsDouble();
         if (m_hasDesiredVelocity) {
-            double desired = m_desiredVelocity.getAsDouble();
-            Logger.recordOutput(kLogPath + "/DesiredVelocityRPM", desired);
-            m_io.setVelocity(Units.rotationsPerMinuteToRadiansPerSecond(desired));
+            m_io.setVoltage(12 * m_bang.calculate(m_inputs.velocityRPM, desired) + m_ff.calculate(desired));
         }
 
         RobotState.getInstance().updateFlywheels(
-            Units.radiansPerSecondToRotationsPerMinute(m_inputs.velocityRadPerSec)
+            m_inputs.velocityRPM,
+            desired,
+            m_hasDesiredVelocity
         );
     }
 }

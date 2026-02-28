@@ -38,11 +38,9 @@ public class IndexerIOSim implements IndexerIO {
         inputs.velocityRadPerSec = m_motor.getAngularVelocityRadPerSec();
         inputs.appliedVolts = m_appliedVolts;
 
-        inputs.statorCurrentAmps =
-            Math.abs(m_motor.getCurrentDrawAmps());
+        inputs.statorCurrentAmps = Math.abs(m_motor.getCurrentDrawAmps());
 
-        inputs.supplyCurrentAmps =
-            Math.abs(m_motor.getCurrentDrawAmps());
+        inputs.supplyCurrentAmps = Math.abs(m_motor.getCurrentDrawAmps());
 
         inputs.tempCelsius = 30.0;
     }

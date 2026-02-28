@@ -21,12 +21,13 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.util.Conversions;
 
 public class HoodIOTalonFX implements HoodIO {
-
     private final TalonFX m_motor;
+
     private final MotionMagicVoltage m_motionMagic = new MotionMagicVoltage(0);
-    
+
     private final StatusSignal<Angle> m_position;
     private final StatusSignal<AngularVelocity> m_velocity;
     private final StatusSignal<Voltage> m_appliedVolts;
@@ -36,10 +37,9 @@ public class HoodIOTalonFX implements HoodIO {
 
     private final Debouncer m_connectedDebounce = new Debouncer(0.5, DebounceType.kFalling);
 
-    private TalonFXConfiguration m_config = new TalonFXConfiguration();
+    private final TalonFXConfiguration m_config = new TalonFXConfiguration();
 
     public HoodIOTalonFX(int id, CANBus canbus) {
-
         m_motor = new TalonFX(id, canbus);
 
         m_config.CurrentLimits.StatorCurrentLimit = kStatorCurrentLimit;
@@ -58,8 +58,17 @@ public class HoodIOTalonFX implements HoodIO {
         m_config.Slot0.kI = kI;
         m_config.Slot0.kD = kD;
 
-        m_config.MotionMagic.MotionMagicCruiseVelocity = kMaxVelocityRadPerSec;
-        m_config.MotionMagic.MotionMagicAcceleration = kMaxAcelRadPerSecSq;
+        m_config.Slot0.kS = kS;
+        m_config.Slot0.kV = kV;
+        m_config.Slot0.kA = kA;
+        m_config.Slot0.kG = kG;
+
+        m_config.MotionMagic.MotionMagicCruiseVelocity = Conversions.radiansToRotations(
+            kMotionMagicCruiseVelocityRadPerSec
+        );
+        m_config.MotionMagic.MotionMagicAcceleration = Conversions.radiansToRotations(
+            kMotionMagicCruiseAccelerationRadPerSecSq
+        );
 
         StatusCode result = m_motor.getConfigurator().apply(m_config);
         if (!result.isOK()) {
@@ -112,10 +121,8 @@ public class HoodIOTalonFX implements HoodIO {
     }
 
     @Override
-    public void setPosition(double positionRad) {
+    public void runPosition(double positionRad) {
         m_motor.setControl(m_motionMagic.withPosition(Units.Radians.of(positionRad)));
-<<<<<<< HEAD
-=======
     }
 
     @Override
@@ -124,16 +131,51 @@ public class HoodIOTalonFX implements HoodIO {
         m_config.Slot0.kI = kI;
         m_config.Slot0.kD = kD;
 
-        m_motor.getConfigurator().apply(m_config);
->>>>>>> 791e2fda97d0e477f1a7d32c8a9c663fa50fec77
+        StatusCode result = m_motor.getConfigurator().apply(m_config);
+        if (!result.isOK()) {
+            DriverStation.reportWarning(
+                "Failed to apply hood configs!\nName: "
+                    + result.getName()
+                    + "\nDescription: "
+                    + result.getDescription(),
+                true
+            );
+        }
     }
 
     @Override
-    public void setPID(double p, double i, double d) {
-        m_config.Slot0.kP = kP;
-        m_config.Slot0.kI = kI;
-        m_config.Slot0.kD = kD;
+    public void setFF(double s, double v, double a, double g) {
+        m_config.Slot0.kS = s;
+        m_config.Slot0.kV = v;
+        m_config.Slot0.kA = a;
+        m_config.Slot0.kG = g;
 
-        m_motor.getConfigurator().apply(m_config);
+        StatusCode result = m_motor.getConfigurator().apply(m_config);
+        if (!result.isOK()) {
+            DriverStation.reportWarning(
+                "Failed to apply hood configs!\nName: "
+                    + result.getName()
+                    + "\nDescription: "
+                    + result.getDescription(),
+                true
+            );
+        }
+    }
+
+    @Override
+    public void setMotionMagic(double cruiseVelocityRadPerSec, double accelerationRadPerSecSq) {
+        m_config.MotionMagic.MotionMagicCruiseVelocity = Conversions.radiansToRotations(cruiseVelocityRadPerSec);
+        m_config.MotionMagic.MotionMagicAcceleration = Conversions.radiansToRotations(accelerationRadPerSecSq);
+
+        StatusCode result = m_motor.getConfigurator().apply(m_config);
+        if (!result.isOK()) {
+            DriverStation.reportWarning(
+                "Failed to apply hood configs!\nName: "
+                    + result.getName()
+                    + "\nDescription: "
+                    + result.getDescription(),
+                true
+            );
+        }
     }
 }
