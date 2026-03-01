@@ -25,6 +25,12 @@ public class RobotState {
 
     public static void init() {
         s_instance = new RobotState();
+
+        // Log empty AimingParameters on initialization to avoid loop overruns
+        Logger.recordOutput(
+            "RobotState/LatestAimingParameters",
+            new AimingParameters(Rotation2d.kZero, 0.0, Rotation2d.kZero)
+        );
     }
 
     public static RobotState getInstance() { return s_instance; }

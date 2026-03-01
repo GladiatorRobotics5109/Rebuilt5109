@@ -193,6 +193,8 @@ public class RobotContainer {
             "Drive SysId (Dynamic Reverse)",
             m_drive.sysIdDynamic(SysIdRoutine.Direction.kReverse)
         );
+
+        m_autoChooser.addOption("Test", AutoCommands.test(m_drive, m_turret, m_flywheels, m_indexer));
     }
 
     /**
