@@ -90,6 +90,9 @@ public final class Constants {
 
         public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 0.0;
         public static final double kMotionMagicCruiseVelocityRadPerSec = 0.0;
+        
+        public static final Rotation2d kMaxPosition = Rotation2d.kCCW_Pi_2;
+        public static final Rotation2d kMinPosition = Rotation2d.kCW_Pi_2;
 
         // Defined as origin of the robot to the bottom edge of the moving turret assembly
         public static final Transform3d kRobotToTurret = new Transform3d(

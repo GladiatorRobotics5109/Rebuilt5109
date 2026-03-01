@@ -15,6 +15,7 @@ import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.Constants.TurretConstants;
 import frc.robot.util.Conversions;
 
 import static frc.robot.Constants.TurretConstants.*;
@@ -65,6 +66,12 @@ public class TurretIOTalonFX implements TurretIO {
         m_config.MotorOutput.Inverted = kInverted
             ? InvertedValue.Clockwise_Positive
             : InvertedValue.CounterClockwise_Positive;
+        
+        m_config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = kMaxPosition.getRotations();
+        m_config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        m_config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = kMinPosition.getRotations();
+        m_config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        
 
         StatusCode result = m_motor.getConfigurator().apply(m_config);
         if (!result.isOK()) {
