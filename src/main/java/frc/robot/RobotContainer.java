@@ -10,6 +10,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,6 +34,7 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.Conversions;
+import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.Visualizer;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -195,10 +197,27 @@ public class RobotContainer {
         );
     }
 
+    public final LoggedTunableNumber m_flywheelsVelocity = new LoggedTunableNumber("FlywheelsVelocityRPM", 0.0);
+    public final LoggedTunableNumber m_turretPosition = new LoggedTunableNumber("TurretPositionDeg", 0.0);
+
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
      * @return the command to run in autonomous
      */
-    public Command getAutonomousCommand() { return m_autoChooser.get(); }
+    public Command getAutonomousCommand() {
+        DriverStation.silenceJoystickConnectionWarning(true);
+        // return m_autoChooser.get();
+
+        return Commands.runOnce(
+            () -> {
+                m_flywheels.runVelocity(m_flywheelsVelocity::get);
+                m_turret.runPosition(() -> Rotation2d.fromDegrees(m_turretPosition.get()));
+            },
+            m_flywheels,
+            m_turret
+        );
+
+        // return TurretCommands.feedforwardCharacterization(m_turret);
+    }
 }
