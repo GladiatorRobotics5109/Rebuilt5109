@@ -26,7 +26,7 @@ public final class Constants {
     public static final CANBus kCANBusCANivore = new CANBus("drivetrain");
 
     /** Whether to schedule the auto aim commands as each subsystem's default command */
-    public static final boolean kEnableAutoAimAsDefault = true;
+    public static final boolean kEnableAutoAimAsDefault = false;
 
     public static final class DriveCommandsConstants {
         public static final double kDeadband = 0.1;
@@ -72,7 +72,7 @@ public final class Constants {
     public static final class TurretConstants {
         public static final String kLogPath = "Subsystems/Turret";
 
-        public static final int kId = 0;
+        public static final int kId = 5;
         public static final double kStatorCurrentLimit = 0.0;
         public static final boolean kStatorCurrentLimitEnable = false;
         public static final double kSupplyCurrentLimit = 40.0;
@@ -80,16 +80,16 @@ public final class Constants {
         public static final double kGearRatio = (48.0 / 10.0) * (100.0 / 10.0);
         public static final boolean kInverted = false;
 
-        public static final double kP = 0.0;
+        public static final double kP = 500.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
-        public static final double kS = 0.0;
-        public static final double kV = 0.0;
+        public static final double kS = 0.188;
+        public static final double kV = 4.2;
         public static final double kA = 0.0;
 
-        public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 0.0;
-        public static final double kMotionMagicCruiseVelocityRadPerSec = 0.0;
+        public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 30;
+        public static final double kMotionMagicCruiseVelocityRadPerSec = 30;
         
         public static final Rotation2d kMaxPosition = Rotation2d.kCCW_Pi_2;
         public static final Rotation2d kMinPosition = Rotation2d.kCW_Pi_2;

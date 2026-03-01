@@ -11,6 +11,8 @@ import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.littletonrobotics.junction.Logger;
+
 public class TurretCommands {
     public static Command autoAim(TurretSubsystem turret) {
         return turret.startEnd(
@@ -20,7 +22,7 @@ public class TurretCommands {
     }
 
     public static Command feedforwardCharacterization(TurretSubsystem turret) {
-        final double kFFRampRate = 0.1;
+        final double kFFRampRate = 0.05;
 
         List<Double> velocitySamples = new LinkedList<>();
         List<Double> voltageSamples = new LinkedList<>();
@@ -71,6 +73,8 @@ public class TurretCommands {
                         System.out.println("********** Turret FF Characterization Results **********");
                         System.out.println("\tkS: " + formatter.format(kS));
                         System.out.println("\tkV: " + formatter.format(kV));
+                        Logger.recordOutput("TurretKS", kS);
+                        Logger.recordOutput("TurretKV", kV);
                     }
                 )
         );
