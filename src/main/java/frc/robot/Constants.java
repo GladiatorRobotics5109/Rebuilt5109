@@ -20,10 +20,12 @@ public final class Constants {
     public static final Mode kSimMode = Mode.SIM;
     public static final Mode kCurrentMode = RobotBase.isReal() ? Mode.REAL : kSimMode;
     public static final boolean kTuningMode = true;
-    public static final boolean kSimShouldUseKeyboard = kCurrentMode == Mode.SIM && true;
+    public static final boolean kSimShouldUseKeyboard = kCurrentMode == Mode.SIM && false;
 
     public static final CANBus kCANBusRio = CANBus.roboRIO();
     public static final CANBus kCANBusCANivore = new CANBus("drivetrain");
+
+    public static final int kDriverControllerPort = 0;
 
     /** Whether to schedule the auto aim commands as each subsystem's default command */
     public static final boolean kEnableAutoAimAsDefault = false;
@@ -90,7 +92,7 @@ public final class Constants {
 
         public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 30;
         public static final double kMotionMagicCruiseVelocityRadPerSec = 30;
-        
+
         public static final Rotation2d kMaxPosition = Rotation2d.kCCW_Pi_2;
         public static final Rotation2d kMinPosition = Rotation2d.kCW_Pi_2;
 

@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.HoodConstants;
@@ -56,7 +56,7 @@ public class RobotContainer {
     private final IntakeSubsystem m_intake;
 
     // Controller
-    private final CommandPS5Controller m_driverController = new CommandPS5Controller(0);
+    private final CommandPS4Controller m_driverController = new CommandPS4Controller(Constants.kDriverControllerPort);
     private CommandGenericHID m_driverControllerSim;
 
     // Dashboard inputs
