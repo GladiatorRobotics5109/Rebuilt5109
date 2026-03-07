@@ -52,6 +52,14 @@ public class Conversions {
         return Units.radiansToRotations(rad);
     }
 
+    public double rotationsToRadians(double rot) {
+        return Units.rotationsToRadians(rot);
+    }
+
+    public double rotationsPerMinuteToRadiansPerSecond(double rpm) {
+        return Units.rotationsPerMinuteToRadiansPerSecond(rpm);
+    }
+
     public double inchesToMeters(double in) {
         return Units.inchesToMeters(in);
     }

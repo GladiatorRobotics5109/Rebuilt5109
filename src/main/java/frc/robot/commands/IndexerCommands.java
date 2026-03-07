@@ -7,7 +7,7 @@ import static frc.robot.Constants.IndexerConstants.*;
 
 public class IndexerCommands {
     public static Command index(IndexerSubsystem indexer) {
-        return indexer.runOnce(() -> indexer.runVoltage(kIndexVoltage));
+        return indexer.runOnce(() -> indexer.runVoltage(kIndexerIndexVoltage, kKickupIndexVoltage));
     }
 
     public static Command stop(IndexerSubsystem indexer) {
