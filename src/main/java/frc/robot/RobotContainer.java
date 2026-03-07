@@ -31,6 +31,7 @@ import frc.robot.subsystems.flywheels.FlywheelsSubsystem;
 import frc.robot.subsystems.hood.HoodSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem.IntakeState;
 import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.Conversions;
@@ -131,6 +132,25 @@ public class RobotContainer {
                         ? FuelStrategy.SHUTTLE
                         : FuelStrategy.HUB
                 )
+            )
+        );
+
+        m_driverController.R2().and(() -> (m_driverController.getR2Axis() + 1) / 2.0 > 0.05).whileTrue(
+            IntakeCommands.testRollers(m_intake, () -> {
+                double val = Math.pow((m_driverController.getR2Axis() + 1) / 2.0, 2);
+                Logger.recordOutput("VAL", val);
+                return 12 * val;
+            })
+        );
+
+        m_driverController.povUp().whileTrue(IntakeCommands.testPivot(m_intake, () -> -2));
+        m_driverController.povDown().whileTrue(IntakeCommands.testPivot(m_intake, () -> 2));
+
+        m_driverController.L1().onTrue(
+            Commands.either(
+                IntakeCommands.deploy(m_intake),
+                IntakeCommands.stow(m_intake),
+                () -> m_intake.getState() != IntakeState.DEPLOYED
             )
         );
 
