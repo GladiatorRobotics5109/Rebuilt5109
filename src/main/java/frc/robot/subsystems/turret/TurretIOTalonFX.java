@@ -122,13 +122,18 @@ public class TurretIOTalonFX implements TurretIO {
     }
 
     @Override
-    public void setPosition(double positionRad) {
+    public void runPosition(double positionRad) {
         m_motor.setControl(m_motionMagic.withPosition(Units.Radians.of(positionRad)));
     }
 
     @Override
-    public void setVoltage(double volts) {
+    public void runVoltage(double volts) {
         m_motor.setControl(m_voltageOut.withOutput(volts));
+    }
+
+    @Override
+    public void setPosition(double positionRad) {
+        m_motor.setPosition(Conversions.radiansToRotations(positionRad));
     }
 
     @Override

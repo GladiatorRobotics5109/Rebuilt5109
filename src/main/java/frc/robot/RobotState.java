@@ -78,9 +78,6 @@ public class RobotState {
         if (m_latestAimingParameters != null)
             return m_latestAimingParameters;
 
-        // m_latestAimingParameters = new AimingParameters(Rotation2d.kZero, 0, Rotation2d.kZero);
-        // return m_latestAimingParameters;
-
         Translation2d target = switch (m_fuelStrategy) {
             case HUB -> AllianceFlip.apply(Hub.topCenterPoint).toTranslation2d();
             case SHUTTLE -> {

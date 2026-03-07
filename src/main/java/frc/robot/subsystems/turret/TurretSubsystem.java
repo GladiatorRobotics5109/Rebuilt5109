@@ -36,7 +36,7 @@ public class TurretSubsystem extends SubsystemBase {
 
     public TurretSubsystem() {
         m_io = switch (Constants.kCurrentMode) {
-            // case REAL -> new TurretIOTalonFX(kId, Constants.kCANBusCANivore);
+            case REAL -> new TurretIOTalonFX(kId, Constants.kCANBusRio);
             case SIM -> new TurretIOSim();
             default -> new TurretIO() {};
         };
@@ -53,11 +53,15 @@ public class TurretSubsystem extends SubsystemBase {
 
     public void runVoltage(double volts) {
         m_hasDesiredPosition = false;
-        m_io.setVoltage(volts);
+        m_io.runVoltage(volts);
     }
 
     public void stop() {
         runVoltage(0.0);
+    }
+
+    public void setPosition(Rotation2d position) {
+        m_io.setPosition(position.getRadians());
     }
 
     public Rotation2d getPosition() { return Rotation2d.fromRadians(m_inputs.positionRad); }
@@ -75,7 +79,7 @@ public class TurretSubsystem extends SubsystemBase {
         else if (m_hasDesiredPosition) {
             Rotation2d desired = m_desiredPosition.get();
             Logger.recordOutput(kLogPath + "/DesiredPosiiton", desired);
-            m_io.setPosition(desired.getRadians());
+            m_io.runPosition(desired.getRadians());
         }
 
         if (m_pid.hasChanged(hashCode())) {

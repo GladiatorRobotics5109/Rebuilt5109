@@ -27,7 +27,7 @@ public class Conversions {
 
         return new Pose3d(
             translation,
-            new Rotation3d(0.0, -hoodAngle.getRadians(), robot.getRotation().getRadians() + turretAngle.getRadians())
+            new Rotation3d(0.0, hoodAngle.getRadians(), robot.getRotation().getRadians() + turretAngle.getRadians())
         );
     }
 
@@ -50,5 +50,13 @@ public class Conversions {
 
     public double radiansToRotations(double rad) {
         return Units.radiansToRotations(rad);
+    }
+
+    public double inchesToMeters(double in) {
+        return Units.inchesToMeters(in);
+    }
+
+    public double degreesToRadians(double deg) {
+        return Units.degreesToRadians(deg);
     }
 }

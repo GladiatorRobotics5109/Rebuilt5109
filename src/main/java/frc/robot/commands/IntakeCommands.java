@@ -21,6 +21,6 @@ public class IntakeCommands {
     }
 
     public Command stow(IntakeSubsystem intake) {
-        return intake.runOnce(intake::stow);
+        return intake.startEnd(intake::stow, intake::stop);
     }
 }

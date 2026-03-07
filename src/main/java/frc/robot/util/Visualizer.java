@@ -22,7 +22,7 @@ public class Visualizer {
     public static Visualizer getInstance() { return s_instance; }
 
     private Visualizer(DriveSubsystem drive, FlywheelsSubsystem flywheels) {
-        FuelSim.getInstance().spawnStartingFuel();
+        // FuelSim.getInstance().spawnStartingFuel();
         FuelSim.getInstance().registerRobot(
             Units.inchesToMeters(28),
             Units.inchesToMeters(24),
@@ -62,19 +62,5 @@ public class Visualizer {
     private Pose3d getTurretPose() {
         RobotState state = RobotState.getInstance();
         return Conversions.robotPoseToTurretPose(state.getPose(), state.getTurretPosition(), state.getHoodAngle());
-
-        // Pose2d robot = RobotState.getInstance().getPose();
-        // return new Pose3d(
-        //     new Translation3d(robot.getX(), robot.getY(), 0).plus(
-        //         TurretConstants.kRobotToTurret.getTranslation().rotateBy(
-        //             new Rotation3d(0, 0, robot.getRotation().getRadians())
-        //         )
-        //     ),
-        //     new Rotation3d(
-        //         0,
-        //         -RobotState.getInstance().getHoodAngle().getRadians(),
-        //         RobotState.getInstance().getTurretHeading().getRadians()
-        //     )
-        // );
     }
 }

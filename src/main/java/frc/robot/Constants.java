@@ -10,6 +10,7 @@ import frc.robot.FieldConstants.AprilTagLayoutType;
 import frc.robot.FieldConstants.LinesHorizontal;
 import frc.robot.FieldConstants.LinesVertical;
 import frc.robot.util.AllianceFlip;
+import frc.robot.util.Conversions;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -28,16 +29,33 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
 
     /** Whether to schedule the auto aim commands as each subsystem's default command */
-    public static final boolean kEnableAutoAimAsDefault = false;
+    public static final boolean kEnableAutoAimAsDefault = true;
 
-    public static final class DriveCommandsConstants {
+    public static final class DriveConstants {
         public static final double kDeadband = 0.1;
-        public static final double kAngleP = 5.0;
-        public static final double kAngleD = 0.4;
-        public static final double kAngleMaxVelocity = 8.0;
-        public static final double kAngleMaxAcceleration = 20.0;
+
+        public static final double kDriveToPoseAngleP = 5.0;
+        public static final double kDriveToPoseAngleD = 0.4;
+        public static final double kDriveToPoseAngleMaxVelocity = 8.0;
+        public static final double kDriveToPoseAngleMaxAcceleration = 20.0;
+
+        public static final double kDriveToPoseXP = 5.0;
+        public static final double kDriveToPoseXD = 0.4;
+        public static final double kDriveToPoseXMaxVelocity = 2.0;
+        public static final double kDriveToPoseXMaxAcceleration = 10.0;
+
+        public static final double kDriveToPoseYP = 5.0;
+        public static final double kDriveToPoseYD = 0.4;
+        public static final double kDriveToPoseYMaxVelocity = 2.0;
+        public static final double kDriveToPoseYMaxAcceleration = 10.0;
+
+        public static final double kDriveToPoseToleranceX = Conversions.inchesToMeters(4);
+        public static final double kDriveToPoseToleranceY = Conversions.inchesToMeters(4);
+        public static final double kDriveToPoseToleranceAngle = Conversions.degreesToRadians(10);
+
         public static final double kFFStartDelay = 2.0; // Secs
         public static final double kFFRampRate = 0.1; // Volts/Sec
+
         public static final double kWheelRadiusMaxVelocity = 0.25; // Rad/Sec
         public static final double kWheelRadiusRampRate = 0.05; // Rad/Sec^2
     }
@@ -49,7 +67,7 @@ public final class Constants {
         public static final double kStatorCurrentLimit = 0.0;
         public static final boolean kStatorCurrentLimitEnable = false;
         public static final double kSupplyCurrentLimit = 40.0;
-        public static final boolean kSupplyCurrentLimitEnable = false;
+        public static final boolean kSupplyCurrentLimitEnable = true;
         public static final double kGearRatio = 1.0;
         public static final boolean kInverted = true;
 
@@ -67,7 +85,8 @@ public final class Constants {
         public static final double kSimMOI = 0.0004475;
 
         public static final double kSimShooterWheelRadius = Units.inchesToMeters(2);
-        public static final double kSimShooterEfficiency = 0.365;
+        // public static final double kSimShooterEfficiency = 0.365;
+        public static final double kSimShooterEfficiency = 0.31;
         public static final double kSimShootRate = 5;
     }
 
@@ -96,6 +115,10 @@ public final class Constants {
         public static final Rotation2d kMaxPosition = Rotation2d.kCCW_Pi_2;
         public static final Rotation2d kMinPosition = Rotation2d.kCW_Pi_2;
 
+        public static final Rotation2d kRightTrenchPosition = Rotation2d.fromDegrees(-15);
+        public static final Rotation2d kLeftTrenchPosition = kRightTrenchPosition.times(-1);
+        public static final Rotation2d kOutpostPosition = Rotation2d.fromDegrees(15);
+
         // Defined as origin of the robot to the bottom edge of the moving turret assembly
         public static final Transform3d kRobotToTurret = new Transform3d(
             Units.inchesToMeters(7.247244),
@@ -113,22 +136,20 @@ public final class Constants {
 
         public static final double kHoodAutoStowThreshold = Units.inchesToMeters(20);
 
-        // TO-DO: CHANGE THE GEAR RATIO
-
         public static final int kId = 50;
         public static final double kStatorCurrentLimit = 0.0;
         public static final boolean kStatorCurrentLimitEnable = false;
         public static final double kSupplyCurrentLimit = 40.0;
         public static final boolean kSupplyCurrentLimitEnable = true;
-        public static final double kGearRatio = 4.0;
+        public static final double kGearRatio = 25.0;
         public static final boolean kInverted = false;
 
-        public static final double kP = 0.0;
+        public static final double kP = 5.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
-        public static final double kMotionMagicCruiseVelocityRadPerSec = 0.0;
-        public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 0.0;
+        public static final double kMotionMagicCruiseVelocityRadPerSec = Conversions.degreesToRadians(90);
+        public static final double kMotionMagicCruiseAccelerationRadPerSecSq = Conversions.degreesToRadians(90);
 
         public static final double kS = 0.0;
         public static final double kV = 0.0;
@@ -150,7 +171,7 @@ public final class Constants {
         public static final boolean kInverted = false;
 
         public static final double kStatorCurrentLimit = 60.0;
-        public static final boolean kStatorCurrentLimitEnable = true;
+        public static final boolean kStatorCurrentLimitEnable = false;
 
         public static final double kSupplyCurrentLimit = 40.0;
         public static final boolean kSupplyCurrentLimitEnable = true;
@@ -170,14 +191,14 @@ public final class Constants {
         public static final double kRollersStatorCurrentLimit = 0.0;
         public static final boolean kRollersStatorCurrentLimitEnable = false;
 
-        public static final double kRollersSupplyCurrentLimit = 0.0;
-        public static final boolean kRollersSupplyCurrentLimitEnable = false;
+        public static final double kRollersSupplyCurrentLimit = 40.0;
+        public static final boolean kRollersSupplyCurrentLimitEnable = true;
 
         public static final double kPivotStatorCurrentLimit = 0.0;
         public static final boolean kPivotStatorCurrentLimitEnable = false;
 
-        public static final double kPivotSupplyCurrentLimit = 0.0;
-        public static final boolean kPivotSupplyCurrentLimitEnable = false;
+        public static final double kPivotSupplyCurrentLimit = 40.0;
+        public static final boolean kPivotSupplyCurrentLimitEnable = true;
 
         public static final double kPivotGearRatio = 9 * 5 * 2;
 
@@ -191,10 +212,10 @@ public final class Constants {
         public static final double kPivotS = 0.0;
         public static final double kPivotV = 0.0;
 
-        public static final double kRollersGearRatio = 3;
+        public static final double kRollersGearRatio = 5;
 
         public static final boolean kRollersInvert = true;
-        public static final boolean kRollersBrake = true;
+        public static final boolean kRollersBrake = false;
 
         public static final Rotation2d kPivotMaxPosition = Rotation2d.fromDegrees(90);
         public static final Rotation2d kPivotMinPosition = Rotation2d.fromDegrees(-10);
@@ -279,6 +300,8 @@ public final class Constants {
             AllianceFlip.flipX(kShuttleBlueBottom.getX()),
             LinesHorizontal.center / 4 * 3
         );
+
+        public static final double kTrenchFlywheelsVelocityRPM = 4500.0;
     }
 
     public static enum Mode {
