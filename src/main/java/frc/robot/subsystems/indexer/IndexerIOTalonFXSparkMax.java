@@ -144,6 +144,6 @@ public class IndexerIOTalonFXSparkMax implements IndexerIO {
     @Override
     public void runVoltage(double indexerVolts, double kickupVolts) {
         m_indexer.setControl(m_indexerVoltageOut.withOutput(indexerVolts));
-        m_kickup.setVoltage(kickupVolts);
+        // m_kickup.setVoltage(kickupVolts);
     }
 }
