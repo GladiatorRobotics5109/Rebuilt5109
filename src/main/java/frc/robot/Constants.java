@@ -29,7 +29,7 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
 
     /** Whether to schedule the auto aim commands as each subsystem's default command */
-    public static final boolean kEnableAutoAimAsDefault = false;
+    public static final boolean kEnableAutoAimAsDefault = true;
 
     public static final class DriveConstants {
         public static final double kDeadband = 0.1;
@@ -173,7 +173,7 @@ public final class Constants {
         public static final int kKickupId = 21;
         public static final double kIndexerGearRatio = 3.0;
         public static final double kKickupGearRatio = 3.0;
-        public static final boolean kInverted = false;
+        public static final boolean kInverted = true;
 
         public static final double kStatorCurrentLimit = 60.0;
         public static final boolean kStatorCurrentLimitEnable = false;
