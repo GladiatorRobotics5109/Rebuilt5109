@@ -143,7 +143,7 @@ public final class Constants {
         public static final boolean kStatorCurrentLimitEnable = false;
         public static final double kSupplyCurrentLimit = 40.0;
         public static final boolean kSupplyCurrentLimitEnable = true;
-        public static final double kGearRatio = 25.0;
+        public static final double kGearRatio = 25.0 * 248.0 / 18.0;
         public static final boolean kInverted = false;
 
         public static final double kP = 5.0;
