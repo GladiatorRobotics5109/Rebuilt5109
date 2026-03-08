@@ -126,7 +126,8 @@ public class RobotState {
         }
 
         m_latestAimingParameters = new AimingParameters(targetPosition, flywheelsRPM, pitch);
-        Logger.recordOutput("RobotState/LatestAimingParameters", m_latestAimingParameters);
+        Logger.recordOutput("RobotState/AimingParameters/Dist", dist);
+        Logger.recordOutput("RobotState/AimingParameters/LatestAimingParameters", m_latestAimingParameters);
 
         return m_latestAimingParameters;
     }
