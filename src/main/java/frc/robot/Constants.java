@@ -133,7 +133,7 @@ public final class Constants {
     public static final class HoodConstants {
         public static final String kLogPath = "Subsystems/Hood";
 
-        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20);
+        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(40);
         public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(55);
 
         public static final double kHoodAutoStowThreshold = Units.inchesToMeters(20);
