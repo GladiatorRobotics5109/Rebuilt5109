@@ -92,7 +92,9 @@ public class VisionIOTurretLimelight implements VisionIO {
             robotToCamera.getRotation().getY(),
             robotToCamera.getRotation().getZ()
         );
-        LimelightHelpers.SetRobotOrientation(name, rotationSupplier.get().getDegrees(), 0, 0, 0, 0, 0);
+        double deg = rotationSupplier.get().getDegrees();
+        Logger.recordOutput("TEST_1", deg);
+        LimelightHelpers.SetRobotOrientation(name, deg, 0, 0, 0, 0, 0);
         NetworkTableInstance.getDefault()
             .flush(); // Increases network traffic but recommended by Limelight
 
