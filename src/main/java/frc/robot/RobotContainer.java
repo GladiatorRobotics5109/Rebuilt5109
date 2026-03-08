@@ -122,7 +122,7 @@ public class RobotContainer {
             m_hood.setDefaultCommand(HoodCommands.autoAim(m_hood));
         }
 
-        m_driverController.circle().onTrue(
+        m_driverController.cross().onTrue(
             Commands.either(IndexerCommands.stop(m_indexer), IndexerCommands.index(m_indexer), m_indexer::isIndexing)
         );
         m_driverController.triangle().onTrue(
