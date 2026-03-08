@@ -166,8 +166,8 @@ public final class Constants {
     public static final class IndexerConstants {
         public static final String kLogPath = "Subsystems/Indexer";
 
-        public static final double kIndexerIndexVoltage = 12.0;
-        public static final double kKickupIndexVoltage = 12.0;
+        public static final double kIndexerIndexVoltage = 6.0;
+        public static final double kKickupIndexVoltage = 6.0;
 
         public static final int kIndexerId = 20;
         public static final int kKickupId = 21;
