@@ -99,6 +99,8 @@ public class TurretIOTalonFX implements TurretIO {
         );
 
         ParentDevice.optimizeBusUtilizationForAll(m_motor);
+
+        m_motor.setPosition(0.0);
     }
 
     @Override
