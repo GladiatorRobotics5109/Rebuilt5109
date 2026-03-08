@@ -98,6 +98,8 @@ public class HoodIOTalonFX implements HoodIO {
         );
 
         ParentDevice.optimizeBusUtilizationForAll(m_motor);
+
+        m_motor.setPosition(kMaxAngle.getRotations());
     }
 
     @Override
