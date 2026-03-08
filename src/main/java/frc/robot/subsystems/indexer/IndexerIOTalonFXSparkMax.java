@@ -100,7 +100,7 @@ public class IndexerIOTalonFXSparkMax implements IndexerIO {
 
         if (kSupplyCurrentLimitEnable)
             kickupConfig.smartCurrentLimit((int)kSupplyCurrentLimit);
-        
+
         kickupConfig.encoder.positionConversionFactor(1 / kKickupGearRatio);
 
         m_kickup.configure(kickupConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
