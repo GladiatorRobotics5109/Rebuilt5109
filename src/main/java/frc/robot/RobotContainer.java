@@ -97,7 +97,9 @@ public class RobotContainer {
             Visualizer.init(m_drive, m_flywheels);
         }
 
-        Translation3d robot = FieldConstants.Hub.topCenterPoint.plus(new Translation3d(Conversions.inchesToMeters(-118), 0.0, 0.0));
+        Translation3d robot = FieldConstants.Hub.topCenterPoint.plus(
+            new Translation3d(Conversions.inchesToMeters(-118), 0.0, 0.0)
+        );
 
         m_drive.setPose(new Pose2d(robot.getX(), robot.getY(), Rotation2d.kZero));
 
