@@ -277,7 +277,7 @@ public final class Constants {
 
         static {
             kHubFlywheelsRPMs.put(1.4, 2250.0);
-            kHubFlywheelsRPMs.put(3, 3500.0);
+            kHubFlywheelsRPMs.put(3.0, 3500.0);
             kHubFlywheelsRPMs.put(4.1, 4050.0);
 
             kShuttleFlywheelsRPMs.put(1.0, 5500.0);
