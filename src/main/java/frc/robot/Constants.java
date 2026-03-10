@@ -77,7 +77,7 @@ public final class Constants {
         public static final double kIdleDistThresholdMeters = 5.0;
         public static final double kIdleDistDebounce = 0.5;
 
-        public static final double kS = 0.19;
+        public static final double kS = 0.188;
         public static final double kV = 0.018;
         public static final double kA = 0.0;
         public static final double kBangBangTolerance = 75;
