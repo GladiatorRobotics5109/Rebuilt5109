@@ -78,7 +78,7 @@ public final class Constants {
         public static final double kIdleDistDebounce = 0.5;
 
         public static final double kS = 0.188;
-        public static final double kV = 0.0001;
+        public static final double kV = 0.001;
         public static final double kA = 0.0;
         public static final double kBangBangTolerance = 75;
 
@@ -166,7 +166,7 @@ public final class Constants {
     public static final class IndexerConstants {
         public static final String kLogPath = "Subsystems/Indexer";
 
-        public static final double kIndexerIndexVoltage = 4.0;
+        public static final double kIndexerIndexVoltage = 12.0;
         public static final double kKickupIndexVoltage = 6.0;
 
         public static final int kIndexerId = 20;
