@@ -77,7 +77,7 @@ public class FlywheelsSubsystem extends SubsystemBase {
             Logger.recordOutput("Flywheels_velocity", m_inputs.velocityRPM);
             Logger.recordOutput("Flywheels_Bang", bang);
             Logger.recordOutput("Flywheels_FF", ff);
-            m_io.setVoltage(bang + ff);
+            m_io.setVoltage(ff);
         }
 
         RobotState.getInstance().updateFlywheels(
