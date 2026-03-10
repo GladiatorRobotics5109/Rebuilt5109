@@ -10,6 +10,8 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -94,6 +96,10 @@ public class RobotContainer {
 
             Visualizer.init(m_drive, m_flywheels);
         }
+
+        Translation3d robot = FieldConstants.Hub.topCenterPoint.plus(new Translation3d(Conversions.inchesToMeters(-118), 0.0, 0.0));
+
+        m_drive.setPose(new Pose2d(robot.getX(), robot.getY(), Rotation2d.kZero));
 
         CommandScheduler.getInstance().onCommandInitialize(
             command -> Logger.recordOutput("CommandLog", "INIT: " + command.getName())
