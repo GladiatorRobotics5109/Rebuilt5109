@@ -166,7 +166,7 @@ public final class Constants {
     public static final class IndexerConstants {
         public static final String kLogPath = "Subsystems/Indexer";
 
-        public static final double kIndexerIndexVoltage = 6.0;
+        public static final double kIndexerIndexVoltage = 12.0;
         public static final double kKickupIndexVoltage = 6.0;
 
         public static final int kIndexerId = 20;
@@ -228,7 +228,7 @@ public final class Constants {
         public static final Rotation2d kPivotDeployedPosition = Rotation2d.fromDegrees(90);
         public static final Rotation2d kPivotStowedPosition = kPivotStartingPosition;
 
-        public static final double kRollersIntakeVoltage = 12;
+        public static final double kRollersIntakeVoltage = 8;
     }
 
     public static final class VisionConstants {
