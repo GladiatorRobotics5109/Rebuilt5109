@@ -21,20 +21,20 @@ public class IndexerSubsystem extends SubsystemBase {
 
     public IndexerSubsystem() {
         m_io = switch (Constants.kCurrentMode) {
-            // case REAL -> new IndexerIOTalonFX(kId, Constants.kCANBusRio);
+            case REAL -> new IndexerIOTalonFXSparkMax(kIndexerId, kKickupId, Constants.kCANBusRio);
             case SIM -> new IndexerIOSim();
             default -> new IndexerIO() {};
         };
 
     }
 
-    public void runVoltage(double volts) {
-        m_indexing = volts != 0.0;
-        m_io.runVoltage(volts);
+    public void runVoltage(double indexerVolts, double kickupVolts) {
+        m_indexing = indexerVolts != 0.0;
+        m_io.runVoltage(indexerVolts, kickupVolts);
     }
 
     public void stop() {
-        runVoltage(0.0);
+        runVoltage(0.0, 0.0);
     }
 
     @Override

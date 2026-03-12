@@ -41,11 +41,11 @@ public class VisionSubsystem extends SubsystemBase {
     ) {
         this.consumer = consumer;
         this.io = switch (Constants.kCurrentMode) {
-            // case REAL -> new VisionIO[] { new VisionIOTurretLimelight(
-            //     kCamera1Name,
-            //     rotationSupplier,
-            //     robotToTurretCamera
-            // ) };
+            case REAL -> new VisionIO[] { new VisionIOTurretLimelight(
+                kCamera1Name,
+                rotationSupplier,
+                robotToTurretCamera
+            ) };
             default -> new VisionIO[] { new VisionIO() {} };
         };
 

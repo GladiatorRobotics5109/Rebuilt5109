@@ -15,7 +15,7 @@ public class FlywheelsCommands {
     }
 
     public static Command runVelocity(FlywheelsSubsystem flywheels, DoubleSupplier velocity) {
-        return flywheels.startEnd(() -> flywheels.runVelocity(velocity), flywheels::stop).withName(
+        return flywheels.runOnce(() -> flywheels.runVelocity(velocity)).withName(
             "FlywheelsCommands::runVelocity"
         );
     }

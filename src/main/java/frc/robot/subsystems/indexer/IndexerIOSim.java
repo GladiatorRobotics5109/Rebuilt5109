@@ -20,7 +20,7 @@ public class IndexerIOSim implements IndexerIO {
             LinearSystemId.createDCMotorSystem(
                 DCMotor.getKrakenX60(1),
                 kSimMOI,
-                kGearRatio
+                kIndexerGearRatio
             ),
             DCMotor.getKrakenX60(1)
         );
@@ -32,23 +32,23 @@ public class IndexerIOSim implements IndexerIO {
         // Advance physics by 20ms
         m_motor.update(Robot.defaultPeriodSecs);
 
-        inputs.connected = true;
+        inputs.indexerConnected = true;
 
-        inputs.positionRad = m_motor.getAngularPositionRad();
-        inputs.velocityRadPerSec = m_motor.getAngularVelocityRadPerSec();
-        inputs.appliedVolts = m_appliedVolts;
+        inputs.indexerPositionRad = m_motor.getAngularPositionRad();
+        inputs.indexerVelocityRadPerSec = m_motor.getAngularVelocityRadPerSec();
+        inputs.indexerAppliedVolts = m_appliedVolts;
 
-        inputs.statorCurrentAmps = Math.abs(m_motor.getCurrentDrawAmps());
+        inputs.indexerStatorCurrentAmps = Math.abs(m_motor.getCurrentDrawAmps());
 
-        inputs.supplyCurrentAmps = Math.abs(m_motor.getCurrentDrawAmps());
+        inputs.indexerSupplyCurrentAmps = Math.abs(m_motor.getCurrentDrawAmps());
 
-        inputs.tempCelsius = 30.0;
+        inputs.indexerTempCelsius = 30.0;
     }
 
     @Override
-    public void runVoltage(double volts) {
+    public void runVoltage(double indexerVolts, double kickupVolts) {
 
-        m_appliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
+        m_appliedVolts = MathUtil.clamp(indexerVolts, -12.0, 12.0);
         m_motor.setInputVoltage(m_appliedVolts);
     }
 }

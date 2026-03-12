@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -22,6 +24,10 @@ public class AllianceFlip {
         return alliance.get() == Alliance.Red;
     }
 
+    public Pose2d apply(Pose2d p) {
+        return shouldFlip() ? flip(p) : p;
+    }
+
     public Translation3d apply(Translation3d t) {
         return shouldFlip() ? flip(t) : t;
     }
@@ -32,6 +38,14 @@ public class AllianceFlip {
 
     public double flipX(double x) {
         return FieldConstants.fieldLength - x;
+    }
+
+    public Pose2d flip(Pose2d p) {
+        return new Pose2d(
+            FieldConstants.fieldLength - p.getX(),
+            FieldConstants.fieldWidth - p.getY(),
+            p.getRotation().plus(Rotation2d.k180deg)
+        );
     }
 
     public Translation3d flip(Translation3d t) {

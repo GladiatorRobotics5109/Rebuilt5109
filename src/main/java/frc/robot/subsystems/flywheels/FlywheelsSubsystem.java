@@ -29,7 +29,7 @@ public class FlywheelsSubsystem extends SubsystemBase {
 
     public FlywheelsSubsystem() {
         m_io = switch (Constants.kCurrentMode) {
-            case REAL -> new FlywheelsIOTalonFX(kId, Constants.kCANBusCANivore);
+            case REAL -> new FlywheelsIOTalonFX(kId, Constants.kCANBusRio);
             case SIM -> new FlywheelsIOSim();
             default -> new FlywheelsIO() {};
         };
@@ -71,7 +71,13 @@ public class FlywheelsSubsystem extends SubsystemBase {
 
         double desired = m_desiredVelocity.getAsDouble();
         if (m_hasDesiredVelocity) {
-            m_io.setVoltage(12 * m_bang.calculate(m_inputs.velocityRPM, desired) + m_ff.calculate(desired));
+            double bang = 12 * m_bang.calculate(m_inputs.velocityRPM, desired);
+            double ff = m_ff.calculate(desired);
+            Logger.recordOutput("Flywheels_desired", desired);
+            Logger.recordOutput("Flywheels_velocity", m_inputs.velocityRPM);
+            Logger.recordOutput("Flywheels_Bang", bang);
+            Logger.recordOutput("Flywheels_FF", ff);
+            m_io.setVoltage(bang + ff);
         }
 
         RobotState.getInstance().updateFlywheels(

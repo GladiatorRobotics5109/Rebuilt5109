@@ -11,13 +11,14 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.HoodConstants;
@@ -31,10 +32,10 @@ import frc.robot.subsystems.flywheels.FlywheelsSubsystem;
 import frc.robot.subsystems.hood.HoodSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem.IntakeState;
 import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.Conversions;
-import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.Visualizer;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -56,7 +57,7 @@ public class RobotContainer {
     private final IntakeSubsystem m_intake;
 
     // Controller
-    private final CommandPS5Controller m_driverController = new CommandPS5Controller(0);
+    private final CommandPS4Controller m_driverController = new CommandPS4Controller(Constants.kDriverControllerPort);
     private CommandGenericHID m_driverControllerSim;
 
     // Dashboard inputs
@@ -96,6 +97,12 @@ public class RobotContainer {
             Visualizer.init(m_drive, m_flywheels);
         }
 
+        Translation3d robot = FieldConstants.Hub.topCenterPoint.plus(
+            new Translation3d(Conversions.inchesToMeters(-118), 0.0, 0.0)
+        );
+
+        m_drive.setPose(new Pose2d(robot.getX(), robot.getY(), Rotation2d.kZero));
+
         CommandScheduler.getInstance().onCommandInitialize(
             command -> Logger.recordOutput("CommandLog", "INIT: " + command.getName())
         );
@@ -123,7 +130,9 @@ public class RobotContainer {
             m_hood.setDefaultCommand(HoodCommands.autoAim(m_hood));
         }
 
-        m_driverController.circle().whileTrue(IndexerCommands.index(m_indexer));
+        m_driverController.cross().onTrue(
+            Commands.either(IndexerCommands.stop(m_indexer), IndexerCommands.index(m_indexer), m_indexer::isIndexing)
+        );
         m_driverController.triangle().onTrue(
             Commands.runOnce(
                 () -> RobotState.getInstance().setFuelStrategy(
@@ -133,6 +142,27 @@ public class RobotContainer {
                 )
             )
         );
+
+        // m_driverController.R2().and(() -> (m_driverController.getR2Axis() + 1) / 2.0 > 0.05).whileTrue(
+        //     IntakeCommands.testRollers(m_intake, () -> {
+        //         double val = Math.pow((m_driverController.getR2Axis() + 1) / 2.0, 2);
+        //         Logger.recordOutput("VAL", val);
+        //         return 12 * val;
+        //     })
+        // );
+
+        // m_driverController.povUp().whileTrue(IntakeCommands.testPivot(m_intake, () -> -2));
+        // m_driverController.povDown().whileTrue(IntakeCommands.testPivot(m_intake, () -> 2));
+
+        m_driverController.L1().onTrue(
+            Commands.either(
+                IntakeCommands.deploy(m_intake),
+                IntakeCommands.stow(m_intake),
+                () -> m_intake.getState() != IntakeState.DEPLOYED
+            )
+        );
+
+        m_driverController.povLeft().whileTrue(TurretCommands.straight(m_turret));
 
         // Automatically stow the hood when the robot gets close to the trench so that we don't hit it
         new Trigger(
@@ -170,56 +200,50 @@ public class RobotContainer {
     }
 
     private void buildAutoChooser() {
+        m_autoChooser.addOption(
+            "Comp_preloadAndOutpost",
+            AutoCommands.preloadAndOutpost(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
+        );
+
+        m_autoChooser.addOption(
+            "Comp_preloadAndDepot",
+            AutoCommands.preloadAndDepot(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
+        );
+
         // Set up SysId routines
         m_autoChooser.addOption(
-            "Drive Wheel Radius Characterization",
+            "SysID_DriveWheelRadiusCharacterization",
             DriveCommands.wheelRadiusCharacterization(m_drive)
         );
         m_autoChooser.addOption(
-            "Drive Simple FF Characterization",
+            "SysID_DriveSimpleFFCharacterization",
             DriveCommands.feedforwardCharacterization(m_drive)
         );
         m_autoChooser.addOption(
-            "Drive SysId (Quasistatic Forward)",
+            "SysID_Drive (Quasistatic Forward)",
             m_drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward)
         );
         m_autoChooser.addOption(
-            "Drive SysId (Quasistatic Reverse)",
+            "SysID_Drive (Quasistatic Reverse)",
             m_drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse)
         );
         m_autoChooser.addOption(
-            "Drive SysId (Dynamic Forward)",
+            "SysID_Drive (Dynamic Forward)",
             m_drive.sysIdDynamic(SysIdRoutine.Direction.kForward)
         );
         m_autoChooser.addOption(
-            "Drive SysId (Dynamic Reverse)",
+            "SysID_Drive (Dynamic Reverse)",
             m_drive.sysIdDynamic(SysIdRoutine.Direction.kReverse)
         );
 
         m_autoChooser.addOption("Test", AutoCommands.test(m_drive, m_turret, m_flywheels, m_indexer));
+        m_autoChooser.addOption("TestTurret", AutoCommands.testTurret(m_flywheels, m_turret));
     }
-
-    public final LoggedTunableNumber m_flywheelsVelocity = new LoggedTunableNumber("FlywheelsVelocityRPM", 0.0);
-    public final LoggedTunableNumber m_turretPosition = new LoggedTunableNumber("TurretPositionDeg", 0.0);
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
      * @return the command to run in autonomous
      */
-    public Command getAutonomousCommand() {
-        DriverStation.silenceJoystickConnectionWarning(true);
-        // return m_autoChooser.get();
-
-        return Commands.runOnce(
-            () -> {
-                m_flywheels.runVelocity(m_flywheelsVelocity::get);
-                m_turret.runPosition(() -> Rotation2d.fromDegrees(m_turretPosition.get()));
-            },
-            m_flywheels,
-            m_turret
-        );
-
-        // return TurretCommands.feedforwardCharacterization(m_turret);
-    }
+    public Command getAutonomousCommand() { return m_autoChooser.get(); }
 }

@@ -30,7 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-import static frc.robot.Constants.DriveCommandsConstants.*;
+import static frc.robot.Constants.DriveConstants.*;
 
 public class DriveCommands {
     private DriveCommands() {}
@@ -124,10 +124,10 @@ public class DriveCommands {
 
         // Create PID controller
         ProfiledPIDController angleController = new ProfiledPIDController(
-            kAngleP,
+            kDriveToPoseAngleP,
             0.0,
-            kAngleD,
-            new TrapezoidProfile.Constraints(kAngleMaxVelocity, kAngleMaxAcceleration)
+            kDriveToPoseAngleD,
+            new TrapezoidProfile.Constraints(kDriveToPoseAngleMaxVelocity, kDriveToPoseAngleMaxAcceleration)
         );
         angleController.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -317,6 +317,10 @@ public class DriveCommands {
                     )
             )
         );
+    }
+
+    public static Command driveToPose(Supplier<Pose2d> target, DriveSubsystem drive) {
+        return new DriveToPose(target, drive);
     }
 
     private static class WheelRadiusCharacterizationState {

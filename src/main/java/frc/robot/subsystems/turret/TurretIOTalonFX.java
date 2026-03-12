@@ -15,7 +15,6 @@ import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.Constants.TurretConstants;
 import frc.robot.util.Conversions;
 
 import static frc.robot.Constants.TurretConstants.*;
@@ -66,12 +65,11 @@ public class TurretIOTalonFX implements TurretIO {
         m_config.MotorOutput.Inverted = kInverted
             ? InvertedValue.Clockwise_Positive
             : InvertedValue.CounterClockwise_Positive;
-        
+
         m_config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = kMaxPosition.getRotations();
         m_config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         m_config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = kMinPosition.getRotations();
         m_config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        
 
         StatusCode result = m_motor.getConfigurator().apply(m_config);
         if (!result.isOK()) {
@@ -101,6 +99,8 @@ public class TurretIOTalonFX implements TurretIO {
         );
 
         ParentDevice.optimizeBusUtilizationForAll(m_motor);
+
+        m_motor.setPosition(0.0);
     }
 
     @Override
@@ -124,13 +124,18 @@ public class TurretIOTalonFX implements TurretIO {
     }
 
     @Override
-    public void setPosition(double positionRad) {
+    public void runPosition(double positionRad) {
         m_motor.setControl(m_motionMagic.withPosition(Units.Radians.of(positionRad)));
     }
 
     @Override
-    public void setVoltage(double volts) {
+    public void runVoltage(double volts) {
         m_motor.setControl(m_voltageOut.withOutput(volts));
+    }
+
+    @Override
+    public void setPosition(double positionRad) {
+        m_motor.setPosition(Conversions.radiansToRotations(positionRad));
     }
 
     @Override
