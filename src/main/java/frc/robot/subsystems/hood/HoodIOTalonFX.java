@@ -69,6 +69,11 @@ public class HoodIOTalonFX implements HoodIO {
         m_config.MotionMagic.MotionMagicAcceleration = Conversions.radiansToRotations(
             kMotionMagicCruiseAccelerationRadPerSecSq
         );
+        
+        m_config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = kMaxAngle.getRotations();
+        m_config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        m_config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = kMinAngle.getRotations();
+        m_config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
         StatusCode result = m_motor.getConfigurator().apply(m_config);
         if (!result.isOK()) {
