@@ -82,7 +82,36 @@ public class AutoCommands {
         );
     }
 
-    public static Command preloadAndOutpost(
+    public static Command preloadRight(
+        DriveSubsystem drive,
+        TurretSubsystem turret,
+        FlywheelsSubsystem flyhweels,
+        IndexerSubsystem indexer,
+        IntakeSubsystem intake
+    ) {
+        return Commands.sequence(
+            prefix(
+                () -> AllianceFlip.apply(
+                    new Pose2d(
+                        LinesVertical.starting - Conversions.inchesToMeters(12),
+                        LinesHorizontal.rightTrenchOpenStart - Conversions.inchesToMeters(16 + 3),
+                        Rotation2d.kCCW_Pi_2
+                    )
+                ),
+                () -> Rotation2d.kZero,
+                drive,
+                turret
+            ),
+            TurretCommands.rightTrench(turret),
+            FlywheelsCommands.runVelocity(flyhweels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
+            Commands.waitSeconds(2),
+            IndexerCommands.index(indexer),
+            Commands.waitSeconds(4),
+            IndexerCommands.stop(indexer)
+        );
+    }
+
+    public static Command preloadAndOutpostRight(
         DriveSubsystem drive,
         TurretSubsystem turret,
         FlywheelsSubsystem flywheels,
@@ -112,10 +141,10 @@ public class AutoCommands {
                 TurretCommands.outpost(turret),
                 IndexerCommands.index(indexer).beforeStarting(Commands.waitSeconds(1))
             )
-        ).withName("AutoCommands::preloadAndOutpost");
+        ).withName("AutoCommands::preloadAndOutpostRight");
     }
 
-    public static Command preloadAndDepot(
+    public static Command preloadAndDepotLeft(
         DriveSubsystem drive,
         TurretSubsystem turret,
         FlywheelsSubsystem flywheels,
@@ -137,7 +166,7 @@ public class AutoCommands {
                 FlywheelsCommands.autoAim(flywheels),
                 IndexerCommands.index(indexer).beforeStarting(Commands.waitSeconds(1.2))
             )
-        ).withName("AutoCommands::preloadAndDepot");
+        ).withName("AutoCommands::preloadAndDepotLeft");
     }
 
     public static Command test(

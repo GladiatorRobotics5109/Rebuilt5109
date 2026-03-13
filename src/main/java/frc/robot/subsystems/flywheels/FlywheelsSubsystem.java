@@ -73,10 +73,10 @@ public class FlywheelsSubsystem extends SubsystemBase {
         if (m_hasDesiredVelocity) {
             double bang = 12 * m_bang.calculate(m_inputs.velocityRPM, desired);
             double ff = m_ff.calculate(desired);
-            Logger.recordOutput("Flywheels_desired", desired);
-            Logger.recordOutput("Flywheels_velocity", m_inputs.velocityRPM);
-            Logger.recordOutput("Flywheels_Bang", bang);
-            Logger.recordOutput("Flywheels_FF", ff);
+            // Logger.recordOutput(kLogPath + "/control_desired", desired);
+            // Logger.recordOutput(kLogPath + "/control_velocity", m_inputs.velocityRPM);
+            Logger.recordOutput(kLogPath + "/BangOutput", bang);
+            Logger.recordOutput(kLogPath + "/FFOutput", ff);
             m_io.setVoltage(bang + ff);
         }
 

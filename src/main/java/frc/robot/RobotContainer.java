@@ -10,8 +10,6 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -97,12 +95,6 @@ public class RobotContainer {
             Visualizer.init(m_drive, m_flywheels);
         }
 
-        Translation3d robot = FieldConstants.Hub.topCenterPoint.plus(
-            new Translation3d(Conversions.inchesToMeters(-118), 0.0, 0.0)
-        );
-
-        m_drive.setPose(new Pose2d(robot.getX(), robot.getY(), Rotation2d.kZero));
-
         CommandScheduler.getInstance().onCommandInitialize(
             command -> Logger.recordOutput("CommandLog", "INIT: " + command.getName())
         );
@@ -152,8 +144,8 @@ public class RobotContainer {
         //     })
         // );
 
-        // m_driverController.povUp().whileTrue(IntakeCommands.testPivot(m_intake, () -> -2));
-        // m_driverController.povDown().whileTrue(IntakeCommands.testPivot(m_intake, () -> 2));
+        m_driverController.povUp().whileTrue(IntakeCommands.testPivot(m_intake, () -> -2));
+        m_driverController.povDown().whileTrue(IntakeCommands.testPivot(m_intake, () -> 2));
 
         m_driverController.L1().onTrue(
             Commands.either(
@@ -206,13 +198,17 @@ public class RobotContainer {
             AutoCommands.preloadLeft(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
         );
         m_autoChooser.addOption(
-            "Comp_preloadAndOutpost",
-            AutoCommands.preloadAndOutpost(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
+            "Comp_preloadRight",
+            AutoCommands.preloadRight(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
+        );
+        m_autoChooser.addOption(
+            "Comp_preloadAndOutpostRight",
+            AutoCommands.preloadAndOutpostRight(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
         );
 
         m_autoChooser.addOption(
-            "Comp_preloadAndDepot",
-            AutoCommands.preloadAndDepot(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
+            "Comp_preloadAndDepotLeft",
+            AutoCommands.preloadAndDepotLeft(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
         );
 
         // Set up SysId routines

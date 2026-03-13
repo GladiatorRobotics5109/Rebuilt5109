@@ -1,7 +1,5 @@
 package frc.robot.subsystems.hood;
 
-import static frc.robot.Constants.IndexerConstants.kLogPath;
-
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;

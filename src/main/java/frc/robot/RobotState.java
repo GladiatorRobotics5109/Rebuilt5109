@@ -28,7 +28,7 @@ public class RobotState {
 
         // Log empty AimingParameters on initialization to avoid loop overruns
         Logger.recordOutput(
-            "RobotState/LatestAimingParameters",
+            "RobotState/AimingParameters/LatestAimingParameters",
             new AimingParameters(Rotation2d.kZero, 0.0, Rotation2d.kZero)
         );
     }
@@ -104,7 +104,6 @@ public class RobotState {
         );
 
         Translation2d delta = target.minus(predicted.getTranslation());
-        Logger.recordOutput("TEST_TEST_DeltaX", delta.getX());
         Rotation2d targetPosition = delta.getAngle().minus(predicted.getRotation());
         double dist = delta.getNorm();
         Rotation2d pitch = Rotation2d.fromRadians(
@@ -127,7 +126,11 @@ public class RobotState {
         }
 
         m_latestAimingParameters = new AimingParameters(targetPosition, flywheelsRPM, pitch);
-        Logger.recordOutput("RobotState/LatestAimingParameters", m_latestAimingParameters);
+        Logger.recordOutput("AimingParameters/LatestAimingParameters", m_latestAimingParameters);
+        Logger.recordOutput("AimingParameters/Target", target);
+        Logger.recordOutput("AimingParameters/Predicted", predicted);
+        Logger.recordOutput("AimingParameters/Delta", delta);
+        Logger.recordOutput("AimingParameters/Dist", dist);
 
         return m_latestAimingParameters;
     }
@@ -175,7 +178,7 @@ public class RobotState {
         Logger.recordOutput("Subsystems/Drive/Velocity", m_velocity);
         Logger.recordOutput("Subsystems/Drive/DesiredVelocity", m_desiredVelocity);
 
-        Logger.recordOutput("Subsystems/Flywheels/Velocity", m_flywheelsVelocity);
+        Logger.recordOutput("Subsystems/Flywheels/CurrentVelocity", m_flywheelsVelocity);
         Logger.recordOutput("Subsystems/Flywheels/DesiredVelocity", m_flywheelsDesiredVelocity);
         Logger.recordOutput("Subsystems/Flywheels/HasDesiredVeloicty", m_flywheelsHasDesiredVelocity);
 

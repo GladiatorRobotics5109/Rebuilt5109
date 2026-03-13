@@ -144,7 +144,7 @@ public final class Constants {
         public static final double kSupplyCurrentLimit = 40.0;
         public static final boolean kSupplyCurrentLimitEnable = true;
         public static final double kGearRatio = 25.0 * 248.0 / 18.0;
-        public static final boolean kInverted = false;
+        public static final boolean kInverted = true;
 
         public static final double kP = 5.0;
         public static final double kI = 0.0;
@@ -211,7 +211,7 @@ public final class Constants {
         public static final double kPivotGearRatio = 9 * 5 * 2;
 
         public static final boolean kPivotInvert = false;
-        public static final boolean kPivotBrake = true;
+        public static final boolean kPivotBrake = false;
 
         public static final double kPivotP = 20; // V / rot
         public static final double kPivotI = 0.0;
@@ -220,7 +220,7 @@ public final class Constants {
         public static final double kPivotS = 0.0;
         public static final double kPivotV = 0.0;
 
-        public static final double kRollersGearRatio = 5;
+        public static final double kRollersGearRatio = 3;
 
         public static final boolean kRollersInvert = true;
         public static final boolean kRollersBrake = false;
@@ -230,6 +230,8 @@ public final class Constants {
         public static final Rotation2d kPivotStartingPosition = Rotation2d.kZero;
         public static final Rotation2d kPivotDeployedPosition = Rotation2d.fromDegrees(95);
         public static final Rotation2d kPivotStowedPosition = kPivotStartingPosition;
+        public static final Rotation2d kPivotDeployedTolerance = Rotation2d.fromDegrees(5);
+        public static final double kPviotDeployedHoldingVoltage = 2.0;
 
         public static final double kRollersIntakeVoltage = 10;
     }
@@ -278,19 +280,17 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap kShuttleHoodPitch = new InterpolatingDoubleTreeMap();
 
         static {
-            // kHubFlywheelsRPMs.put(1.4, 2250.0);
-            // kHubFlywheelsRPMs.put(3.0, 3500.0);
-            // kHubFlywheelsRPMs.put(4.1, 4050.0);
-
             kHubFlywheelsRPMs.put(Conversions.inchesToMeters(80.93), 2700.0);
             kHubFlywheelsRPMs.put(Conversions.inchesToMeters(131.0), 3350.0);
             kHubFlywheelsRPMs.put(Conversions.inchesToMeters(157.4), 3550.0);
             kHubFlywheelsRPMs.put(Conversions.inchesToMeters(264.5), 4025.0);
 
-            kShuttleFlywheelsRPMs.put(1.0, 5500.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(80.93), 2700.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(131.0), 3350.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(157.4), 3550.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(264.5), 4025.0);
 
             kHubHoodPitch.put(1.0, HoodConstants.kMaxAngle.getRadians());
-
             kShuttleHoodPitch.put(1.0, HoodConstants.kMinAngle.getRadians());
         }
 
@@ -314,7 +314,7 @@ public final class Constants {
             LinesHorizontal.center / 4 * 3
         );
 
-        public static final double kTrenchFlywheelsVelocityRPM = 4500.0;
+        public static final double kTrenchFlywheelsVelocityRPM = 3450.0;
     }
 
     public static enum Mode {
