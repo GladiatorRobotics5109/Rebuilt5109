@@ -169,6 +169,9 @@ public final class Constants {
         public static final double kIndexerIndexVoltage = 12.0;
         public static final double kKickupIndexVoltage = 6.0;
 
+        public static final double kIndexerReverseVoltage = -6.0;
+        public static final double kKickupReverseVoltage = 0.0;
+
         public static final int kIndexerId = 20;
         public static final int kKickupId = 21;
         public static final double kIndexerGearRatio = 3.0;
@@ -210,7 +213,7 @@ public final class Constants {
         public static final boolean kPivotInvert = false;
         public static final boolean kPivotBrake = true;
 
-        public static final double kPivotP = 40; // V / rot
+        public static final double kPivotP = 20; // V / rot
         public static final double kPivotI = 0.0;
         public static final double kPivotD = 0.0;
 

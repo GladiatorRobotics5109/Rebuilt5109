@@ -133,6 +133,7 @@ public class RobotContainer {
         m_driverController.cross().onTrue(
             Commands.either(IndexerCommands.stop(m_indexer), IndexerCommands.index(m_indexer), m_indexer::isIndexing)
         );
+        m_driverController.square().onTrue(IndexerCommands.reverse(m_indexer)).onFalse(IndexerCommands.stop(m_indexer));
         m_driverController.triangle().onTrue(
             Commands.runOnce(
                 () -> RobotState.getInstance().setFuelStrategy(

@@ -10,6 +10,10 @@ public class IndexerCommands {
         return indexer.runOnce(() -> indexer.runVoltage(kIndexerIndexVoltage, kKickupIndexVoltage));
     }
 
+    public static Command reverse(IndexerSubsystem indexer) {
+        return indexer.runOnce(() -> indexer.runVoltage(kIndexerReverseVoltage, kKickupReverseVoltage));
+    }
+
     public static Command stop(IndexerSubsystem indexer) {
         return indexer.runOnce(indexer::stop);
     }
