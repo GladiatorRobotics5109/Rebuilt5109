@@ -104,6 +104,7 @@ public class RobotState {
         );
 
         Translation2d delta = target.minus(predicted.getTranslation());
+        Logger.recordOutput("TEST_TEST_DeltaX", delta.getX());
         Rotation2d targetPosition = delta.getAngle().minus(predicted.getRotation());
         double dist = delta.getNorm();
         Rotation2d pitch = Rotation2d.fromRadians(
@@ -126,8 +127,7 @@ public class RobotState {
         }
 
         m_latestAimingParameters = new AimingParameters(targetPosition, flywheelsRPM, pitch);
-        Logger.recordOutput("RobotState/AimingParameters/Dist", dist);
-        Logger.recordOutput("RobotState/AimingParameters/LatestAimingParameters", m_latestAimingParameters);
+        Logger.recordOutput("RobotState/LatestAimingParameters", m_latestAimingParameters);
 
         return m_latestAimingParameters;
     }

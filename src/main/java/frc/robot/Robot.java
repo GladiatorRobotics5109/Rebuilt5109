@@ -67,7 +67,7 @@ public class Robot extends LoggedRobot {
                 break;
         }
 
-        LoggedPowerDistribution.getInstance(0, ModuleType.kRev);
+        LoggedPowerDistribution.getInstance(1, ModuleType.kRev);
 
         // Start AdvantageKit logger
         Logger.start();
@@ -154,6 +154,7 @@ public class Robot extends LoggedRobot {
     /** This function is called periodically whilst in simulation. */
     @Override
     public void simulationPeriodic() {
-        Visualizer.getInstance().periodic();
+        if (Constants.kCurrentMode == frc.robot.Constants.Mode.SIM)
+            Visualizer.getInstance().periodic();
     }
 }

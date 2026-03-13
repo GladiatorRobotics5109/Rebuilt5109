@@ -201,6 +201,10 @@ public class RobotContainer {
 
     private void buildAutoChooser() {
         m_autoChooser.addOption(
+            "Comp_preloadLeft",
+            AutoCommands.preloadLeft(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
+        );
+        m_autoChooser.addOption(
             "Comp_preloadAndOutpost",
             AutoCommands.preloadAndOutpost(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
         );
@@ -237,7 +241,7 @@ public class RobotContainer {
         );
 
         m_autoChooser.addOption("Test", AutoCommands.test(m_drive, m_turret, m_flywheels, m_indexer));
-        m_autoChooser.addOption("TestTurret", AutoCommands.testTurret(m_flywheels, m_turret));
+        m_autoChooser.addOption("TestTurret", AutoCommands.testTurret(m_flywheels, m_turret, m_indexer));
     }
 
     /**

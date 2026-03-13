@@ -74,7 +74,7 @@ public final class Constants {
         public static final double kShootRPM = 5500;
         public static final double kIdleRPM = 1000;
 
-        public static final double kIdleDistThresholdMeters = 5.0;
+        public static final double kIdleDistThresholdMeters = 7.0;
         public static final double kIdleDistDebounce = 0.5;
 
         public static final double kS = 0.188;
@@ -117,7 +117,7 @@ public final class Constants {
         public static final Rotation2d kMaxPosition = Rotation2d.kCCW_Pi_2;
         public static final Rotation2d kMinPosition = Rotation2d.kCW_Pi_2;
 
-        public static final Rotation2d kRightTrenchPosition = Rotation2d.fromDegrees(-15);
+        public static final Rotation2d kRightTrenchPosition = Rotation2d.fromDegrees(-5);
         public static final Rotation2d kLeftTrenchPosition = kRightTrenchPosition.times(-1);
         public static final Rotation2d kOutpostPosition = Rotation2d.fromDegrees(15);
 
@@ -199,8 +199,8 @@ public final class Constants {
         public static final double kRollersSupplyCurrentLimit = 40.0;
         public static final boolean kRollersSupplyCurrentLimitEnable = true;
 
-        public static final double kPivotStatorCurrentLimit = 0.0;
-        public static final boolean kPivotStatorCurrentLimitEnable = false;
+        public static final double kPivotStatorCurrentLimit = 30.0;
+        public static final boolean kPivotStatorCurrentLimitEnable = true;
 
         public static final double kPivotSupplyCurrentLimit = 40.0;
         public static final boolean kPivotSupplyCurrentLimitEnable = true;
@@ -210,7 +210,7 @@ public final class Constants {
         public static final boolean kPivotInvert = false;
         public static final boolean kPivotBrake = true;
 
-        public static final double kPivotP = 60; // V / rot
+        public static final double kPivotP = 40; // V / rot
         public static final double kPivotI = 0.0;
         public static final double kPivotD = 0.0;
 
@@ -222,13 +222,13 @@ public final class Constants {
         public static final boolean kRollersInvert = true;
         public static final boolean kRollersBrake = false;
 
-        public static final Rotation2d kPivotMaxPosition = Rotation2d.fromDegrees(90);
+        public static final Rotation2d kPivotMaxPosition = Rotation2d.fromDegrees(100);
         public static final Rotation2d kPivotMinPosition = Rotation2d.fromDegrees(-10);
         public static final Rotation2d kPivotStartingPosition = Rotation2d.kZero;
-        public static final Rotation2d kPivotDeployedPosition = Rotation2d.fromDegrees(90);
+        public static final Rotation2d kPivotDeployedPosition = Rotation2d.fromDegrees(95);
         public static final Rotation2d kPivotStowedPosition = kPivotStartingPosition;
 
-        public static final double kRollersIntakeVoltage = 8;
+        public static final double kRollersIntakeVoltage = 10;
     }
 
     public static final class VisionConstants {
@@ -262,8 +262,7 @@ public final class Constants {
 
         // Multipliers to apply for MegaTag 2 observations
         public static final double kLinearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
-        public static final double kAngularStdDevMegatag2Factor = 0.5; // No rotation data available
-        // public static final double kAngularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
+        public static final double kAngularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
     }
 
     public static final class AimingConstants {
@@ -276,9 +275,14 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap kShuttleHoodPitch = new InterpolatingDoubleTreeMap();
 
         static {
-            kHubFlywheelsRPMs.put(1.4, 2250.0);
-            kHubFlywheelsRPMs.put(3.0, 3500.0);
-            kHubFlywheelsRPMs.put(4.1, 4050.0);
+            // kHubFlywheelsRPMs.put(1.4, 2250.0);
+            // kHubFlywheelsRPMs.put(3.0, 3500.0);
+            // kHubFlywheelsRPMs.put(4.1, 4050.0);
+
+            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(80.93), 2700.0);
+            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(131.0), 3350.0);
+            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(157.4), 3550.0);
+            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(264.5), 4025.0);
 
             kShuttleFlywheelsRPMs.put(1.0, 5500.0);
 

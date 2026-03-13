@@ -33,7 +33,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -373,12 +372,12 @@ public class DriveSubsystem extends SubsystemBase {
         );
 
         Pose3d tag = FieldConstants.AprilTagLayoutType.OFFICIAL.getLayout().getTagPose(13).get();
-        Logger.recordOutput("DeltaX", tag.getX() - visionRobotPoseMeters.getX());
-        Logger.recordOutput("DeltaY", tag.getY() - visionRobotPoseMeters.getY());
-        Logger.recordOutput(
-            "DeltaRot",
-            Units.radiansToDegrees(tag.getRotation().getZ() - visionRobotPoseMeters.getRotation().getRadians())
-        );
+        // Logger.recordOutput("DeltaX", tag.getX() - visionRobotPoseMeters.getX());
+        // Logger.recordOutput("DeltaY", tag.getY() - visionRobotPoseMeters.getY());
+        // Logger.recordOutput(
+        //     "DeltaRot",
+        //     Units.radiansToDegrees(tag.getRotation().getZ() - visionRobotPoseMeters.getRotation().getRadians())
+        // );
     }
 
     /** Returns the maximum linear speed in meters per sec. */
