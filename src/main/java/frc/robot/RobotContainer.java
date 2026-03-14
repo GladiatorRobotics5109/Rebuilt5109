@@ -141,7 +141,7 @@ public class RobotContainer {
         m_driverController.circle().toggleOnTrue(
             Commands.startEnd(
                 () -> {
-                    m_turret.setPosition(Rotation2d.kZero);
+                    m_turret.runPosition(Rotation2d.kZero);
                     m_flywheels.runVelocity(3500);
                 },
                 () -> {
