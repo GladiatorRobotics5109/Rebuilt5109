@@ -77,7 +77,7 @@ public class AutoCommands {
             FlywheelsCommands.runVelocity(flyhweels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(2),
             IndexerCommands.index(indexer),
-            Commands.waitSeconds(4),
+            Commands.waitSeconds(10),
             IndexerCommands.stop(indexer)
         );
     }
@@ -106,7 +106,7 @@ public class AutoCommands {
             FlywheelsCommands.runVelocity(flyhweels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(2),
             IndexerCommands.index(indexer),
-            Commands.waitSeconds(4),
+            Commands.waitSeconds(10),
             IndexerCommands.stop(indexer)
         );
     }
@@ -124,7 +124,7 @@ public class AutoCommands {
             FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(2),
             IndexerCommands.index(indexer),
-            Commands.waitSeconds(4),
+            Commands.waitSeconds(6),
             IndexerCommands.stop(indexer),
             IntakeCommands.deploy(intake),
             AutoBuilder.followPath(kPreloadAndOutpostPath),
@@ -132,7 +132,7 @@ public class AutoCommands {
                 DriveCommands.driveToPose(
                     () -> AllianceFlip.apply(
                         new Pose2d(
-                            Outpost.centerPoint.plus(new Translation2d(Conversions.inchesToMeters(26), 0.0)),
+                            Outpost.centerPoint.plus(new Translation2d(Conversions.inchesToMeters(28), 0.0)),
                             Rotation2d.kZero
                         )
                     ),
@@ -157,7 +157,7 @@ public class AutoCommands {
             FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(2),
             IndexerCommands.index(indexer),
-            Commands.waitSeconds(4),
+            Commands.waitSeconds(6),
             IndexerCommands.stop(indexer),
             Commands.parallel(
                 AutoBuilder.followPath(kPreloadAndDepotPath),
