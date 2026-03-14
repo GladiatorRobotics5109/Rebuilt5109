@@ -28,8 +28,6 @@ import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.fasterxml.jackson.databind.ext.OptionalHandlerFactory;
-
 /** IO implementation for real Limelight hardware. */
 public class VisionIOTurretLimelight implements VisionIO {
     private final Supplier<Rotation2d> rotationSupplier;
@@ -44,7 +42,7 @@ public class VisionIOTurretLimelight implements VisionIO {
     private final String name;
     private final Supplier<Transform3d> robotToCamera;
 
-    private static final int[] s_blueTags = new int[] { 25, 26, 18, 27, 19, 20, 21, 24};
+    private static final int[] s_blueTags = new int[] { 25, 26, 18, 27, 19, 20, 21, 24 };
     private static final int[] s_redTags = new int[] { 9, 10, 8, 5, 4, 3, 11, 2 };
 
     /**
@@ -85,7 +83,10 @@ public class VisionIOTurretLimelight implements VisionIO {
 
         Optional<Alliance> allianceOpt = DriverStation.getAlliance();
         if (allianceOpt.isPresent()) {
-            LimelightHelpers.SetFiducialIDFiltersOverride(this.name, allianceOpt.get() == Alliance.Blue ? s_blueTags : s_redTags);
+            LimelightHelpers.SetFiducialIDFiltersOverride(
+                this.name,
+                allianceOpt.get() == Alliance.Blue ? s_blueTags : s_redTags
+            );
         }
 
         // Update orientation for MegaTag 2
