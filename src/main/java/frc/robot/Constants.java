@@ -221,7 +221,7 @@ public final class Constants {
         public static final double kPivotGearRatio = 9 * 5 * 2;
 
         public static final boolean kPivotInvert = false;
-        public static final boolean kPivotBrake = true;
+        public static final boolean kPivotBrake = false;
 
         public static final double kPivotP = 35; // V / rot
         public static final double kPivotI = 0.0;
