@@ -204,8 +204,9 @@ public class DriveSubsystem extends SubsystemBase {
 
         // Log empty setpoint states when disabled
         if (DriverStation.isDisabled()) {
-            Logger.recordOutput("Subsystems/Drive/ModuleSetpoints", new SwerveModuleState[] {});
-            Logger.recordOutput("Subsystems/Drive/ModuleSetpointsOptimized", new SwerveModuleState[] {});
+            Logger.recordOutput("Subsystems/Drive/DesiredModuleStates", new SwerveModuleState[] {});
+            Logger.recordOutput("Subsystems/Drive/DesiredModuleStatesOptimized", new SwerveModuleState[] {});
+            Logger.recordOutput("Subsystems/Drive/ModuleStates", new SwerveModuleState[] {});
         }
 
         // Update odometry
@@ -244,6 +245,8 @@ public class DriveSubsystem extends SubsystemBase {
         gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.kCurrentMode != Mode.SIM);
 
         RobotState.getInstance().updateDrive(getPose(), getChassisSpeeds());
+
+        Logger.recordOutput("Subsystems/Drive/ModuleStates", getModuleStates());
     }
 
     /**
