@@ -107,12 +107,23 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
+        // m_drive.setDefaultCommand(
+        //     DriveCommands.joystickDrive(
+        //         m_drive,
+        //         () -> -m_driverController.getLeftY(),
+        //         () -> -m_driverController.getLeftX(),
+        //         () -> -m_driverController.getRightX(),
+        //         () -> m_driverController.getR2Axis()
+        //     )
+        // );
+
         m_drive.setDefaultCommand(
             DriveCommands.joystickDrive(
-                m_drive,
                 () -> -m_driverController.getLeftY(),
                 () -> -m_driverController.getLeftX(),
-                () -> -m_driverController.getRightX()
+                () -> -m_driverController.getRightX(),
+                () -> m_driverController.getR2Axis(),
+                m_drive
             )
         );
 

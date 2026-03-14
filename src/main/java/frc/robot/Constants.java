@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.*;
@@ -9,6 +11,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.FieldConstants.AprilTagLayoutType;
 import frc.robot.FieldConstants.LinesHorizontal;
 import frc.robot.FieldConstants.LinesVertical;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.util.AllianceFlip;
 import frc.robot.util.Conversions;
 
@@ -58,6 +62,12 @@ public final class Constants {
 
         public static final double kWheelRadiusMaxVelocity = 0.25; // Rad/Sec
         public static final double kWheelRadiusRampRate = 0.05; // Rad/Sec^2
+
+        public static final double kDefaultDriveSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        public static final double kSlowDriveSpeed = 1;
+
+        public static final double kDefaultRotationSpeed = kDefaultDriveSpeed / DriveSubsystem.DRIVE_BASE_RADIUS;
+        public static final double kSlowRotationSpeed = Conversions.rotationsToRadians(1);
     }
 
     public static final class FlywheelsConstants {
