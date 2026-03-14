@@ -67,7 +67,7 @@ public class VisionIOTurretLimelight implements VisionIO {
         megatag1Subscriber = table.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[] {});
         megatag2Subscriber = table.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[] {});
 
-        LimelightHelpers.SetIMUMode(this.name, 4);
+        LimelightHelpers.SetIMUAssistAlpha(this.name, 0.005);
     }
 
     @Override
@@ -106,6 +106,14 @@ public class VisionIOTurretLimelight implements VisionIO {
             robotToCamera.getRotation().getY(),
             robotToCamera.getRotation().getZ()
         );
+
+        if (DriverStation.isDisabled()) {
+            LimelightHelpers.SetIMUMode(this.name, 1);
+        }
+        else {
+            LimelightHelpers.SetIMUMode(this.name, 4);
+        }
+
         double deg = rotationSupplier.get().getDegrees();
         LimelightHelpers.SetRobotOrientation(name, deg, 0, 0, 0, 0, 0);
         NetworkTableInstance.getDefault()
