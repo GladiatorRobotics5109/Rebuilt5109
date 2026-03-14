@@ -164,6 +164,13 @@ public class RobotContainer {
         m_driverController.povUp().whileTrue(IntakeCommands.testPivot(m_intake, () -> -2));
         m_driverController.povDown().whileTrue(IntakeCommands.testPivot(m_intake, () -> 2));
 
+        m_driverController.povRight().onTrue(
+            Commands.runOnce(() -> m_flywheels.setVelocityOffset(m_flywheels.getVelocityOffset() + 50))
+        );
+        m_driverController.povLeft().onTrue(
+            Commands.runOnce(() -> m_flywheels.setVelocityOffset(m_flywheels.getVelocityOffset() - 50))
+        );
+
         m_driverController.L1().onTrue(
             Commands.either(
                 IntakeCommands.deploy(m_intake),
@@ -171,8 +178,6 @@ public class RobotContainer {
                 () -> m_intake.getState() != IntakeState.DEPLOYED
             )
         );
-
-        m_driverController.povLeft().whileTrue(TurretCommands.straight(m_turret));
 
         // Automatically stow the hood when the robot gets close to the trench so that we don't hit it
         new Trigger(
