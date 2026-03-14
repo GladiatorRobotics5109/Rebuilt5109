@@ -194,6 +194,8 @@ public final class Constants {
         public static final double kSupplyCurrentLimit = 40.0;
         public static final boolean kSupplyCurrentLimitEnable = true;
 
+        public static final double kKickupCurrentLimit = 30.0;
+
         public static final double kSimMOI = 0.0002;
 
         public static final double kS = 0.0;
@@ -292,8 +294,8 @@ public final class Constants {
         static {
             kHubFlywheelsRPMs.put(Conversions.inchesToMeters(80.93), 2700.0);
             kHubFlywheelsRPMs.put(Conversions.inchesToMeters(131.0), 3350.0);
-            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(157.4), 3550.0);
-            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(264.5), 4025.0);
+            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(157.4), 3600.0);
+            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(264.5), 4075.0);
 
             kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(80.93), 2700.0);
             kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(131.0), 3350.0);
