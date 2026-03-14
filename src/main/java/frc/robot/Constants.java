@@ -127,7 +127,7 @@ public final class Constants {
         public static final Rotation2d kMaxPosition = Rotation2d.kCCW_Pi_2;
         public static final Rotation2d kMinPosition = Rotation2d.kCW_Pi_2;
 
-        public static final Rotation2d kRightTrenchPosition = Rotation2d.fromDegrees(-5);
+        public static final Rotation2d kRightTrenchPosition = Rotation2d.fromDegrees(-8);
         public static final Rotation2d kLeftTrenchPosition = kRightTrenchPosition.times(-1);
         public static final Rotation2d kOutpostPosition = Rotation2d.fromDegrees(15);
 
