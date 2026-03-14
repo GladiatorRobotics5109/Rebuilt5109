@@ -236,8 +236,8 @@ public final class Constants {
         public static final boolean kRollersBrake = false;
 
         public static final Rotation2d kPivotMaxPosition = Rotation2d.fromDegrees(100);
-        public static final Rotation2d kPivotMinPosition = Rotation2d.fromDegrees(-10);
-        public static final Rotation2d kPivotStartingPosition = Rotation2d.kZero;
+        public static final Rotation2d kPivotMinPosition = Rotation2d.fromDegrees(-22.65);
+        public static final Rotation2d kPivotStartingPosition = kPivotMinPosition;
         public static final Rotation2d kPivotDeployedPosition = Rotation2d.fromDegrees(95);
         public static final Rotation2d kPivotStowedPosition = kPivotStartingPosition;
         public static final Rotation2d kPivotDeployedTolerance = Rotation2d.fromDegrees(5);
