@@ -13,17 +13,22 @@ import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.util.LimelightHelpers;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
+
+import com.fasterxml.jackson.databind.ext.OptionalHandlerFactory;
 
 /** IO implementation for real Limelight hardware. */
 public class VisionIOTurretLimelight implements VisionIO {
@@ -38,6 +43,9 @@ public class VisionIOTurretLimelight implements VisionIO {
 
     private final String name;
     private final Supplier<Transform3d> robotToCamera;
+
+    private static final int[] s_blueTags = new int[] { 25, 26, 18, 27, 19, 20, 21, 24};
+    private static final int[] s_redTags = new int[] { 9, 10, 8, 5, 4, 3, 11, 2 };
 
     /**
      * Creates a new VisionIOLimelight.
@@ -74,6 +82,11 @@ public class VisionIOTurretLimelight implements VisionIO {
             Rotation2d.fromDegrees(txSubscriber.get()),
             Rotation2d.fromDegrees(tySubscriber.get())
         );
+
+        Optional<Alliance> allianceOpt = DriverStation.getAlliance();
+        if (allianceOpt.isPresent()) {
+            LimelightHelpers.SetFiducialIDFiltersOverride(this.name, allianceOpt.get() == Alliance.Blue ? s_blueTags : s_redTags);
+        }
 
         // Update orientation for MegaTag 2
         // orientationPublisher.accept(

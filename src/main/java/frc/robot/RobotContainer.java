@@ -10,6 +10,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -107,16 +108,6 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        // m_drive.setDefaultCommand(
-        //     DriveCommands.joystickDrive(
-        //         m_drive,
-        //         () -> -m_driverController.getLeftY(),
-        //         () -> -m_driverController.getLeftX(),
-        //         () -> -m_driverController.getRightX(),
-        //         () -> m_driverController.getR2Axis()
-        //     )
-        // );
-
         m_drive.setDefaultCommand(
             DriveCommands.joystickDrive(
                 () -> -m_driverController.getLeftY(),
@@ -144,6 +135,21 @@ public class RobotContainer {
                         ? FuelStrategy.SHUTTLE
                         : FuelStrategy.HUB
                 )
+            )
+        );
+
+        m_driverController.circle().toggleOnTrue(
+            Commands.startEnd(
+                () -> {
+                    m_turret.setPosition(Rotation2d.kZero);
+                    m_flywheels.runVelocity(3500);
+                },
+                () -> {
+                    m_turret.stop();
+                    m_flywheels.stop();
+                },
+                m_turret,
+                m_flywheels
             )
         );
 

@@ -221,9 +221,9 @@ public final class Constants {
         public static final double kPivotGearRatio = 9 * 5 * 2;
 
         public static final boolean kPivotInvert = false;
-        public static final boolean kPivotBrake = false;
+        public static final boolean kPivotBrake = true;
 
-        public static final double kPivotP = 20; // V / rot
+        public static final double kPivotP = 35; // V / rot
         public static final double kPivotI = 0.0;
         public static final double kPivotD = 0.0;
 
@@ -281,7 +281,7 @@ public final class Constants {
     }
 
     public static final class AimingConstants {
-        public static final double kDriveLookaheadTime = 0.1;
+        public static final double kDriveLookaheadTime = 0.0;
 
         public static final InterpolatingDoubleTreeMap kHubFlywheelsRPMs = new InterpolatingDoubleTreeMap();
         public static final InterpolatingDoubleTreeMap kShuttleFlywheelsRPMs = new InterpolatingDoubleTreeMap();
