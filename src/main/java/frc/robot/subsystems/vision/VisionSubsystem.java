@@ -119,7 +119,9 @@ public class VisionSubsystem extends SubsystemBase {
                     || observation.pose().getX() > kAprilTagLayout.getFieldLength()
                     || observation.pose().getY() < 0.0
                     || observation.pose().getY() > kAprilTagLayout.getFieldWidth()
-                    || (cameraIndex == 0 && Math.abs(RobotState.getInstance().getTurretVelocityRadPerSec()) > kTurretVelocityThresholdRadPerSec);
+                    || (cameraIndex == 0
+                        && Math.abs(RobotState.getInstance().getTurretVelocityRadPerSec())
+                            > kTurretVelocityThresholdRadPerSec);
 
                 // Add pose to log
                 robotPoses.add(observation.pose());
