@@ -280,6 +280,8 @@ public final class Constants {
         // Multipliers to apply for MegaTag 2 observations
         public static final double kLinearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
         public static final double kAngularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
+
+        public static double kTurretVelocityThresholdRadPerSec = Conversions.degreesToRadians(10);
     }
 
     public static final class AimingConstants {

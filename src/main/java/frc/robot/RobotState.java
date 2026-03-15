@@ -67,6 +67,7 @@ public class RobotState {
     private Rotation2d m_turretPosition;
     /** Field relative turret position */
     private Rotation2d m_turretHeading;
+    private double m_turretVelocityRadPerSec;
 
     // -- Hood State --
     private Rotation2d m_hoodAngle;
@@ -150,10 +151,12 @@ public class RobotState {
         m_flywheelsHasDesiredVelocity = hasDesiredVelocity;
     }
 
-    public void updateTurret(Rotation2d turretPosition) {
+    public void updateTurret(Rotation2d turretPosition, double turretVelocityRadPerSec) {
         m_turretPosition = turretPosition;
 
         m_turretHeading = getRotation().plus(m_turretPosition);
+
+        m_turretVelocityRadPerSec = turretVelocityRadPerSec;
     }
 
     public void updateHood(Rotation2d hoodAngle) {
