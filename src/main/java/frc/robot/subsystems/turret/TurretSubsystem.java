@@ -36,7 +36,7 @@ public class TurretSubsystem extends SubsystemBase {
 
     public TurretSubsystem() {
         m_io = switch (Constants.kCurrentMode) {
-            case REAL -> new TurretIOTalonFX(kId, Constants.kCANBusRio);
+            // case REAL -> new TurretIOTalonFX(kId, Constants.kCANBusRio);
             case SIM -> new TurretIOSim();
             default -> new TurretIO() {};
         };
