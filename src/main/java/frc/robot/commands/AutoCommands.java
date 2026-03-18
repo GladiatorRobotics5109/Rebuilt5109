@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.AimingConstants;
+import frc.robot.Constants.IndexerConstants;
+import frc.robot.FieldConstants.LinesHorizontal;
+import frc.robot.FieldConstants.LinesVertical;
 import frc.robot.FieldConstants.Outpost;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.flywheels.FlywheelsSubsystem;
@@ -21,6 +24,7 @@ import frc.robot.util.LoggedTunableNumber;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 
 public class AutoCommands {
     private static PathPlannerPath kTestPath;
@@ -49,7 +53,65 @@ public class AutoCommands {
         }
     }
 
-    public static Command preloadAndOutpost(
+    public static Command preloadLeft(
+        DriveSubsystem drive,
+        TurretSubsystem turret,
+        FlywheelsSubsystem flyhweels,
+        IndexerSubsystem indexer,
+        IntakeSubsystem intake
+    ) {
+        return Commands.sequence(
+            prefix(
+                () -> AllianceFlip.apply(
+                    new Pose2d(
+                        LinesVertical.starting - Conversions.inchesToMeters(12),
+                        LinesHorizontal.leftTrenchOpenStart - Conversions.inchesToMeters(16 + 3),
+                        Rotation2d.kCW_Pi_2
+                    )
+                ),
+                () -> Rotation2d.kZero,
+                drive,
+                turret
+            ),
+            TurretCommands.leftTrench(turret),
+            FlywheelsCommands.runVelocity(flyhweels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
+            Commands.waitSeconds(2),
+            IndexerCommands.index(indexer),
+            Commands.waitSeconds(10),
+            IndexerCommands.stop(indexer)
+        );
+    }
+
+    public static Command preloadRight(
+        DriveSubsystem drive,
+        TurretSubsystem turret,
+        FlywheelsSubsystem flyhweels,
+        IndexerSubsystem indexer,
+        IntakeSubsystem intake
+    ) {
+        return Commands.sequence(
+            prefix(
+                () -> AllianceFlip.apply(
+                    new Pose2d(
+                        LinesVertical.starting - Conversions.inchesToMeters(12),
+                        LinesHorizontal.rightTrenchOpenStart - Conversions.inchesToMeters(16 + 3),
+                        Rotation2d.kCCW_Pi_2
+                    )
+                ),
+                () -> Rotation2d.kZero,
+                drive,
+                turret
+            ),
+            TurretCommands.rightTrench(turret),
+            FlywheelsCommands.runVelocity(flyhweels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
+            Commands.waitSeconds(2),
+            IndexerCommands.index(indexer),
+            Commands.waitSeconds(10),
+            IndexerCommands.stop(indexer)
+        );
+    }
+
+    public static Command preloadAndOutpostRight(
         DriveSubsystem drive,
         TurretSubsystem turret,
         FlywheelsSubsystem flywheels,
@@ -62,7 +124,7 @@ public class AutoCommands {
             FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(2),
             IndexerCommands.index(indexer),
-            Commands.waitSeconds(4),
+            Commands.waitSeconds(6),
             IndexerCommands.stop(indexer),
             IntakeCommands.deploy(intake),
             AutoBuilder.followPath(kPreloadAndOutpostPath),
@@ -70,7 +132,7 @@ public class AutoCommands {
                 DriveCommands.driveToPose(
                     () -> AllianceFlip.apply(
                         new Pose2d(
-                            Outpost.centerPoint.plus(new Translation2d(Conversions.inchesToMeters(26), 0.0)),
+                            Outpost.centerPoint.plus(new Translation2d(Conversions.inchesToMeters(28), 0.0)),
                             Rotation2d.kZero
                         )
                     ),
@@ -79,10 +141,10 @@ public class AutoCommands {
                 TurretCommands.outpost(turret),
                 IndexerCommands.index(indexer).beforeStarting(Commands.waitSeconds(1))
             )
-        ).withName("AutoCommands::preloadAndOutpost");
+        ).withName("AutoCommands::preloadAndOutpostRight");
     }
 
-    public static Command preloadAndDepot(
+    public static Command preloadAndDepotLeft(
         DriveSubsystem drive,
         TurretSubsystem turret,
         FlywheelsSubsystem flywheels,
@@ -95,7 +157,7 @@ public class AutoCommands {
             FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(2),
             IndexerCommands.index(indexer),
-            Commands.waitSeconds(4),
+            Commands.waitSeconds(6),
             IndexerCommands.stop(indexer),
             Commands.parallel(
                 AutoBuilder.followPath(kPreloadAndDepotPath),
@@ -104,7 +166,7 @@ public class AutoCommands {
                 FlywheelsCommands.autoAim(flywheels),
                 IndexerCommands.index(indexer).beforeStarting(Commands.waitSeconds(1.2))
             )
-        ).withName("AutoCommands::preloadAndDepot");
+        ).withName("AutoCommands::preloadAndDepotLeft");
     }
 
     public static Command test(
@@ -119,14 +181,16 @@ public class AutoCommands {
         ).withName("AutoCommands::test");
     }
 
-    public static Command testTurret(FlywheelsSubsystem flywheels, TurretSubsystem turret) {
+    public static Command testTurret(FlywheelsSubsystem flywheels, TurretSubsystem turret, IndexerSubsystem indexer) {
         return Commands.runEnd(() -> {
             flywheels.runVelocity(s_flywheelsVelocity::get);
             turret.runPosition(() -> Rotation2d.fromDegrees(s_turretPosition.get()));
+            indexer.runVoltage(IndexerConstants.kIndexerIndexVoltage, IndexerConstants.kKickupIndexVoltage);
         },
             () -> {
                 flywheels.stop();
                 turret.stop();
+                indexer.stop();
             }
         );
     }
@@ -137,10 +201,24 @@ public class AutoCommands {
         DriveSubsystem drive,
         TurretSubsystem turret
     ) {
+        return prefix(
+            () -> AllianceFlip.apply(firstPath.getStartingHolonomicPose().orElse(Pose2d.kZero)),
+            () -> turretPosition,
+            drive,
+            turret
+        );
+    }
+
+    private static Command prefix(
+        Supplier<Pose2d> startingPose,
+        Supplier<Rotation2d> turretPosition,
+        DriveSubsystem drive,
+        TurretSubsystem turret
+    ) {
         return Commands.runOnce(() -> {
-            drive.setPose(AllianceFlip.apply(firstPath.getStartingHolonomicPose().orElse(Pose2d.kZero)));
-            turret.setPosition(turretPosition);
-        });
+            drive.setPose(startingPose.get());
+            turret.setPosition(turretPosition.get());
+        }, drive, turret);
     }
 
     private static Command shoot(IndexerSubsystem indexer) {

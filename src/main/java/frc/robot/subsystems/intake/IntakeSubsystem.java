@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -15,7 +16,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @AutoLogOutput(key = kLogPath + "/State")
     @Getter
-    private IntakeState m_state = IntakeState.OTHER;
+    private IntakeState m_state = IntakeState.STOWED;
 
     public IntakeSubsystem() {
         m_io = switch (Constants.kCurrentMode) {
@@ -26,32 +27,25 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void deploy() {
-        m_io.runPivotPosition(kPivotDeployedPosition);
-        m_io.runRollersVoltage(kRollersIntakeVoltage);
         m_state = IntakeState.DEPLOYED;
     }
 
     public void stow() {
-        m_io.runPivotPosition(kPivotStowedPosition);
-        m_io.runRollersVoltage(0.0);
         m_state = IntakeState.STOWED;
     }
 
     public void stop() {
-        m_io.runPivotVoltage(0.0);
-        m_io.runRollersVoltage(0.0);
-        m_state = IntakeState.OTHER;
+        m_state = IntakeState.NONE;
     }
 
     public void runPivotVoltage(double volts) {
         m_io.runPivotVoltage(volts);
-        m_state = IntakeState.OTHER;
+        m_state = IntakeState.NONE;
     }
 
     public void runRollersVoltage(double volts) {
         m_io.runRollersVoltage(volts);
-        ;
-        m_state = IntakeState.OTHER;
+        m_state = IntakeState.NONE;
     }
 
     @Override
@@ -62,11 +56,36 @@ public class IntakeSubsystem extends SubsystemBase {
         if (DriverStation.isDisabled()) {
             stop();
         }
+
+        switch (m_state) {
+            case DEPLOYED -> {
+                Logger.recordOutput("DeployedPosRot", kPivotDeployedPosition.getRotations());
+                Logger.recordOutput("DeployedCurrentPositionRot", m_inputs.pivotPositionRot);
+                Logger.recordOutput("DeployedTolerance", kPivotDeployedTolerance.getRotations());
+                if (MathUtil.isNear(
+                    kPivotDeployedPosition.getRotations(),
+                    m_inputs.pivotPositionRot,
+                    kPivotDeployedTolerance.getRotations()
+                )) {
+                    m_io.runPivotVoltage(kPviotDeployedHoldingVoltage);
+                }
+                else {
+                    m_io.runPivotPosition(kPivotDeployedPosition);
+                }
+                m_io.runRollersVoltage(kRollersIntakeVoltage);
+            }
+            case STOWED -> {
+                m_io.runPivotPosition(kPivotStowedPosition);
+                m_io.runRollersVoltage(0.0);
+            }
+            case NONE -> {
+            }
+        }
     }
 
     public enum IntakeState {
         DEPLOYED,
         STOWED,
-        OTHER
+        NONE;
     }
 }

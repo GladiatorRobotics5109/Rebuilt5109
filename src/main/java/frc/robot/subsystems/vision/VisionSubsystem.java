@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
@@ -117,7 +118,10 @@ public class VisionSubsystem extends SubsystemBase {
                     || observation.pose().getX() < 0.0
                     || observation.pose().getX() > kAprilTagLayout.getFieldLength()
                     || observation.pose().getY() < 0.0
-                    || observation.pose().getY() > kAprilTagLayout.getFieldWidth();
+                    || observation.pose().getY() > kAprilTagLayout.getFieldWidth()
+                    || (cameraIndex == 0
+                        && Math.abs(RobotState.getInstance().getTurretVelocityRadPerSec())
+                            > kTurretVelocityThresholdRadPerSec);
 
                 // Add pose to log
                 robotPoses.add(observation.pose());

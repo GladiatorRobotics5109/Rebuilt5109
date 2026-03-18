@@ -94,6 +94,6 @@ public class TurretSubsystem extends SubsystemBase {
             m_io.setMotionMagic(m_mmCruiseVel.get(), m_mmAccel.get());
         }
 
-        RobotState.getInstance().updateTurret(getPosition());
+        RobotState.getInstance().updateTurret(getPosition(), m_inputs.velocityRadPerSec);
     }
 }

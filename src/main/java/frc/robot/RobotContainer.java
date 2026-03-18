@@ -11,7 +11,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -97,12 +96,6 @@ public class RobotContainer {
             Visualizer.init(m_drive, m_flywheels);
         }
 
-        Translation3d robot = FieldConstants.Hub.topCenterPoint.plus(
-            new Translation3d(Conversions.inchesToMeters(-118), 0.0, 0.0)
-        );
-
-        m_drive.setPose(new Pose2d(robot.getX(), robot.getY(), Rotation2d.kZero));
-
         CommandScheduler.getInstance().onCommandInitialize(
             command -> Logger.recordOutput("CommandLog", "INIT: " + command.getName())
         );
@@ -117,10 +110,11 @@ public class RobotContainer {
     private void configureBindings() {
         m_drive.setDefaultCommand(
             DriveCommands.joystickDrive(
-                m_drive,
                 () -> -m_driverController.getLeftY(),
                 () -> -m_driverController.getLeftX(),
-                () -> -m_driverController.getRightX()
+                () -> -m_driverController.getRightX(),
+                () -> m_driverController.getR2Axis(),
+                m_drive
             )
         );
 
@@ -133,6 +127,7 @@ public class RobotContainer {
         m_driverController.cross().onTrue(
             Commands.either(IndexerCommands.stop(m_indexer), IndexerCommands.index(m_indexer), m_indexer::isIndexing)
         );
+        m_driverController.square().onTrue(IndexerCommands.reverse(m_indexer)).onFalse(IndexerCommands.stop(m_indexer));
         m_driverController.triangle().onTrue(
             Commands.runOnce(
                 () -> RobotState.getInstance().setFuelStrategy(
@@ -140,6 +135,21 @@ public class RobotContainer {
                         ? FuelStrategy.SHUTTLE
                         : FuelStrategy.HUB
                 )
+            )
+        );
+
+        m_driverController.circle().toggleOnTrue(
+            Commands.startEnd(
+                () -> {
+                    m_turret.runPosition(Rotation2d.kZero);
+                    m_flywheels.runVelocity(3500);
+                },
+                () -> {
+                    m_turret.stop();
+                    m_flywheels.stop();
+                },
+                m_turret,
+                m_flywheels
             )
         );
 
@@ -151,8 +161,15 @@ public class RobotContainer {
         //     })
         // );
 
-        // m_driverController.povUp().whileTrue(IntakeCommands.testPivot(m_intake, () -> -2));
-        // m_driverController.povDown().whileTrue(IntakeCommands.testPivot(m_intake, () -> 2));
+        m_driverController.povUp().whileTrue(IntakeCommands.testPivot(m_intake, () -> -2));
+        m_driverController.povDown().whileTrue(IntakeCommands.testPivot(m_intake, () -> 2));
+
+        m_driverController.povRight().onTrue(
+            Commands.runOnce(() -> m_flywheels.setVelocityOffset(m_flywheels.getVelocityOffset() + 50))
+        );
+        m_driverController.povLeft().onTrue(
+            Commands.runOnce(() -> m_flywheels.setVelocityOffset(m_flywheels.getVelocityOffset() - 50))
+        );
 
         m_driverController.L1().onTrue(
             Commands.either(
@@ -161,8 +178,6 @@ public class RobotContainer {
                 () -> m_intake.getState() != IntakeState.DEPLOYED
             )
         );
-
-        m_driverController.povLeft().whileTrue(TurretCommands.straight(m_turret));
 
         // Automatically stow the hood when the robot gets close to the trench so that we don't hit it
         new Trigger(
@@ -201,13 +216,21 @@ public class RobotContainer {
 
     private void buildAutoChooser() {
         m_autoChooser.addOption(
-            "Comp_preloadAndOutpost",
-            AutoCommands.preloadAndOutpost(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
+            "Comp_preloadLeft",
+            AutoCommands.preloadLeft(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
+        );
+        m_autoChooser.addOption(
+            "Comp_preloadRight",
+            AutoCommands.preloadRight(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
+        );
+        m_autoChooser.addOption(
+            "Comp_preloadAndOutpostRight",
+            AutoCommands.preloadAndOutpostRight(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
         );
 
         m_autoChooser.addOption(
-            "Comp_preloadAndDepot",
-            AutoCommands.preloadAndDepot(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
+            "Comp_preloadAndDepotLeft",
+            AutoCommands.preloadAndDepotLeft(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
         );
 
         // Set up SysId routines
@@ -237,7 +260,7 @@ public class RobotContainer {
         );
 
         m_autoChooser.addOption("Test", AutoCommands.test(m_drive, m_turret, m_flywheels, m_indexer));
-        m_autoChooser.addOption("TestTurret", AutoCommands.testTurret(m_flywheels, m_turret));
+        m_autoChooser.addOption("TestTurret", AutoCommands.testTurret(m_flywheels, m_turret, m_indexer));
     }
 
     /**

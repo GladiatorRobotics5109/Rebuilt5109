@@ -28,7 +28,7 @@ public class RobotState {
 
         // Log empty AimingParameters on initialization to avoid loop overruns
         Logger.recordOutput(
-            "RobotState/LatestAimingParameters",
+            "RobotState/AimingParameters/LatestAimingParameters",
             new AimingParameters(Rotation2d.kZero, 0.0, Rotation2d.kZero)
         );
     }
@@ -67,6 +67,7 @@ public class RobotState {
     private Rotation2d m_turretPosition;
     /** Field relative turret position */
     private Rotation2d m_turretHeading;
+    private double m_turretVelocityRadPerSec;
 
     // -- Hood State --
     private Rotation2d m_hoodAngle;
@@ -126,8 +127,11 @@ public class RobotState {
         }
 
         m_latestAimingParameters = new AimingParameters(targetPosition, flywheelsRPM, pitch);
-        Logger.recordOutput("RobotState/AimingParameters/Dist", dist);
-        Logger.recordOutput("RobotState/AimingParameters/LatestAimingParameters", m_latestAimingParameters);
+        Logger.recordOutput("AimingParameters/LatestAimingParameters", m_latestAimingParameters);
+        Logger.recordOutput("AimingParameters/Target", target);
+        Logger.recordOutput("AimingParameters/Predicted", predicted);
+        Logger.recordOutput("AimingParameters/Delta", delta);
+        Logger.recordOutput("AimingParameters/Dist", dist);
 
         return m_latestAimingParameters;
     }
@@ -147,10 +151,12 @@ public class RobotState {
         m_flywheelsHasDesiredVelocity = hasDesiredVelocity;
     }
 
-    public void updateTurret(Rotation2d turretPosition) {
+    public void updateTurret(Rotation2d turretPosition, double turretVelocityRadPerSec) {
         m_turretPosition = turretPosition;
 
         m_turretHeading = getRotation().plus(m_turretPosition);
+
+        m_turretVelocityRadPerSec = turretVelocityRadPerSec;
     }
 
     public void updateHood(Rotation2d hoodAngle) {
@@ -175,7 +181,7 @@ public class RobotState {
         Logger.recordOutput("Subsystems/Drive/Velocity", m_velocity);
         Logger.recordOutput("Subsystems/Drive/DesiredVelocity", m_desiredVelocity);
 
-        Logger.recordOutput("Subsystems/Flywheels/Velocity", m_flywheelsVelocity);
+        Logger.recordOutput("Subsystems/Flywheels/CurrentVelocity", m_flywheelsVelocity);
         Logger.recordOutput("Subsystems/Flywheels/DesiredVelocity", m_flywheelsDesiredVelocity);
         Logger.recordOutput("Subsystems/Flywheels/HasDesiredVeloicty", m_flywheelsHasDesiredVelocity);
 

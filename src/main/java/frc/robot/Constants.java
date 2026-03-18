@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.*;
@@ -9,6 +11,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.FieldConstants.AprilTagLayoutType;
 import frc.robot.FieldConstants.LinesHorizontal;
 import frc.robot.FieldConstants.LinesVertical;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.util.AllianceFlip;
 import frc.robot.util.Conversions;
 
@@ -58,6 +62,12 @@ public final class Constants {
 
         public static final double kWheelRadiusMaxVelocity = 0.25; // Rad/Sec
         public static final double kWheelRadiusRampRate = 0.05; // Rad/Sec^2
+
+        public static final double kDefaultDriveSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        public static final double kSlowDriveSpeed = 1;
+
+        public static final double kDefaultRotationSpeed = kDefaultDriveSpeed / DriveSubsystem.DRIVE_BASE_RADIUS;
+        public static final double kSlowRotationSpeed = Conversions.rotationsToRadians(1);
     }
 
     public static final class FlywheelsConstants {
@@ -74,7 +84,7 @@ public final class Constants {
         public static final double kShootRPM = 5500;
         public static final double kIdleRPM = 1000;
 
-        public static final double kIdleDistThresholdMeters = 5.0;
+        public static final double kIdleDistThresholdMeters = 7.0;
         public static final double kIdleDistDebounce = 0.5;
 
         public static final double kS = 0.188;
@@ -117,7 +127,7 @@ public final class Constants {
         public static final Rotation2d kMaxPosition = Rotation2d.kCCW_Pi_2;
         public static final Rotation2d kMinPosition = Rotation2d.kCW_Pi_2;
 
-        public static final Rotation2d kRightTrenchPosition = Rotation2d.fromDegrees(-15);
+        public static final Rotation2d kRightTrenchPosition = Rotation2d.fromDegrees(-8);
         public static final Rotation2d kLeftTrenchPosition = kRightTrenchPosition.times(-1);
         public static final Rotation2d kOutpostPosition = Rotation2d.fromDegrees(15);
 
@@ -144,7 +154,7 @@ public final class Constants {
         public static final double kSupplyCurrentLimit = 40.0;
         public static final boolean kSupplyCurrentLimitEnable = true;
         public static final double kGearRatio = 25.0 * 248.0 / 18.0;
-        public static final boolean kInverted = false;
+        public static final boolean kInverted = true;
 
         public static final double kP = 5.0;
         public static final double kI = 0.0;
@@ -169,6 +179,9 @@ public final class Constants {
         public static final double kIndexerIndexVoltage = 12.0;
         public static final double kKickupIndexVoltage = 6.0;
 
+        public static final double kIndexerReverseVoltage = -6.0;
+        public static final double kKickupReverseVoltage = 0.0;
+
         public static final int kIndexerId = 20;
         public static final int kKickupId = 21;
         public static final double kIndexerGearRatio = 3.0;
@@ -180,6 +193,8 @@ public final class Constants {
 
         public static final double kSupplyCurrentLimit = 40.0;
         public static final boolean kSupplyCurrentLimitEnable = true;
+
+        public static final double kKickupCurrentLimit = 30.0;
 
         public static final double kSimMOI = 0.0002;
 
@@ -199,8 +214,8 @@ public final class Constants {
         public static final double kRollersSupplyCurrentLimit = 40.0;
         public static final boolean kRollersSupplyCurrentLimitEnable = true;
 
-        public static final double kPivotStatorCurrentLimit = 0.0;
-        public static final boolean kPivotStatorCurrentLimitEnable = false;
+        public static final double kPivotStatorCurrentLimit = 30.0;
+        public static final boolean kPivotStatorCurrentLimitEnable = true;
 
         public static final double kPivotSupplyCurrentLimit = 40.0;
         public static final boolean kPivotSupplyCurrentLimitEnable = true;
@@ -208,27 +223,29 @@ public final class Constants {
         public static final double kPivotGearRatio = 9 * 5 * 2;
 
         public static final boolean kPivotInvert = false;
-        public static final boolean kPivotBrake = true;
+        public static final boolean kPivotBrake = false;
 
-        public static final double kPivotP = 60; // V / rot
+        public static final double kPivotP = 35; // V / rot
         public static final double kPivotI = 0.0;
         public static final double kPivotD = 0.0;
 
         public static final double kPivotS = 0.0;
         public static final double kPivotV = 0.0;
 
-        public static final double kRollersGearRatio = 5;
+        public static final double kRollersGearRatio = 3;
 
         public static final boolean kRollersInvert = true;
         public static final boolean kRollersBrake = false;
 
-        public static final Rotation2d kPivotMaxPosition = Rotation2d.fromDegrees(90);
-        public static final Rotation2d kPivotMinPosition = Rotation2d.fromDegrees(-10);
-        public static final Rotation2d kPivotStartingPosition = Rotation2d.kZero;
-        public static final Rotation2d kPivotDeployedPosition = Rotation2d.fromDegrees(90);
+        public static final Rotation2d kPivotMaxPosition = Rotation2d.fromDegrees(100);
+        public static final Rotation2d kPivotMinPosition = Rotation2d.fromDegrees(-22.65);
+        public static final Rotation2d kPivotStartingPosition = kPivotMinPosition;
+        public static final Rotation2d kPivotDeployedPosition = Rotation2d.fromDegrees(95);
         public static final Rotation2d kPivotStowedPosition = kPivotStartingPosition;
+        public static final Rotation2d kPivotDeployedTolerance = Rotation2d.fromDegrees(5);
+        public static final double kPviotDeployedHoldingVoltage = 2.0;
 
-        public static final double kRollersIntakeVoltage = 8;
+        public static final double kRollersIntakeVoltage = 12;
     }
 
     public static final class VisionConstants {
@@ -262,12 +279,13 @@ public final class Constants {
 
         // Multipliers to apply for MegaTag 2 observations
         public static final double kLinearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
-        public static final double kAngularStdDevMegatag2Factor = 0.5; // No rotation data available
-        // public static final double kAngularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
+        public static final double kAngularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
+
+        public static double kTurretVelocityThresholdRadPerSec = Conversions.degreesToRadians(10);
     }
 
     public static final class AimingConstants {
-        public static final double kDriveLookaheadTime = 0.1;
+        public static final double kDriveLookaheadTime = 0.0;
 
         public static final InterpolatingDoubleTreeMap kHubFlywheelsRPMs = new InterpolatingDoubleTreeMap();
         public static final InterpolatingDoubleTreeMap kShuttleFlywheelsRPMs = new InterpolatingDoubleTreeMap();
@@ -276,14 +294,17 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap kShuttleHoodPitch = new InterpolatingDoubleTreeMap();
 
         static {
-            kHubFlywheelsRPMs.put(1.4, 2250.0);
-            kHubFlywheelsRPMs.put(3.0, 3500.0);
-            kHubFlywheelsRPMs.put(4.1, 4050.0);
+            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(80.93), 2700.0);
+            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(131.0), 3350.0);
+            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(157.4), 3600.0);
+            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(264.5), 4075.0);
 
-            kShuttleFlywheelsRPMs.put(1.0, 5500.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(80.93), 2700.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(131.0), 3350.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(157.4), 3550.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(264.5), 4025.0);
 
             kHubHoodPitch.put(1.0, HoodConstants.kMaxAngle.getRadians());
-
             kShuttleHoodPitch.put(1.0, HoodConstants.kMinAngle.getRadians());
         }
 
@@ -307,7 +328,7 @@ public final class Constants {
             LinesHorizontal.center / 4 * 3
         );
 
-        public static final double kTrenchFlywheelsVelocityRPM = 4500.0;
+        public static final double kTrenchFlywheelsVelocityRPM = 3450.0;
     }
 
     public static enum Mode {
