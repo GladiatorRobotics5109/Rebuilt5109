@@ -188,10 +188,10 @@ public class AutoCommands {
             IndexerCommands.stop(indexer),
             Commands.parallel(
                 AutoBuilder.followPath(kPreloadAndCenter),
-                IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(0.85)),
+                IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(2.1)),
                 TurretCommands.autoAim(turret),
                 FlywheelsCommands.autoAim(flywheels),
-                IndexerCommands.index(indexer).beforeStarting(Commands.waitSeconds(5.42))
+                IndexerCommands.index(indexer).beforeStarting(Commands.waitSeconds(13.8))
             )
         ).withName("AutoCommands::preloadAndCenterLeft");
     }
