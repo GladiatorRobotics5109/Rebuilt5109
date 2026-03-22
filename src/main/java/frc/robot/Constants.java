@@ -300,10 +300,10 @@ public final class Constants {
             kHubFlywheelsRPMs.put(Conversions.inchesToMeters(157.4), 3600.0);
             kHubFlywheelsRPMs.put(Conversions.inchesToMeters(264.5), 4075.0);
 
-            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(80.93), 2700.0);
-            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(131.0), 3350.0);
-            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(157.4), 3550.0);
-            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(264.5), 4025.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(80.93), 2800.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(131.0), 3550.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(157.4), 3600.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(264.5), 4200.0);
 
             kHubHoodPitch.put(1.0, HoodConstants.kMaxAngle.getRadians());
             kShuttleHoodPitch.put(1.0, HoodConstants.kMinAngle.getRadians());
