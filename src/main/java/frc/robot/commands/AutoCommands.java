@@ -182,16 +182,16 @@ public class AutoCommands {
             prefix(kPreloadAndCenter, Rotation2d.kZero, drive, turret),
             TurretCommands.leftTrench(turret),
             FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
-            Commands.waitSeconds(2),
+            Commands.waitSeconds(0.5),
             IndexerCommands.index(indexer),
-            Commands.waitSeconds(6),
+            Commands.waitSeconds(4),
             IndexerCommands.stop(indexer),
             Commands.parallel(
                 AutoBuilder.followPath(kPreloadAndCenter),
-                IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(2.1)),
+                IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(1.65)),
                 TurretCommands.autoAim(turret),
                 FlywheelsCommands.autoAim(flywheels),
-                IndexerCommands.index(indexer).beforeStarting(Commands.waitSeconds(13.8))
+                IndexerCommands.index(indexer).beforeStarting(Commands.waitSeconds(12.0))
             )
         ).withName("AutoCommands::preloadAndCenterLeft");
     }
