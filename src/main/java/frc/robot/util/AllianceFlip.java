@@ -36,6 +36,10 @@ public class AllianceFlip {
         return shouldFlip() ? flip(t) : t;
     }
 
+    public double applyX(double x) {
+        return shouldFlip() ? flipX(x) : x;
+    }
+
     public double flipX(double x) {
         return FieldConstants.fieldLength - x;
     }

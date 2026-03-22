@@ -11,19 +11,14 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.Mode;
-import frc.robot.FieldConstants.LeftTrench;
-import frc.robot.FieldConstants.RightTrench;
 import frc.robot.RobotState.FuelStrategy;
 import frc.robot.commands.*;
 import frc.robot.subsystems.drive.DriveSubsystem;
@@ -36,6 +31,7 @@ import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.Conversions;
 import frc.robot.util.Visualizer;
+
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -180,32 +176,32 @@ public class RobotContainer {
         );
 
         // Automatically stow the hood when the robot gets close to the trench so that we don't hit it
-        new Trigger(
-            () -> {
-                Pose2d pose = RobotState.getInstance().getPose();
-                ChassisSpeeds vel = RobotState.getInstance().getVelocityFieldRelative();
+        // new Trigger(
+        //     () -> {
+        //         Pose2d pose = RobotState.getInstance().getPose();
+        //         ChassisSpeeds vel = RobotState.getInstance().getVelocityFieldRelative();
 
-                final double[] positions = new double[] {
-                    LeftTrench.openingTopLeft.getX(),
-                    LeftTrench.openingTopRight.getX(),
-                    LeftTrench.oppOpeningTopLeft.getX(),
-                    LeftTrench.oppOpeningTopRight.getX(),
-                    RightTrench.openingTopLeft.getX(),
-                    RightTrench.openingTopRight.getX(),
-                    RightTrench.oppOpeningTopLeft.getX(),
-                    RightTrench.oppOpeningTopRight.getX()
-                };
+        //         final double[] positions = new double[] {
+        //             LeftTrench.openingTopLeft.getX(),
+        //             LeftTrench.openingTopRight.getX(),
+        //             LeftTrench.oppOpeningTopLeft.getX(),
+        //             LeftTrench.oppOpeningTopRight.getX(),
+        //             RightTrench.openingTopLeft.getX(),
+        //             RightTrench.openingTopRight.getX(),
+        //             RightTrench.oppOpeningTopLeft.getX(),
+        //             RightTrench.oppOpeningTopRight.getX()
+        //         };
 
-                for (double x : positions) {
-                    double delta = pose.getX() - x;
-                    if (Math.abs(delta) < HoodConstants.kHoodAutoStowThreshold
-                        && Math.signum(vel.vxMetersPerSecond) == Math.signum(delta))
-                        return true;
-                }
+        //         for (double x : positions) {
+        //             double delta = pose.getX() - x;
+        //             if (Math.abs(delta) < HoodConstants.kHoodAutoStowThreshold
+        //                 && Math.signum(vel.vxMetersPerSecond) == Math.signum(delta))
+        //                 return true;
+        //         }
 
-                return false;
-            }
-        ).whileTrue(HoodCommands.stow(m_hood));
+        //         return false;
+        //     }
+        // ).whileTrue(HoodCommands.stow(m_hood));
     }
 
     private void configureBindingsKeyboard() {

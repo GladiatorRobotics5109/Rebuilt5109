@@ -121,8 +121,8 @@ public final class Constants {
 
         // public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 30;
         // public static final double kMotionMagicCruiseVelocityRadPerSec = 30;
-        public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 15;
-        public static final double kMotionMagicCruiseVelocityRadPerSec = 10;
+        public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 45;
+        public static final double kMotionMagicCruiseVelocityRadPerSec = 30;
 
         public static final Rotation2d kMaxPosition = Rotation2d.kCCW_Pi_2;
         public static final Rotation2d kMinPosition = Rotation2d.kCW_Pi_2;

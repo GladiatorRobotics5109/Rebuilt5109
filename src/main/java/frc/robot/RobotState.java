@@ -17,6 +17,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 
 import lombok.Setter;
+import lombok.experimental.Accessors;
+
+import java.util.Optional;
+
 import org.littletonrobotics.junction.Logger;
 
 @Getter
@@ -60,6 +64,9 @@ public class RobotState {
     private double m_flywheelsVelocity;
     private double m_flywheelsDesiredVelocity;
     private boolean m_flywheelsHasDesiredVelocity;
+    @Setter
+    @Accessors(fluent = true)
+    private boolean m_flywheelsShouldDisableAutoAim;
 
     // -- Turret State --
 
@@ -118,9 +125,11 @@ public class RobotState {
         );
         double flywheelsRPM;
         if (m_fuelStrategy == FuelStrategy.HUB) {
-            flywheelsRPM = m_idleDebouncer.calculate(dist < FlywheelsConstants.kIdleDistThresholdMeters)
-                ? AimingConstants.kHubFlywheelsRPMs.get(dist)
-                : FlywheelsConstants.kIdleRPM;
+            boolean shouldIdle = shouldIdle();
+            Logger.recordOutput("AimingParameters/ShouldIdle", shouldIdle);
+            flywheelsRPM = shouldIdle
+                ? FlywheelsConstants.kIdleRPM
+                : AimingConstants.kHubFlywheelsRPMs.get(dist);
         }
         else {
             flywheelsRPM = AimingConstants.kShuttleFlywheelsRPMs.get(dist);
@@ -134,6 +143,18 @@ public class RobotState {
         Logger.recordOutput("AimingParameters/Dist", dist);
 
         return m_latestAimingParameters;
+    }
+
+    private boolean shouldIdle() {
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isEmpty())
+            return false;
+
+        return m_idleDebouncer.calculate(switch (alliance.get()) {
+            case Blue -> m_pose.getX()
+                > FieldConstants.LinesVertical.allianceZone + FieldConstants.LinesVertical.neutralZoneNear;
+            case Red -> m_pose.getX() < FieldConstants.LinesVertical.neutralZoneFar;
+        });
     }
 
     public void updateDrive(Pose2d pose, ChassisSpeeds velocity) {

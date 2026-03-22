@@ -77,7 +77,7 @@ public class FlywheelsSubsystem extends SubsystemBase {
             stop();
         }
 
-        double desired = m_desiredVelocity.getAsDouble() + m_velocityOffset;
+        double desired = Math.max(m_desiredVelocity.getAsDouble() + m_velocityOffset, 0.0);
         Logger.recordOutput(kLogPath + "/RealDesiredVelocity", desired);
         if (m_hasDesiredVelocity) {
             double bang = 12 * m_bang.calculate(m_inputs.velocityRPM, desired);
