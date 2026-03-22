@@ -121,7 +121,7 @@ public final class Constants {
 
         // public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 30;
         // public static final double kMotionMagicCruiseVelocityRadPerSec = 30;
-        public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 45;
+        public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 40;
         public static final double kMotionMagicCruiseVelocityRadPerSec = 30;
 
         public static final Rotation2d kMaxPosition = Rotation2d.kCCW_Pi_2;
@@ -252,7 +252,7 @@ public final class Constants {
         public static final String kLogPath = "Subsystems/Vision";
         public static final String kCamera1Name = "limelight-one";
 
-        public static final AprilTagFieldLayout kAprilTagLayout = AprilTagLayoutType.OFFICIAL.getLayout();;
+        public static final AprilTagFieldLayout kAprilTagLayout = AprilTagLayoutType.OFFICIAL.getLayout();
 
         // Robot to camera transforms
         public static Transform3d kTurretToCamera1 = new Transform3d(
@@ -281,7 +281,7 @@ public final class Constants {
         public static final double kLinearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
         public static final double kAngularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
 
-        public static double kTurretVelocityThresholdRadPerSec = Conversions.degreesToRadians(60);
+        public static double kTurretVelocityThresholdRadPerSec = Conversions.degreesToRadians(40);
     }
 
     public static final class AimingConstants {
