@@ -233,6 +233,11 @@ public class RobotContainer {
             AutoCommands.preloadAndDepotLeft(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
         );
 
+        m_autoChooser.addOption(
+            "Comp_preloadAndCenterLeft",
+            AutoCommands.preloadAndCenterLeft(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
+        );
+
         // Set up SysId routines
         m_autoChooser.addOption(
             "SysID_DriveWheelRadiusCharacterization",
