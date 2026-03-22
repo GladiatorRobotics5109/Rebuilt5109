@@ -129,7 +129,12 @@ public class VisionSubsystem extends SubsystemBase {
                     || (cameraIndex == 0
                         && Math.abs(RobotState.getInstance().getTurretVelocityRadPerSec())
                             > kTurretVelocityThresholdRadPerSec)
-                    || (DriverStation.isEnabled() && !MathUtil.isNear(robotRotation.getRadians(), observation.pose().getRotation().getZ(), kRotationErrorToleranceRad));
+                    || (DriverStation.isEnabled()
+                        && !MathUtil.isNear(
+                            robotRotation.getRadians(),
+                            observation.pose().getRotation().getZ(),
+                            kRotationErrorToleranceRad
+                        ));
 
                 // Add pose to log
                 robotPoses.add(observation.pose());
