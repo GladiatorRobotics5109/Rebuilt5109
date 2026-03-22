@@ -286,7 +286,7 @@ public final class Constants {
     }
 
     public static final class AimingConstants {
-        public static final double kDriveLookaheadTime = 1.75;
+        public static final double kDriveLookaheadTime = 0.75;
 
         public static final InterpolatingDoubleTreeMap kHubFlywheelsRPMs = new InterpolatingDoubleTreeMap();
         public static final InterpolatingDoubleTreeMap kShuttleFlywheelsRPMs = new InterpolatingDoubleTreeMap();
