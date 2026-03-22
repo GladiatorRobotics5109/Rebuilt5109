@@ -274,7 +274,7 @@ public final class Constants {
         // Standard deviation multipliers for each camera
         // (Adjust to trust some cameras more than others)
         public static final double[] kCameraStdDevFactors = new double[] {
-            1.0, // Camera 0
+            2.0, // Camera 0
         };
 
         // Multipliers to apply for MegaTag 2 observations
@@ -282,6 +282,7 @@ public final class Constants {
         public static final double kAngularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
 
         public static double kTurretVelocityThresholdRadPerSec = Conversions.degreesToRadians(20);
+        public static double kRotationErrorToleranceRad = Conversions.degreesToRadians(10);
     }
 
     public static final class AimingConstants {
