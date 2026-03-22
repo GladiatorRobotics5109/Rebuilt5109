@@ -24,7 +24,7 @@ import frc.robot.util.Conversions;
 public final class Constants {
     public static final Mode kSimMode = Mode.SIM;
     public static final Mode kCurrentMode = RobotBase.isReal() ? Mode.REAL : kSimMode;
-    public static final boolean kTuningMode = true;
+    public static final boolean kTuningMode = false;
     public static final boolean kSimShouldUseKeyboard = kCurrentMode == Mode.SIM && false;
 
     public static final CANBus kCANBusRio = CANBus.roboRIO();
@@ -329,7 +329,7 @@ public final class Constants {
             LinesHorizontal.center / 4 * 3
         );
 
-        public static final double kTrenchFlywheelsVelocityRPM = 3450.0;
+        public static final double kTrenchFlywheelsVelocityRPM = 3425.0;
     }
 
     public static enum Mode {

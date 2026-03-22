@@ -191,7 +191,8 @@ public class AutoCommands {
                 IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(1.65)),
                 TurretCommands.autoAim(turret),
                 FlywheelsCommands.autoAim(flywheels),
-                IndexerCommands.index(indexer).beforeStarting(Commands.waitSeconds(12.0))
+                IndexerCommands.index(indexer).beforeStarting(Commands.waitSeconds(12.0)),
+                IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(11.5))
             )
         ).withName("AutoCommands::preloadAndCenterLeft");
     }
