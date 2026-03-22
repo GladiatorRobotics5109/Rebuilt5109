@@ -20,7 +20,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public IntakeSubsystem() {
         m_io = switch (Constants.kCurrentMode) {
-            // case REAL -> new IntakeIOTalonFX(kRollersId, kPivotId, Constants.kCANBusRio);
+            case REAL -> new IntakeIOTalonFX(kRollersId, kPivotId, Constants.kCANBusRio);
             case SIM -> new IntakeIOSim();
             default -> new IntakeIO() {};
         };
