@@ -268,8 +268,8 @@ public final class Constants {
 
         // Standard deviation baselines, for 1 meter distance and 1 tag
         // (Adjusted automatically based on distance and # of tags)
-        public static final double kLinearStdDevBaseline = 0.02; // Meters
-        public static final double kAngularStdDevBaseline = 0.06; // Radians
+        public static final double kLinearStdDevBaseline = 0.04; // Meters
+        public static final double kAngularStdDevBaseline = 0.1; // Radians
 
         // Standard deviation multipliers for each camera
         // (Adjust to trust some cameras more than others)
@@ -281,7 +281,7 @@ public final class Constants {
         public static final double kLinearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
         public static final double kAngularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
 
-        public static double kTurretVelocityThresholdRadPerSec = Conversions.degreesToRadians(40);
+        public static double kTurretVelocityThresholdRadPerSec = Conversions.degreesToRadians(20);
     }
 
     public static final class AimingConstants {
