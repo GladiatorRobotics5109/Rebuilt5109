@@ -189,12 +189,12 @@ public class AutoCommands {
             Commands.parallel(
                 AutoBuilder.followPath(kPreloadAndCenter),
                 Commands.sequence(
-                    IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(1.65)),
-                    IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(11.5))
+                    IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(1.9)),
+                    IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(16))
                 ),
                 TurretCommands.autoAim(turret),
                 FlywheelsCommands.autoAim(flywheels),
-                IndexerCommands.index(indexer).beforeStarting(Commands.waitSeconds(12.0))
+                IndexerCommands.index(indexer).beforeStarting(Commands.waitSeconds(13.85))
             )
         ).withName("AutoCommands::preloadAndCenterLeft");
     }
