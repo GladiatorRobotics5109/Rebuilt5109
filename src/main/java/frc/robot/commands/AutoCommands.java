@@ -30,6 +30,7 @@ public class AutoCommands {
     private static PathPlannerPath kTestPath;
     private static PathPlannerPath kPreloadAndOutpostPath;
     private static PathPlannerPath kPreloadAndDepotPath;
+    private static PathPlannerPath kPreloadAndCenter;
 
     private static final LoggedTunableNumber s_flywheelsVelocity = new LoggedTunableNumber(
         "TestFlywheelsVelocityRPM",
@@ -47,6 +48,7 @@ public class AutoCommands {
             kTestPath = PathPlannerPath.fromChoreoTrajectory("Test");
             kPreloadAndOutpostPath = PathPlannerPath.fromChoreoTrajectory("PreloadAndOutpost");
             kPreloadAndDepotPath = PathPlannerPath.fromChoreoTrajectory("PreloadAndDepot");
+            kPreloadAndCenter = PathPlannerPath.fromChoreoTrajectory("PreloadAndCenter");
         }
         catch (IOException | ParseException e) {
             DriverStation.reportError("Failed to load PathPlannerPath", e.getStackTrace());
@@ -167,6 +169,31 @@ public class AutoCommands {
                 IndexerCommands.index(indexer).beforeStarting(Commands.waitSeconds(1.2))
             )
         ).withName("AutoCommands::preloadAndDepotLeft");
+    }
+
+    public static Command preloadAndCenterLeft(
+        DriveSubsystem drive,
+        TurretSubsystem turret,
+        FlywheelsSubsystem flywheels,
+        IndexerSubsystem indexer,
+        IntakeSubsystem intake
+    ) {
+        return Commands.sequence(
+            prefix(kPreloadAndCenter, Rotation2d.kZero, drive, turret),
+            TurretCommands.leftTrench(turret),
+            FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
+            Commands.waitSeconds(2),
+            IndexerCommands.index(indexer),
+            Commands.waitSeconds(6),
+            IndexerCommands.stop(indexer),
+            Commands.parallel(
+                AutoBuilder.followPath(kPreloadAndCenter),
+                IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(0.85)),
+                TurretCommands.autoAim(turret),
+                FlywheelsCommands.autoAim(flywheels),
+                IndexerCommands.index(indexer).beforeStarting(Commands.waitSeconds(5.42))
+            )
+        ).withName("AutoCommands::preloadAndCenterLeft");
     }
 
     public static Command test(
