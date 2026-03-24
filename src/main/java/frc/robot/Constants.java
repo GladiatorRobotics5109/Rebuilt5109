@@ -225,7 +225,7 @@ public final class Constants {
         public static final boolean kPivotInvert = false;
         public static final boolean kPivotBrake = true;
 
-        public static final double kPivotP = 40; // V / rot
+        public static final double kPivotP = 35; // V / rot
         public static final double kPivotI = 0.0;
         public static final double kPivotD = 0.0;
 
