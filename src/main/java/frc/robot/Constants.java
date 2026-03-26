@@ -245,7 +245,7 @@ public final class Constants {
         public static final Rotation2d kPivotDeployedTolerance = Rotation2d.fromDegrees(5);
         public static final double kPviotDeployedHoldingVoltage = 2.0;
 
-        public static final double kRollersIntakeVoltage = 12;
+        public static final double kRollersIntakeVoltage = 10;
     }
 
     public static final class VisionConstants {
@@ -286,7 +286,8 @@ public final class Constants {
     }
 
     public static final class AimingConstants {
-        public static final double kDriveLookaheadTime = 0.75;
+        public static final double kDriveTranslationLookaheadTime = 0.75;
+        public static final double kDriveRotationLookaheadTime = 0.1;
 
         public static final InterpolatingDoubleTreeMap kHubFlywheelsRPMs = new InterpolatingDoubleTreeMap();
         public static final InterpolatingDoubleTreeMap kShuttleFlywheelsRPMs = new InterpolatingDoubleTreeMap();

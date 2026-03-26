@@ -103,11 +103,11 @@ public class RobotState {
         };
 
         Pose2d predicted = new Pose2d(
-            m_pose.getX() + m_velocityFieldRelative.vxMetersPerSecond * AimingConstants.kDriveLookaheadTime,
-            m_pose.getY() + m_velocityFieldRelative.vyMetersPerSecond * AimingConstants.kDriveLookaheadTime,
+            m_pose.getX() + m_velocityFieldRelative.vxMetersPerSecond * AimingConstants.kDriveTranslationLookaheadTime,
+            m_pose.getY() + m_velocityFieldRelative.vyMetersPerSecond * AimingConstants.kDriveTranslationLookaheadTime,
             Rotation2d.fromRadians(
                 m_pose.getRotation().getRadians()
-                    + m_velocityFieldRelative.omegaRadiansPerSecond * AimingConstants.kDriveLookaheadTime
+                    + m_velocityFieldRelative.omegaRadiansPerSecond * AimingConstants.kDriveRotationLookaheadTime
             )
         );
 
