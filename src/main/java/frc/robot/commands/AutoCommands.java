@@ -79,7 +79,11 @@ public class AutoCommands {
             FlywheelsCommands.runVelocity(flyhweels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(2),
             IndexerCommands.index(indexer),
-            Commands.waitSeconds(10),
+            Commands.waitSeconds(4.5),
+            IndexerCommands.reverse(indexer),
+            Commands.waitSeconds(0.5),
+            IndexerCommands.index(indexer),
+            Commands.waitSeconds(5),
             IndexerCommands.stop(indexer)
         );
     }
@@ -108,7 +112,11 @@ public class AutoCommands {
             FlywheelsCommands.runVelocity(flyhweels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(2),
             IndexerCommands.index(indexer),
-            Commands.waitSeconds(10),
+            Commands.waitSeconds(4.5),
+            IndexerCommands.reverse(indexer),
+            Commands.waitSeconds(0.5),
+            IndexerCommands.index(indexer),
+            Commands.waitSeconds(5),
             IndexerCommands.stop(indexer)
         );
     }
@@ -126,7 +134,11 @@ public class AutoCommands {
             FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(2),
             IndexerCommands.index(indexer),
-            Commands.waitSeconds(6),
+            Commands.waitSeconds(2.75),
+            IndexerCommands.reverse(indexer),
+            Commands.waitSeconds(0.5),
+            IndexerCommands.index(indexer),
+            Commands.waitSeconds(2.75),
             IndexerCommands.stop(indexer),
             IntakeCommands.deploy(intake),
             AutoBuilder.followPath(kPreloadAndOutpostPath),
@@ -159,7 +171,11 @@ public class AutoCommands {
             FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(2),
             IndexerCommands.index(indexer),
-            Commands.waitSeconds(6),
+            Commands.waitSeconds(2.75),
+            IndexerCommands.reverse(indexer),
+            Commands.waitSeconds(0.5),
+            IndexerCommands.index(indexer),
+            Commands.waitSeconds(2.75),
             IndexerCommands.stop(indexer),
             Commands.parallel(
                 AutoBuilder.followPath(kPreloadAndDepotPath),
@@ -194,7 +210,15 @@ public class AutoCommands {
                 ),
                 TurretCommands.autoAim(turret),
                 FlywheelsCommands.autoAim(flywheels),
-                IndexerCommands.index(indexer).beforeStarting(Commands.waitSeconds(13.85))
+                Commands.sequence(
+                    Commands.waitSeconds(13.85),
+                    Commands.repeatingSequence(
+                        IndexerCommands.index(indexer),
+                        Commands.waitSeconds(4),
+                        IndexerCommands.reverse(indexer),
+                        Commands.waitSeconds(1)
+                    )
+                )
             )
         ).withName("AutoCommands::preloadAndCenterLeft");
     }
@@ -249,13 +273,5 @@ public class AutoCommands {
             drive.setPose(startingPose.get());
             turret.setPosition(turretPosition.get());
         }, drive, turret);
-    }
-
-    private static Command shoot(IndexerSubsystem indexer) {
-        return Commands.sequence(
-            IndexerCommands.index(indexer),
-            Commands.waitSeconds(5),
-            IndexerCommands.stop(indexer)
-        );
     }
 }
