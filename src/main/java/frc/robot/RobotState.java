@@ -12,7 +12,7 @@ import frc.robot.Constants.FlywheelsConstants;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.FieldConstants.Hub;
 import frc.robot.FieldConstants.LinesHorizontal;
-import frc.robot.util.AllianceFlip;
+import frc.robot.util.Flip;
 import lombok.AccessLevel;
 import lombok.Getter;
 
@@ -87,7 +87,7 @@ public class RobotState {
             return m_latestAimingParameters;
 
         Translation2d target = switch (m_fuelStrategy) {
-            case HUB -> AllianceFlip.apply(Hub.topCenterPoint).toTranslation2d();
+            case HUB -> Flip.apply(Hub.topCenterPoint).toTranslation2d();
             case SHUTTLE -> {
                 if (m_pose.getY() >= LinesHorizontal.center) {
                     yield DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue

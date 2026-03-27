@@ -13,7 +13,7 @@ import frc.robot.FieldConstants.LinesHorizontal;
 import frc.robot.FieldConstants.LinesVertical;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.DriveSubsystem;
-import frc.robot.util.AllianceFlip;
+import frc.robot.util.Flip;
 import frc.robot.util.Conversions;
 
 /**
@@ -179,7 +179,7 @@ public final class Constants {
         public static final double kIndexerIndexVoltage = 12.0;
         public static final double kKickupIndexVoltage = 6.0;
 
-        public static final double kIndexerReverseVoltage = -6.0;
+        public static final double kIndexerReverseVoltage = -9.0;
         public static final double kKickupReverseVoltage = 0.0;
 
         public static final int kIndexerId = 20;
@@ -322,12 +322,12 @@ public final class Constants {
         );
 
         public static final Translation2d kShuttleRedTop = new Translation2d(
-            AllianceFlip.flipX(kShuttleBlueTop.getX()),
+            Flip.flipX(kShuttleBlueTop.getX()),
             LinesHorizontal.center / 4
         );
 
         public static final Translation2d kShuttleRedBottom = new Translation2d(
-            AllianceFlip.flipX(kShuttleBlueBottom.getX()),
+            Flip.flipX(kShuttleBlueBottom.getX()),
             LinesHorizontal.center / 4 * 3
         );
 

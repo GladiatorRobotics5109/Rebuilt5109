@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -18,8 +19,9 @@ import frc.robot.subsystems.flywheels.FlywheelsSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.turret.TurretSubsystem;
-import frc.robot.util.AllianceFlip;
+import frc.robot.util.Flip;
 import frc.robot.util.Conversions;
+import frc.robot.util.Flip;
 import frc.robot.util.LoggedTunableNumber;
 import org.json.simple.parser.ParseException;
 
@@ -30,7 +32,8 @@ public class AutoCommands {
     private static PathPlannerPath kTestPath;
     private static PathPlannerPath kPreloadAndOutpostPath;
     private static PathPlannerPath kPreloadAndDepotPath;
-    private static PathPlannerPath kPreloadAndCenter;
+    private static PathPlannerPath kPreloadAndCenterLeft;
+    private static PathPlannerPath kPreloadAndCenterRight;
 
     private static final LoggedTunableNumber s_flywheelsVelocity = new LoggedTunableNumber(
         "TestFlywheelsVelocityRPM",
@@ -48,7 +51,8 @@ public class AutoCommands {
             kTestPath = PathPlannerPath.fromChoreoTrajectory("Test");
             kPreloadAndOutpostPath = PathPlannerPath.fromChoreoTrajectory("PreloadAndOutpost");
             kPreloadAndDepotPath = PathPlannerPath.fromChoreoTrajectory("PreloadAndDepot");
-            kPreloadAndCenter = PathPlannerPath.fromChoreoTrajectory("PreloadAndCenter");
+            kPreloadAndCenterLeft = PathPlannerPath.fromChoreoTrajectory("PreloadAndCenterLeft");
+            kPreloadAndCenterRight = Flip.flipY(kPreloadAndCenterLeft);
         }
         catch (IOException | ParseException e) {
             DriverStation.reportError("Failed to load PathPlannerPath", e.getStackTrace());
@@ -64,7 +68,7 @@ public class AutoCommands {
     ) {
         return Commands.sequence(
             prefix(
-                () -> AllianceFlip.apply(
+                () -> Flip.apply(
                     new Pose2d(
                         LinesVertical.starting - Conversions.inchesToMeters(12),
                         LinesHorizontal.leftTrenchOpenStart - Conversions.inchesToMeters(16 + 3),
@@ -97,7 +101,7 @@ public class AutoCommands {
     ) {
         return Commands.sequence(
             prefix(
-                () -> AllianceFlip.apply(
+                () -> Flip.apply(
                     new Pose2d(
                         LinesVertical.starting - Conversions.inchesToMeters(12),
                         LinesHorizontal.rightTrenchOpenStart - Conversions.inchesToMeters(16 + 3),
@@ -144,7 +148,7 @@ public class AutoCommands {
             AutoBuilder.followPath(kPreloadAndOutpostPath),
             Commands.parallel(
                 DriveCommands.driveToPose(
-                    () -> AllianceFlip.apply(
+                    () -> Flip.apply(
                         new Pose2d(
                             Outpost.centerPoint.plus(new Translation2d(Conversions.inchesToMeters(28), 0.0)),
                             Rotation2d.kZero
@@ -195,7 +199,7 @@ public class AutoCommands {
         IntakeSubsystem intake
     ) {
         return Commands.sequence(
-            prefix(kPreloadAndCenter, Rotation2d.kZero, drive, turret),
+            prefix(kPreloadAndCenterLeft, Rotation2d.kZero, drive, turret),
             TurretCommands.leftTrench(turret),
             FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(0.5),
@@ -203,7 +207,7 @@ public class AutoCommands {
             Commands.waitSeconds(4),
             IndexerCommands.stop(indexer),
             Commands.parallel(
-                AutoBuilder.followPath(kPreloadAndCenter),
+                AutoBuilder.followPath(kPreloadAndCenterLeft),
                 Commands.sequence(
                     IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(1.9)),
                     IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(16))
@@ -221,6 +225,42 @@ public class AutoCommands {
                 )
             )
         ).withName("AutoCommands::preloadAndCenterLeft");
+    }
+
+    public static Command preloadAndCenterRight(
+        DriveSubsystem drive,
+        TurretSubsystem turret,
+        FlywheelsSubsystem flywheels,
+        IndexerSubsystem indexer,
+        IntakeSubsystem intake
+    ) {
+        return Commands.sequence(
+            prefix(kPreloadAndCenterRight, Rotation2d.kZero, drive, turret),
+            TurretCommands.leftTrench(turret),
+            FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
+            Commands.waitSeconds(0.5),
+            IndexerCommands.index(indexer),
+            Commands.waitSeconds(4),
+            IndexerCommands.stop(indexer),
+            Commands.parallel(
+                AutoBuilder.followPath(kPreloadAndCenterRight),
+                Commands.sequence(
+                    IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(1.9)),
+                    IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(16))
+                ),
+                TurretCommands.autoAim(turret),
+                FlywheelsCommands.autoAim(flywheels),
+                Commands.sequence(
+                    Commands.waitSeconds(13.85),
+                    Commands.repeatingSequence(
+                        IndexerCommands.index(indexer),
+                        Commands.waitSeconds(4),
+                        IndexerCommands.reverse(indexer),
+                        Commands.waitSeconds(1)
+                    )
+                )
+            )
+        ).withName("AutoCommands::preloadAndCenterRight");
     }
 
     public static Command test(
@@ -256,7 +296,7 @@ public class AutoCommands {
         TurretSubsystem turret
     ) {
         return prefix(
-            () -> AllianceFlip.apply(firstPath.getStartingHolonomicPose().orElse(Pose2d.kZero)),
+            () -> Flip.apply(firstPath.getStartingHolonomicPose().orElse(Pose2d.kZero)),
             () -> turretPosition,
             drive,
             turret

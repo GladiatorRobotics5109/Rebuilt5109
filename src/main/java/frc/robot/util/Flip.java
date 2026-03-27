@@ -9,10 +9,16 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.FieldConstants;
 import lombok.experimental.UtilityClass;
 
+import java.util.List;
 import java.util.Optional;
 
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.IdealStartingState;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
+
 @UtilityClass
-public class AllianceFlip {
+public class Flip {
     public boolean shouldFlip() {
         Optional<Alliance> alliance = DriverStation.getAlliance();
         if (alliance.isEmpty()) {
@@ -62,5 +68,38 @@ public class AllianceFlip {
 
     public Translation2d flip(Translation2d t) {
         return new Translation2d(FieldConstants.fieldLength - t.getX(), FieldConstants.fieldWidth - t.getY());
+    }
+
+    public PathPlannerPath flipY(PathPlannerPath path) {
+        List<Waypoint> flippedWaypoints = path.getWaypoints().stream().map(waypoint -> flipY(waypoint)).toList();
+        return new PathPlannerPath(
+            flippedWaypoints,
+            path.getGlobalConstraints(),
+            flipY(path.getIdealStartingState()),
+            flipY(path.getGoalEndState())
+        );
+    }
+
+    public Waypoint flipY(Waypoint w) {
+        return new Waypoint(flipY(w.prevControl()), flipY(w.anchor()), flipY(w.nextControl()));
+    }
+
+    public IdealStartingState flipY(IdealStartingState i) {
+        return new IdealStartingState(i.velocityMPS(), flipY(i.rotation()));
+    }
+
+    public GoalEndState flipY(GoalEndState e) {
+        return new GoalEndState(e.velocityMPS(), flipY(e.rotation()));
+    }
+
+    public Rotation2d flipY(Rotation2d r) {
+        return r.times(-1);
+    }
+
+    public Translation2d flipY(Translation2d t) {
+        return new Translation2d(
+            t.getX(),
+            FieldConstants.fieldWidth - t.getY()
+        );
     }
 }
