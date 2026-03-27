@@ -209,13 +209,13 @@ public class AutoCommands {
             Commands.parallel(
                 AutoBuilder.followPath(kPreloadAndCenterLeft),
                 Commands.sequence(
-                    IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(1.9)),
-                    IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(16))
+                    IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(1.55)),
+                    IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(15))
                 ),
                 TurretCommands.autoAim(turret),
                 FlywheelsCommands.autoAim(flywheels),
                 Commands.sequence(
-                    Commands.waitSeconds(13.85),
+                    Commands.waitSeconds(11.3),
                     Commands.repeatingSequence(
                         IndexerCommands.index(indexer),
                         Commands.waitSeconds(4),
@@ -245,13 +245,13 @@ public class AutoCommands {
             Commands.parallel(
                 AutoBuilder.followPath(kPreloadAndCenterRight),
                 Commands.sequence(
-                    IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(1.9)),
-                    IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(16))
+                    IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(1.55)),
+                    IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(15))
                 ),
                 TurretCommands.autoAim(turret),
                 FlywheelsCommands.autoAim(flywheels),
                 Commands.sequence(
-                    Commands.waitSeconds(13.85),
+                    Commands.waitSeconds(11.3),
                     Commands.repeatingSequence(
                         IndexerCommands.index(indexer),
                         Commands.waitSeconds(4),
