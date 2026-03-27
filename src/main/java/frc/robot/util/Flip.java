@@ -9,13 +9,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.FieldConstants;
 import lombok.experimental.UtilityClass;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
+import com.pathplanner.lib.path.PathPoint;
+import com.pathplanner.lib.path.RotationTarget;
 
 @UtilityClass
 public class Flip {
@@ -71,17 +71,45 @@ public class Flip {
     }
 
     public PathPlannerPath flipY(PathPlannerPath path) {
-        List<Waypoint> flippedWaypoints = path.getWaypoints().stream().map(waypoint -> flipY(waypoint)).toList();
-        return new PathPlannerPath(
-            flippedWaypoints,
+        // System.out.println("WAYPOINTS LEN: " + path.getWaypoints().size());
+        // for (Waypoint w : path.getWaypoints()) {
+        //     System.out.println("Waypoint:" + w.anchor().toString());
+        // }
+        // List<Waypoint> flippedWaypoints = path.getWaypoints().stream().map(waypoint -> flipY(waypoint)).toList();
+        // return new PathPlannerPath(
+        //     flippedWaypoints,
+        //     path.getGlobalConstraints(),
+        //     flipY(path.getIdealStartingState()),
+        //     flipY(path.getGoalEndState())
+        // );
+
+        PathPlannerPath flipped = PathPlannerPath.fromPathPoints(
+            path.getAllPathPoints().stream().map(p -> Flip.flipY(p)).toList(),
             path.getGlobalConstraints(),
-            flipY(path.getIdealStartingState()),
-            flipY(path.getGoalEndState())
+            Flip.flipY(path.getGoalEndState())
         );
+
+        return flipped;
     }
 
-    public Waypoint flipY(Waypoint w) {
-        return new Waypoint(flipY(w.prevControl()), flipY(w.anchor()), flipY(w.nextControl()));
+    public PathPoint flipY(PathPoint p) {
+        if (p.rotationTarget == null && p.constraints == null) {
+            return new PathPoint(flipY(p.position));
+        }
+        else if (p.constraints == null) {
+            return new PathPoint(
+                flipY(p.position),
+                new RotationTarget(p.rotationTarget.position(), flipY(p.rotationTarget.rotation()))
+            );
+        }
+        else {
+            return new PathPoint(
+                flipY(p.position),
+                new RotationTarget(p.rotationTarget.position(), flipY(p.rotationTarget.rotation())),
+                p.constraints
+            );
+
+        }
     }
 
     public IdealStartingState flipY(IdealStartingState i) {

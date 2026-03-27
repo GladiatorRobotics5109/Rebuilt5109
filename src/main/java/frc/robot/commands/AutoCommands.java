@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 public class AutoCommands {
-    private static PathPlannerPath kTestPath;
+    // private static PathPlannerPath kTestPath;
     private static PathPlannerPath kPreloadAndOutpostPath;
     private static PathPlannerPath kPreloadAndDepotPath;
     private static PathPlannerPath kPreloadAndCenterLeft;
@@ -48,7 +48,7 @@ public class AutoCommands {
         IndexerSubsystem indexer
     ) {
         try {
-            kTestPath = PathPlannerPath.fromChoreoTrajectory("Test");
+            // kTestPath = PathPlannerPath.fromChoreoTrajectory("Test");
             kPreloadAndOutpostPath = PathPlannerPath.fromChoreoTrajectory("PreloadAndOutpost");
             kPreloadAndDepotPath = PathPlannerPath.fromChoreoTrajectory("PreloadAndDepot");
             kPreloadAndCenterLeft = PathPlannerPath.fromChoreoTrajectory("PreloadAndCenterLeft");
@@ -236,7 +236,7 @@ public class AutoCommands {
     ) {
         return Commands.sequence(
             prefix(kPreloadAndCenterRight, Rotation2d.kZero, drive, turret),
-            TurretCommands.leftTrench(turret),
+            TurretCommands.rightTrench(turret),
             FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(0.5),
             IndexerCommands.index(indexer),
@@ -269,10 +269,12 @@ public class AutoCommands {
         FlywheelsSubsystem flywheels,
         IndexerSubsystem indexer
     ) {
-        return Commands.sequence(
-            prefix(kTestPath, Rotation2d.kZero, drive, turret),
-            AutoBuilder.followPath(kTestPath)
-        ).withName("AutoCommands::test");
+        // return Commands.sequence(
+        //     prefix(kTestPath, Rotation2d.kZero, drive, turret),
+        //     AutoBuilder.followPath(kTestPath)
+        // ).withName("AutoCommands::test");
+
+        return Commands.none().withName("AutoCommands::test");
     }
 
     public static Command testTurret(FlywheelsSubsystem flywheels, TurretSubsystem turret, IndexerSubsystem indexer) {
