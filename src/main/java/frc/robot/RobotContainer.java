@@ -174,6 +174,10 @@ public class RobotContainer {
             )
         );
 
+        m_driverController.R1()
+            .onTrue(Commands.runOnce(() -> m_intake.setReverse(true)))
+            .onFalse(Commands.runOnce(() -> m_intake.setReverse(false)));
+
         // Automatically stow the hood when the robot gets close to the trench so that we don't hit it
         // new Trigger(
         //     () -> {

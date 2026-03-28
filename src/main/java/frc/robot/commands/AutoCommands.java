@@ -204,7 +204,7 @@ public class AutoCommands {
             FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(0.5),
             IndexerCommands.index(indexer),
-            Commands.waitSeconds(4),
+            Commands.waitSeconds(3.25),
             IndexerCommands.stop(indexer),
             Commands.parallel(
                 AutoBuilder.followPath(kPreloadAndCenterLeft),
@@ -240,7 +240,7 @@ public class AutoCommands {
             FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(0.5),
             IndexerCommands.index(indexer),
-            Commands.waitSeconds(4),
+            Commands.waitSeconds(3.25),
             IndexerCommands.stop(indexer),
             Commands.parallel(
                 AutoBuilder.followPath(kPreloadAndCenterRight),

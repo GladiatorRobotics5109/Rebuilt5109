@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import lombok.Getter;
+import lombok.Setter;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -17,6 +19,11 @@ public class IntakeSubsystem extends SubsystemBase {
     @AutoLogOutput(key = kLogPath + "/State")
     @Getter
     private IntakeState m_state = IntakeState.STOWED;
+
+    @AutoLogOutput(key = kLogPath + "/Reverse")
+    @Getter
+    @Setter
+    private boolean m_reverse;
 
     public IntakeSubsystem() {
         m_io = switch (Constants.kCurrentMode) {
@@ -72,7 +79,7 @@ public class IntakeSubsystem extends SubsystemBase {
                 else {
                     m_io.runPivotPosition(kPivotDeployedPosition);
                 }
-                m_io.runRollersVoltage(kRollersIntakeVoltage);
+                m_io.runRollersVoltage(m_reverse ? kRollersReverseVoltage : kRollersIntakeVoltage);
             }
             case STOWED -> {
                 m_io.runPivotPosition(kPivotStowedPosition);
