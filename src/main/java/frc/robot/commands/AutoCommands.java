@@ -52,7 +52,8 @@ public class AutoCommands {
             kPreloadAndOutpostPath = PathPlannerPath.fromChoreoTrajectory("PreloadAndOutpost");
             kPreloadAndDepotPath = PathPlannerPath.fromChoreoTrajectory("PreloadAndDepot");
             kPreloadAndCenterLeft = PathPlannerPath.fromChoreoTrajectory("PreloadAndCenterLeft");
-            kPreloadAndCenterRight = Flip.flipY(kPreloadAndCenterLeft);
+            // kPreloadAndCenterRight = Flip.flipY(kPreloadAndCenterLeft);
+            kPreloadAndCenterRight = PathPlannerPath.fromChoreoTrajectory("PreloadAndCenterRight");
         }
         catch (IOException | ParseException e) {
             DriverStation.reportError("Failed to load PathPlannerPath", e.getStackTrace());
@@ -235,6 +236,12 @@ public class AutoCommands {
         IntakeSubsystem intake
     ) {
         return Commands.sequence(
+            // prefix(
+            //     () -> Flip.apply(Flip.flipY(kPreloadAndCenterLeft.getStartingHolonomicPose().orElse(Pose2d.kZero))),
+            //     () -> Rotation2d.kZero,
+            //     drive,
+            //     turret
+            // ),
             prefix(kPreloadAndCenterRight, Rotation2d.kZero, drive, turret),
             TurretCommands.rightTrench(turret),
             FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),

@@ -120,6 +120,13 @@ public class Flip {
         return new GoalEndState(e.velocityMPS(), flipY(e.rotation()));
     }
 
+    public Pose2d flipY(Pose2d p) {
+        return new Pose2d(
+            flipY(p.getTranslation()),
+            flipY(p.getRotation())
+        );
+    }
+
     public Rotation2d flipY(Rotation2d r) {
         return r.times(-1);
     }
