@@ -109,12 +109,13 @@ public class VisionIOTurretLimelight implements VisionIO {
             Conversions.radiansToDegrees(robotToCamera.getRotation().getZ())
         );
 
-        if (DriverStation.isDisabled()) {
-            LimelightHelpers.SetIMUMode(this.name, 1);
-        }
-        else {
-            LimelightHelpers.SetIMUMode(this.name, 4);
-        }
+        LimelightHelpers.SetIMUMode(this.name, 1);
+        // if (DriverStation.isDisabled()) {
+        //     LimelightHelpers.SetIMUMode(this.name, 1);
+        // }
+        // else {
+        //     LimelightHelpers.SetIMUMode(this.name, 4);
+        // }
 
         double deg = rotationSupplier.get().getDegrees();
         LimelightHelpers.SetRobotOrientation(name, deg, 0, 0, 0, 0, 0);
