@@ -204,18 +204,18 @@ public class AutoCommands {
             FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(0.5),
             IndexerCommands.index(indexer),
-            Commands.waitSeconds(3.25),
+            Commands.waitSeconds(2.25),
             IndexerCommands.stop(indexer),
             Commands.parallel(
                 AutoBuilder.followPath(kPreloadAndCenterLeft),
                 Commands.sequence(
-                    IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(1.55)),
-                    IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(15))
+                    IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(1.5)),
+                    IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(13.5))
                 ),
                 TurretCommands.autoAim(turret),
                 FlywheelsCommands.autoAim(flywheels),
                 Commands.sequence(
-                    Commands.waitSeconds(11.3),
+                    Commands.waitSeconds(11.2),
                     Commands.repeatingSequence(
                         IndexerCommands.index(indexer),
                         Commands.waitSeconds(4),
@@ -240,13 +240,13 @@ public class AutoCommands {
             FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(0.5),
             IndexerCommands.index(indexer),
-            Commands.waitSeconds(3.25),
+            Commands.waitSeconds(2.25),
             IndexerCommands.stop(indexer),
             Commands.parallel(
                 AutoBuilder.followPath(kPreloadAndCenterRight),
                 Commands.sequence(
-                    IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(1.55)),
-                    IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(15))
+                    IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(1.5)),
+                    IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(13.5))
                 ),
                 TurretCommands.autoAim(turret),
                 FlywheelsCommands.autoAim(flywheels),
