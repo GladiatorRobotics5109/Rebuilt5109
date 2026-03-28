@@ -211,7 +211,7 @@ public class AutoCommands {
                 AutoBuilder.followPath(kPreloadAndCenterLeft),
                 Commands.sequence(
                     IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(1.5)),
-                    IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(13.5))
+                    IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(11))
                 ),
                 TurretCommands.autoAim(turret),
                 FlywheelsCommands.autoAim(flywheels),
@@ -253,7 +253,7 @@ public class AutoCommands {
                 AutoBuilder.followPath(kPreloadAndCenterRight),
                 Commands.sequence(
                     IntakeCommands.deploy(intake).beforeStarting(Commands.waitSeconds(1.5)),
-                    IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(12.5))
+                    IntakeCommands.stow(intake).beforeStarting(Commands.waitSeconds(11))
                 ),
                 TurretCommands.autoAim(turret),
                 FlywheelsCommands.autoAim(flywheels),
