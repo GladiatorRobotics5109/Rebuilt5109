@@ -177,7 +177,8 @@ public final class Constants {
         public static final String kLogPath = "Subsystems/Indexer";
 
         public static final double kIndexerIndexVoltage = 12.0;
-        public static final double kKickupIndexVoltage = 6.0;
+        // public static final double kKickupIndexVoltage = 6.0;
+        public static final double kKickupIndexVoltage = 12.0;
 
         public static final double kIndexerReverseVoltage = -9.0;
         public static final double kKickupReverseVoltage = 0.0;
