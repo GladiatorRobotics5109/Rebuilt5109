@@ -34,6 +34,8 @@ public class AutoCommands {
     private static PathPlannerPath kPreloadAndDepotPath;
     private static PathPlannerPath kPreloadAndCenterLeft;
     private static PathPlannerPath kPreloadAndCenterRight;
+    private static PathPlannerPath kNewRight1;
+    private static PathPlannerPath kNewRight2;
 
     private static final LoggedTunableNumber s_flywheelsVelocity = new LoggedTunableNumber(
         "TestFlywheelsVelocityRPM",
@@ -54,6 +56,8 @@ public class AutoCommands {
             kPreloadAndCenterLeft = PathPlannerPath.fromChoreoTrajectory("PreloadAndCenterLeft");
             // kPreloadAndCenterRight = Flip.flipY(kPreloadAndCenterLeft);
             kPreloadAndCenterRight = PathPlannerPath.fromChoreoTrajectory("PreloadAndCenterRight");
+            kNewRight1 = PathPlannerPath.fromChoreoTrajectory("NewRight_1");
+            kNewRight2 = PathPlannerPath.fromChoreoTrajectory("NewRight_2");
         }
         catch (IOException | ParseException e) {
             DriverStation.reportError("Failed to load PathPlannerPath", e.getStackTrace());
@@ -268,6 +272,52 @@ public class AutoCommands {
                 )
             )
         ).withName("AutoCommands::preloadAndCenterRight");
+    }
+
+    public static Command newRight(
+        DriveSubsystem drive,
+        TurretSubsystem turret,
+        FlywheelsSubsystem flywheels,
+        IndexerSubsystem indexer,
+        IntakeSubsystem intake
+    ) {
+        return Commands.sequence(
+            prefix(kNewRight1, Rotation2d.kZero, drive, turret),
+            Commands.parallel(
+                TurretCommands.autoAim(turret),
+                FlywheelsCommands.autoAim(flywheels),
+                Commands.sequence(
+                    Commands.parallel(
+                        AutoBuilder.followPath(kNewRight1),
+                        Commands.sequence(
+                            Commands.waitSeconds(1.3),
+                            IntakeCommands.deploy(intake),
+                            Commands.waitSeconds(11.6),
+                            IntakeCommands.stow(intake)
+                        ),
+                        Commands.sequence(
+                            Commands.waitSeconds(10.5),
+                            IndexerCommands.index(indexer)
+                        )
+                    ),
+                    Commands.waitSeconds(2.5),
+                    IndexerCommands.stop(indexer),
+                    Commands.parallel(
+                        AutoBuilder.followPath(kNewRight2),
+                        Commands.sequence(
+                            Commands.waitSeconds(1.7),
+                            IntakeCommands.deploy(intake),
+                            Commands.waitSeconds(10.6),
+                            IntakeCommands.stow(intake)
+                        ),
+                        Commands.sequence(
+                            Commands.waitSeconds(9.6),
+                            IndexerCommands.index(indexer)
+                        )
+                    )
+                )
+            )
+        ).withName("AutoCommands::newRight");
     }
 
     public static Command test(
