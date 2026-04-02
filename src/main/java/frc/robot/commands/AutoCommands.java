@@ -290,7 +290,7 @@ public class AutoCommands {
                     Commands.parallel(
                         AutoBuilder.followPath(kNewRight1),
                         Commands.sequence(
-                            Commands.waitSeconds(1.3),
+                            Commands.waitSeconds(0.88),
                             IntakeCommands.deploy(intake),
                             Commands.waitSeconds(11.6),
                             IntakeCommands.stow(intake)
