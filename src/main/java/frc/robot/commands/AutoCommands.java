@@ -290,14 +290,19 @@ public class AutoCommands {
                     Commands.parallel(
                         AutoBuilder.followPath(kNewRight1),
                         Commands.sequence(
-                            Commands.waitSeconds(0.88),
+                            Commands.waitSeconds(0.91),
                             IntakeCommands.deploy(intake),
-                            Commands.waitSeconds(11.6),
+                            Commands.waitSeconds(11.5),
                             IntakeCommands.stow(intake)
                         ),
                         Commands.sequence(
-                            Commands.waitSeconds(10.5),
-                            IndexerCommands.index(indexer)
+                            Commands.waitSeconds(9.5),
+                            Commands.repeatingSequence(
+                                IndexerCommands.index(indexer),
+                                Commands.waitSeconds(2),
+                                IndexerCommands.reverse(indexer),
+                                Commands.waitSeconds(1)
+                            )
                         )
                     ),
                     Commands.waitSeconds(2.5),
