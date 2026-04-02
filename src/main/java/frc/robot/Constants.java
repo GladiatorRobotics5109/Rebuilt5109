@@ -299,7 +299,7 @@ public final class Constants {
         static {
             kHubFlywheelsRPMs.put(Conversions.inchesToMeters(80.93), 2700.0);
             kHubFlywheelsRPMs.put(Conversions.inchesToMeters(131.0), 3350.0);
-            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(157.4), 3600.0);
+            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(157.4), 3620.0);
             kHubFlywheelsRPMs.put(Conversions.inchesToMeters(264.5), 4150.0);
 
             kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(80.93), 2800.0);
