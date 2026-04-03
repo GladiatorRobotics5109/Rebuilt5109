@@ -56,6 +56,10 @@ public class Conversions {
         return Units.rotationsToRadians(rot);
     }
 
+    public double radiansToDegrees(double rad) {
+        return Units.radiansToDegrees(rad);
+    }
+
     public double rotationsPerMinuteToRadiansPerSecond(double rpm) {
         return Units.rotationsPerMinuteToRadiansPerSecond(rpm);
     }

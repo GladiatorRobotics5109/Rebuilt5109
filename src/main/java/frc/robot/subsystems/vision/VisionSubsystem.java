@@ -9,6 +9,7 @@ package frc.robot.subsystems.vision;
 
 import static frc.robot.Constants.VisionConstants.*;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,6 +19,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -34,6 +36,7 @@ public class VisionSubsystem extends SubsystemBase {
     private final VisionIO[] io;
     private final VisionIOInputsAutoLogged[] inputs;
     private final Alert[] disconnectedAlerts;
+    private final Supplier<Rotation2d> rotationSupplier;
 
     public VisionSubsystem(
         VisionConsumer consumer,
@@ -49,6 +52,8 @@ public class VisionSubsystem extends SubsystemBase {
             ) };
             default -> new VisionIO[] { new VisionIO() {} };
         };
+
+        this.rotationSupplier = rotationSupplier;
 
         // Initialize inputs
         this.inputs = new VisionIOInputsAutoLogged[io.length];
@@ -88,6 +93,8 @@ public class VisionSubsystem extends SubsystemBase {
         List<Pose3d> allRobotPosesAccepted = new LinkedList<>();
         List<Pose3d> allRobotPosesRejected = new LinkedList<>();
 
+        Rotation2d robotRotation = rotationSupplier.get();
+
         // Loop over cameras
         for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
             // Update disconnected alert
@@ -121,7 +128,13 @@ public class VisionSubsystem extends SubsystemBase {
                     || observation.pose().getY() > kAprilTagLayout.getFieldWidth()
                     || (cameraIndex == 0
                         && Math.abs(RobotState.getInstance().getTurretVelocityRadPerSec())
-                            > kTurretVelocityThresholdRadPerSec);
+                            > kTurretVelocityThresholdRadPerSec)
+                    || (DriverStation.isEnabled()
+                        && !MathUtil.isNear(
+                            robotRotation.getRadians(),
+                            observation.pose().getRotation().getZ(),
+                            kRotationErrorToleranceRad
+                        ));
 
                 // Add pose to log
                 robotPoses.add(observation.pose());

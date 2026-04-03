@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import lombok.Getter;
+import lombok.Setter;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -18,12 +20,19 @@ public class IntakeSubsystem extends SubsystemBase {
     @Getter
     private IntakeState m_state = IntakeState.STOWED;
 
+    @AutoLogOutput(key = kLogPath + "/Reverse")
+    @Getter
+    @Setter
+    private boolean m_reverse;
+
     public IntakeSubsystem() {
         m_io = switch (Constants.kCurrentMode) {
-            // case REAL -> new IntakeIOTalonFX(kRollersId, kPivotId, Constants.kCANBusRio);
+            case REAL -> new IntakeIOTalonFX(kRollersId, kPivotId, Constants.kCANBusRio);
             case SIM -> new IntakeIOSim();
             default -> new IntakeIO() {};
         };
+
+        Logger.recordOutput(kLogPath + "/PivotDesiredPosition", 0.0);
     }
 
     public void deploy() {
@@ -59,9 +68,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         switch (m_state) {
             case DEPLOYED -> {
-                Logger.recordOutput("DeployedPosRot", kPivotDeployedPosition.getRotations());
-                Logger.recordOutput("DeployedCurrentPositionRot", m_inputs.pivotPositionRot);
-                Logger.recordOutput("DeployedTolerance", kPivotDeployedTolerance.getRotations());
+                Logger.recordOutput(kLogPath + "/PivotDesiredPosition", kPivotDeployedPosition);
                 if (MathUtil.isNear(
                     kPivotDeployedPosition.getRotations(),
                     m_inputs.pivotPositionRot,
@@ -72,13 +79,15 @@ public class IntakeSubsystem extends SubsystemBase {
                 else {
                     m_io.runPivotPosition(kPivotDeployedPosition);
                 }
-                m_io.runRollersVoltage(kRollersIntakeVoltage);
+                m_io.runRollersVoltage(m_reverse ? kRollersReverseVoltage : kRollersIntakeVoltage);
             }
             case STOWED -> {
+                Logger.recordOutput(kLogPath + "/PivotDesiredPosition", kPivotStowedPosition);
                 m_io.runPivotPosition(kPivotStowedPosition);
                 m_io.runRollersVoltage(0.0);
             }
             case NONE -> {
+                Logger.recordOutput(kLogPath + "/PivotDesiredPosition", 0.0);
             }
         }
     }

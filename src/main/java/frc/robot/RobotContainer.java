@@ -9,7 +9,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -175,6 +174,10 @@ public class RobotContainer {
             )
         );
 
+        m_driverController.R1()
+            .onTrue(Commands.runOnce(() -> m_intake.setReverse(true)))
+            .onFalse(Commands.runOnce(() -> m_intake.setReverse(false)));
+
         // Automatically stow the hood when the robot gets close to the trench so that we don't hit it
         // new Trigger(
         //     () -> {
@@ -232,6 +235,16 @@ public class RobotContainer {
         m_autoChooser.addOption(
             "Comp_preloadAndCenterLeft",
             AutoCommands.preloadAndCenterLeft(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
+        );
+
+        m_autoChooser.addOption(
+            "Comp_preloadAndCenterRight",
+            AutoCommands.preloadAndCenterRight(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
+        );
+
+        m_autoChooser.addOption(
+            "Comp_newRight",
+            AutoCommands.newRight(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
         );
 
         // Set up SysId routines

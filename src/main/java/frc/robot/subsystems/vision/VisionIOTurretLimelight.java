@@ -16,7 +16,9 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.RobotState;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.util.Conversions;
 import frc.robot.util.LimelightHelpers;
 
 import java.util.HashSet;
@@ -95,24 +97,25 @@ public class VisionIOTurretLimelight implements VisionIO {
         // );
         Transform3d robotToCamera = this.robotToCamera.get();
         Logger.recordOutput(VisionConstants.kLogPath + "/RobotToCamera", robotToCamera);
-        // Pose3d robotPose = Conversions.toPose3d(RobotState.getInstance().getPose());
-        // Logger.recordOutput(VisionConstants.kLogPath + "/CameraPose", robotPose.plus(robotToCamera));
+        Pose3d robotPose = Conversions.toPose3d(RobotState.getInstance().getPose());
+        Logger.recordOutput(VisionConstants.kLogPath + "/CameraPose", robotPose.plus(robotToCamera));
         LimelightHelpers.setCameraPose_RobotSpace(
             name,
             robotToCamera.getX(),
             robotToCamera.getY(),
             robotToCamera.getZ(),
-            robotToCamera.getRotation().getX(),
-            robotToCamera.getRotation().getY(),
-            robotToCamera.getRotation().getZ()
+            Conversions.radiansToDegrees(robotToCamera.getRotation().getX()),
+            Conversions.radiansToDegrees(robotToCamera.getRotation().getY()),
+            Conversions.radiansToDegrees(robotToCamera.getRotation().getZ())
         );
 
-        if (DriverStation.isDisabled()) {
-            LimelightHelpers.SetIMUMode(this.name, 1);
-        }
-        else {
-            LimelightHelpers.SetIMUMode(this.name, 4);
-        }
+        LimelightHelpers.SetIMUMode(this.name, 1);
+        // if (DriverStation.isDisabled()) {
+        //     LimelightHelpers.SetIMUMode(this.name, 1);
+        // }
+        // else {
+        //     LimelightHelpers.SetIMUMode(this.name, 4);
+        // }
 
         double deg = rotationSupplier.get().getDegrees();
         LimelightHelpers.SetRobotOrientation(name, deg, 0, 0, 0, 0, 0);
