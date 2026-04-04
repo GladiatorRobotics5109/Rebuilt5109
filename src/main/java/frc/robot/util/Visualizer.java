@@ -22,7 +22,7 @@ public class Visualizer {
     public static Visualizer getInstance() { return s_instance; }
 
     private Visualizer(DriveSubsystem drive, FlywheelsSubsystem flywheels) {
-        // FuelSim.getInstance().spawnStartingFuel();
+        FuelSim.getInstance().spawnStartingFuel();
         FuelSim.getInstance().registerRobot(
             Units.inchesToMeters(28),
             Units.inchesToMeters(24),

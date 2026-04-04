@@ -31,6 +31,7 @@ public final class Constants {
     public static final CANBus kCANBusCANivore = new CANBus("drivetrain");
 
     public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
 
     /** Whether to schedule the auto aim commands as each subsystem's default command */
     public static final boolean kEnableAutoAimAsDefault = true;
@@ -96,7 +97,7 @@ public final class Constants {
 
         public static final double kSimShooterWheelRadius = Units.inchesToMeters(2);
         // public static final double kSimShooterEfficiency = 0.365;
-        public static final double kSimShooterEfficiency = 0.31;
+        public static final double kSimShooterEfficiency = 0.35;
         public static final double kSimShootRate = 5;
     }
 
@@ -284,6 +285,8 @@ public final class Constants {
 
         public static double kTurretVelocityThresholdRadPerSec = Conversions.degreesToRadians(20);
         public static double kRotationErrorToleranceRad = Conversions.degreesToRadians(10);
+
+        public static boolean kEnableDynamicTagFilter = true;
     }
 
     public static final class AimingConstants {

@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.AimingConstants;
@@ -21,11 +22,12 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.util.Flip;
 import frc.robot.util.Conversions;
-import frc.robot.util.Flip;
 import frc.robot.util.LoggedTunableNumber;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 public class AutoCommands {
@@ -36,6 +38,13 @@ public class AutoCommands {
     private static PathPlannerPath kPreloadAndCenterRight;
     private static PathPlannerPath kNewRight1;
     private static PathPlannerPath kNewRight2;
+    private static PathPlannerPath kNewCenter1;
+    private static PathPlannerPath kNewCenter2;
+
+    private static PathPlannerPath kNewRight1Mirrored;
+    private static PathPlannerPath kNewRight2Mirrored;
+    private static PathPlannerPath kNewCenter1Mirrored;
+    private static PathPlannerPath kNewCenter2Mirrored;
 
     private static final LoggedTunableNumber s_flywheelsVelocity = new LoggedTunableNumber(
         "TestFlywheelsVelocityRPM",
@@ -43,21 +52,27 @@ public class AutoCommands {
     );
     private static final LoggedTunableNumber s_turretPosition = new LoggedTunableNumber("TestTurretPositionDeg", 0.0);
 
-    public static void init(
-        DriveSubsystem drive,
-        TurretSubsystem turret,
-        FlywheelsSubsystem flywheels,
-        IndexerSubsystem indexer
-    ) {
+    private static DoubleSupplier s_preAutoDelay;
+    private static BooleanSupplier s_isRight;
+
+    public static void init(DoubleSupplier preAutoDelay, BooleanSupplier isRight) {
+        s_preAutoDelay = preAutoDelay;
+        s_isRight = isRight;
+
         try {
-            // kTestPath = PathPlannerPath.fromChoreoTrajectory("Test");
             kPreloadAndOutpostPath = PathPlannerPath.fromChoreoTrajectory("PreloadAndOutpost");
             kPreloadAndDepotPath = PathPlannerPath.fromChoreoTrajectory("PreloadAndDepot");
             kPreloadAndCenterLeft = PathPlannerPath.fromChoreoTrajectory("PreloadAndCenterLeft");
-            // kPreloadAndCenterRight = Flip.flipY(kPreloadAndCenterLeft);
             kPreloadAndCenterRight = PathPlannerPath.fromChoreoTrajectory("PreloadAndCenterRight");
             kNewRight1 = PathPlannerPath.fromChoreoTrajectory("NewRight_1");
             kNewRight2 = PathPlannerPath.fromChoreoTrajectory("NewRight_2");
+            kNewCenter1 = PathPlannerPath.fromChoreoTrajectory("NewCenter_1");
+            kNewCenter2 = PathPlannerPath.fromChoreoTrajectory("NewCenter_2");
+
+            kNewRight1Mirrored = kNewRight1.mirrorPath();
+            kNewRight2Mirrored = kNewRight2.mirrorPath();
+            kNewCenter1Mirrored = kNewCenter1.mirrorPath();
+            kNewCenter2Mirrored = kNewCenter2.mirrorPath();
         }
         catch (IOException | ParseException e) {
             DriverStation.reportError("Failed to load PathPlannerPath", e.getStackTrace());
@@ -67,7 +82,7 @@ public class AutoCommands {
     public static Command preloadLeft(
         DriveSubsystem drive,
         TurretSubsystem turret,
-        FlywheelsSubsystem flyhweels,
+        FlywheelsSubsystem flywheels,
         IndexerSubsystem indexer,
         IntakeSubsystem intake
     ) {
@@ -85,7 +100,7 @@ public class AutoCommands {
                 turret
             ),
             TurretCommands.leftTrench(turret),
-            FlywheelsCommands.runVelocity(flyhweels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
+            FlywheelsCommands.runVelocity(flywheels, () -> AimingConstants.kTrenchFlywheelsVelocityRPM),
             Commands.waitSeconds(2),
             IndexerCommands.index(indexer),
             Commands.waitSeconds(4.5),
@@ -274,7 +289,7 @@ public class AutoCommands {
         ).withName("AutoCommands::preloadAndCenterRight");
     }
 
-    public static Command newRight(
+    public static Command newTrench(
         DriveSubsystem drive,
         TurretSubsystem turret,
         FlywheelsSubsystem flywheels,
@@ -282,13 +297,21 @@ public class AutoCommands {
         IntakeSubsystem intake
     ) {
         return Commands.sequence(
-            prefix(kNewRight1, Rotation2d.kZero, drive, turret),
+            Commands.either(
+                prefix(kNewRight1, Rotation2d.kZero, drive, turret),
+                prefix(kNewRight1Mirrored, Rotation2d.kZero, drive, turret),
+                s_isRight
+            ),
             Commands.parallel(
                 TurretCommands.autoAim(turret),
                 FlywheelsCommands.autoAim(flywheels),
                 Commands.sequence(
                     Commands.parallel(
-                        AutoBuilder.followPath(kNewRight1),
+                        Commands.either(
+                            AutoBuilder.followPath(kNewRight1),
+                            AutoBuilder.followPath(kNewRight1Mirrored),
+                            s_isRight
+                        ),
                         Commands.sequence(
                             Commands.waitSeconds(0.91),
                             IntakeCommands.deploy(intake),
@@ -307,7 +330,11 @@ public class AutoCommands {
                     ),
                     IndexerCommands.stop(indexer),
                     Commands.parallel(
-                        AutoBuilder.followPath(kNewRight2),
+                        Commands.either(
+                            AutoBuilder.followPath(kNewRight2),
+                            AutoBuilder.followPath(kNewRight2Mirrored),
+                            s_isRight
+                        ),
                         Commands.sequence(
                             Commands.waitSeconds(1.7),
                             IntakeCommands.deploy(intake),
@@ -321,7 +348,64 @@ public class AutoCommands {
                     )
                 )
             )
-        ).withName("AutoCommands::newRight");
+        ).withName("AutoCommands::newTrench");
+    }
+
+    public static Command newCenter(
+        DriveSubsystem drive,
+        TurretSubsystem turret,
+        FlywheelsSubsystem flywheels,
+        IndexerSubsystem indexer,
+        IntakeSubsystem intake
+    ) {
+        return Commands.sequence(
+            Commands.either(
+                prefix(kNewCenter1, Rotation2d.kZero, drive, turret),
+                prefix(kNewCenter1Mirrored, Rotation2d.kZero, drive, turret),
+                s_isRight
+            ),
+            Commands.parallel(
+                TurretCommands.autoAim(turret),
+                FlywheelsCommands.autoAim(flywheels),
+                Commands.sequence(
+                    Commands.parallel(
+                        Commands.either(
+                            AutoBuilder.followPath(kNewCenter1),
+                            AutoBuilder.followPath(kNewCenter1Mirrored),
+                            s_isRight
+                        ),
+                        Commands.sequence(
+                            Commands.waitSeconds(0.8),
+                            IndexerCommands.index(indexer),
+                            Commands.waitSeconds(2),
+                            IndexerCommands.stop(indexer)
+                        )
+                    ),
+                    Commands.parallel(
+                        Commands.either(
+                            AutoBuilder.followPath(kNewCenter2),
+                            AutoBuilder.followPath(kNewCenter2Mirrored),
+                            s_isRight
+                        ),
+                        Commands.sequence(
+                            Commands.waitSeconds(7),
+                            Commands.repeatingSequence(
+                                IndexerCommands.index(indexer),
+                                Commands.waitSeconds(2),
+                                IndexerCommands.reverse(indexer),
+                                Commands.waitSeconds(0.5)
+                            )
+                        ),
+                        Commands.sequence(
+                            Commands.waitSeconds(1.1),
+                            IntakeCommands.deploy(intake),
+                            Commands.waitSeconds(7.9),
+                            IntakeCommands.stow(intake)
+                        )
+                    )
+                )
+            )
+        ).withName("AutoCommands::newCenter");
     }
 
     public static Command test(
@@ -372,9 +456,17 @@ public class AutoCommands {
         DriveSubsystem drive,
         TurretSubsystem turret
     ) {
-        return Commands.runOnce(() -> {
+        return Commands.sequence(Commands.runOnce(() -> {
             drive.setPose(startingPose.get());
             turret.setPosition(turretPosition.get());
-        }, drive, turret);
+        }, drive, turret), wait(s_preAutoDelay));
+    }
+
+    private static Command wait(DoubleSupplier seconds) {
+        Timer timer = new Timer();
+        return Commands.startEnd(() -> {
+            timer.reset();
+            timer.start();
+        }, timer::stop).onlyWhile(() -> !timer.hasElapsed(seconds.getAsDouble()));
     }
 }

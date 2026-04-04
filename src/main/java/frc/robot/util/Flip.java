@@ -11,12 +11,6 @@ import lombok.experimental.UtilityClass;
 
 import java.util.Optional;
 
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.IdealStartingState;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.PathPoint;
-import com.pathplanner.lib.path.RotationTarget;
-
 @UtilityClass
 public class Flip {
     public boolean shouldFlip() {
@@ -68,73 +62,5 @@ public class Flip {
 
     public Translation2d flip(Translation2d t) {
         return new Translation2d(FieldConstants.fieldLength - t.getX(), FieldConstants.fieldWidth - t.getY());
-    }
-
-    public PathPlannerPath flipY(PathPlannerPath path) {
-        // System.out.println("WAYPOINTS LEN: " + path.getWaypoints().size());
-        // for (Waypoint w : path.getWaypoints()) {
-        //     System.out.println("Waypoint:" + w.anchor().toString());
-        // }
-        // List<Waypoint> flippedWaypoints = path.getWaypoints().stream().map(waypoint -> flipY(waypoint)).toList();
-        // return new PathPlannerPath(
-        //     flippedWaypoints,
-        //     path.getGlobalConstraints(),
-        //     flipY(path.getIdealStartingState()),
-        //     flipY(path.getGoalEndState())
-        // );
-
-        PathPlannerPath flipped = PathPlannerPath.fromPathPoints(
-            path.getAllPathPoints().stream().map(p -> Flip.flipY(p)).toList(),
-            path.getGlobalConstraints(),
-            Flip.flipY(path.getGoalEndState())
-        );
-
-        return flipped;
-    }
-
-    public PathPoint flipY(PathPoint p) {
-        if (p.rotationTarget == null && p.constraints == null) {
-            return new PathPoint(flipY(p.position));
-        }
-        else if (p.constraints == null) {
-            return new PathPoint(
-                flipY(p.position),
-                new RotationTarget(p.rotationTarget.position(), flipY(p.rotationTarget.rotation()))
-            );
-        }
-        else {
-            return new PathPoint(
-                flipY(p.position),
-                new RotationTarget(p.rotationTarget.position(), flipY(p.rotationTarget.rotation())),
-                p.constraints
-            );
-
-        }
-    }
-
-    public IdealStartingState flipY(IdealStartingState i) {
-        return new IdealStartingState(i.velocityMPS(), flipY(i.rotation()));
-    }
-
-    public GoalEndState flipY(GoalEndState e) {
-        return new GoalEndState(e.velocityMPS(), flipY(e.rotation()));
-    }
-
-    public Pose2d flipY(Pose2d p) {
-        return new Pose2d(
-            flipY(p.getTranslation()),
-            flipY(p.getRotation())
-        );
-    }
-
-    public Rotation2d flipY(Rotation2d r) {
-        return r.times(-1);
-    }
-
-    public Translation2d flipY(Translation2d t) {
-        return new Translation2d(
-            t.getX(),
-            FieldConstants.fieldWidth - t.getY()
-        );
     }
 }

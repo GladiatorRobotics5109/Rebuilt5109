@@ -16,8 +16,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Mode;
+import frc.robot.FieldConstants.LinesVertical;
 import frc.robot.RobotState.FuelStrategy;
 import frc.robot.commands.*;
 import frc.robot.subsystems.drive.DriveSubsystem;
@@ -33,6 +36,8 @@ import frc.robot.util.Visualizer;
 
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -52,10 +57,15 @@ public class RobotContainer {
 
     // Controller
     private final CommandPS4Controller m_driverController = new CommandPS4Controller(Constants.kDriverControllerPort);
+    private final CommandXboxController m_operatorController = new CommandXboxController(
+        Constants.kOperatorControllerPort
+    );
     private CommandGenericHID m_driverControllerSim;
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> m_autoChooser;
+    private final LoggedNetworkNumber m_preAutoDelay;
+    private final LoggedNetworkBoolean m_isRight;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -74,7 +84,9 @@ public class RobotContainer {
         m_intake = new IntakeSubsystem();
 
         // Set up auto routines
-        AutoCommands.init(m_drive, m_turret, m_flywheels, m_indexer);
+        m_preAutoDelay = new LoggedNetworkNumber("Pre Auto Delay", 0.0);
+        m_isRight = new LoggedNetworkBoolean("IsRight", true);
+        AutoCommands.init(m_preAutoDelay, m_isRight);
         m_autoChooser = new LoggedDashboardChooser<>("Auto Chooser", AutoBuilder.buildAutoChooser());
         buildAutoChooser();
 
@@ -178,33 +190,21 @@ public class RobotContainer {
             .onTrue(Commands.runOnce(() -> m_intake.setReverse(true)))
             .onFalse(Commands.runOnce(() -> m_intake.setReverse(false)));
 
-        // Automatically stow the hood when the robot gets close to the trench so that we don't hit it
-        // new Trigger(
-        //     () -> {
-        //         Pose2d pose = RobotState.getInstance().getPose();
-        //         ChassisSpeeds vel = RobotState.getInstance().getVelocityFieldRelative();
+        m_operatorController.povRight().onTrue(
+            Commands.runOnce(() -> m_flywheels.setVelocityOffset(m_flywheels.getVelocityOffset() + 50))
+        );
+        m_operatorController.povLeft().onTrue(
+            Commands.runOnce(() -> m_flywheels.setVelocityOffset(m_flywheels.getVelocityOffset() - 50))
+        );
+        m_operatorController.y().onTrue(Commands.runOnce(() -> m_flywheels.setVelocityOffset(0)));
 
-        //         final double[] positions = new double[] {
-        //             LeftTrench.openingTopLeft.getX(),
-        //             LeftTrench.openingTopRight.getX(),
-        //             LeftTrench.oppOpeningTopLeft.getX(),
-        //             LeftTrench.oppOpeningTopRight.getX(),
-        //             RightTrench.openingTopLeft.getX(),
-        //             RightTrench.openingTopRight.getX(),
-        //             RightTrench.oppOpeningTopLeft.getX(),
-        //             RightTrench.oppOpeningTopRight.getX()
-        //         };
+        new Trigger(() -> {
+            double x = RobotState.getInstance().getPose().getX();
 
-        //         for (double x : positions) {
-        //             double delta = pose.getX() - x;
-        //             if (Math.abs(delta) < HoodConstants.kHoodAutoStowThreshold
-        //                 && Math.signum(vel.vxMetersPerSecond) == Math.signum(delta))
-        //                 return true;
-        //         }
-
-        //         return false;
-        //     }
-        // ).whileTrue(HoodCommands.stow(m_hood));
+            return x > LinesVertical.neutralZoneNear && x < LinesVertical.neutralZoneFar;
+        }).onTrue(Commands.runOnce(() -> m_vision.shouldUseAllTags(true))).onFalse(
+            Commands.runOnce(() -> m_vision.shouldUseAllTags(false))
+        );
     }
 
     private void configureBindingsKeyboard() {
@@ -244,7 +244,11 @@ public class RobotContainer {
 
         m_autoChooser.addOption(
             "Comp_newRight",
-            AutoCommands.newRight(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
+            AutoCommands.newTrench(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
+        );
+        m_autoChooser.addOption(
+            "Comp_newCenter",
+            AutoCommands.newCenter(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
         );
 
         // Set up SysId routines

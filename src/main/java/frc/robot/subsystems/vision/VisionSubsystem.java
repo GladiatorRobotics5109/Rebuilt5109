@@ -21,14 +21,20 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.FieldConstants.AprilTagLayoutType;
 import frc.robot.RobotState;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class VisionSubsystem extends SubsystemBase {
@@ -37,6 +43,19 @@ public class VisionSubsystem extends SubsystemBase {
     private final VisionIOInputsAutoLogged[] inputs;
     private final Alert[] disconnectedAlerts;
     private final Supplier<Rotation2d> rotationSupplier;
+
+    @AutoLogOutput(key = kLogPath + "/ShouldUseAllTags")
+    @Getter
+    @Setter
+    @Accessors(fluent = true)
+    private boolean shouldUseAllTags;
+
+    private static final int[] s_blueTags = new int[] { 25, 26, 18, 27, 19, 20, 21, 24 };
+    private static final int[] s_redTags = new int[] { 9, 10, 8, 5, 4, 3, 11, 2 };
+
+    private static final int[] s_allTags = AprilTagLayoutType.OFFICIAL.getLayout().getTags().stream().mapToInt(
+        tag -> tag.ID
+    ).toArray();
 
     public VisionSubsystem(
         VisionConsumer consumer,
@@ -50,6 +69,7 @@ public class VisionSubsystem extends SubsystemBase {
                 rotationSupplier,
                 robotToTurretCamera
             ) };
+            case SIM -> new VisionIO[] { new VisionIOTurretLimelightSim(robotToTurretCamera) };
             default -> new VisionIO[] { new VisionIO() {} };
         };
 
@@ -205,6 +225,25 @@ public class VisionSubsystem extends SubsystemBase {
             "Subsystems/Vision/Summary/RobotPosesRejected",
             allRobotPosesRejected.toArray(new Pose3d[0])
         );
+
+        for (VisionIO io : this.io) {
+            if (kEnableDynamicTagFilter && shouldUseAllTags) {
+                Logger.recordOutput(kLogPath + "/IsUsingAllTags", true);
+                io.setTagFilter(s_allTags);
+            }
+            else {
+                DriverStation.getAlliance().ifPresentOrElse(
+                    a -> {
+                        io.setTagFilter(a == Alliance.Blue ? s_blueTags : s_redTags);
+                        Logger.recordOutput(kLogPath + "/IsUsingAllTags", false);
+                    },
+                    () -> {
+                        io.setTagFilter(s_allTags);
+                        Logger.recordOutput(kLogPath + "/IsUsingAllTags", true);
+                    }
+                );
+            }
+        }
     }
 
     @FunctionalInterface
