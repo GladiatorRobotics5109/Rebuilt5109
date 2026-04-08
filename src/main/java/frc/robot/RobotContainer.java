@@ -114,7 +114,7 @@ public class RobotContainer {
             command -> Logger.recordOutput("CommandLog", "INTERRUPT: " + command.getName())
         );
 
-        m_drive.setPose(new Pose2d(5, 3, Rotation2d.kZero));
+        m_drive.setPose(new Pose2d(7, 3, Rotation2d.kZero));
     }
 
     private void configureBindings() {
@@ -206,7 +206,7 @@ public class RobotContainer {
 
             return x > LinesVertical.neutralZoneNear && x < LinesVertical.neutralZoneFar;
         }).onTrue(Commands.runOnce(() -> m_vision.shouldUseAllTags(true)))
-          .onFalse(Commands.runOnce(() -> m_vision.shouldUseAllTags(false)));
+            .onFalse(Commands.runOnce(() -> m_vision.shouldUseAllTags(false)));
     }
 
     private void configureBindingsKeyboard() {
