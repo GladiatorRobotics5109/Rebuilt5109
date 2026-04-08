@@ -88,7 +88,7 @@ public class IntakeSubsystem extends SubsystemBase {
                 m_io.runRollersVoltage(0.0);
             }
             case NONE -> {
-                Logger.recordOutput(kLogPath + "/PivotDesiredPosition", 0.0);
+                Logger.recordOutput(kLogPath + "/PivotDesiredPosition", Rotation2d.kZero);
             }
         }
     }
