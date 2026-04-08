@@ -1,118 +1,117 @@
 {
   "hubs": [
     {
-      "x": 0,
-      "y": 33,
-      "width": 1512,
-      "height": 949,
+      "x": 266,
+      "y": 80,
+      "width": 1145,
+      "height": 667,
       "state": {
         "sidebar": {
           "width": 295,
           "expanded": [
-            "NT:/AdvantageKit/RealOutputs",
-            "NT:/AdvantageKit/Flywheels",
-            "NT:/AdvantageKit/NetworkInputs/Subsystems",
-            "NT:/AdvantageKit/NetworkInputs/Subsystems/Flywheels/PID",
-            "NT:/AdvantageKit/Subsystems",
-            "NT:/AdvantageKit/Drive",
-            "NT:/AdvantageKit/NetworkInputs/Subsystems/Flywheels",
-            "NT:/AdvantageKit/RealOutputs/RobotState",
-            "NT:/AdvantageKit/RealOutputs/Subsystems/Flywheels",
-            "NT:/AdvantageKit/RealOutputs/Subsystems/Turret",
-            "NT:/AdvantageKit/RealOutputs/SwerveChassisSpeeds/Measured",
-            "NT:/AdvantageKit/RealOutputs/SwerveStates/Measured",
-            "NT:/AdvantageKit/RealOutputs/RobotState/Turret",
-            "NT:/AdvantageKit/RealOutputs/Visualizer",
-            "NT:/AdvantageKit/RealOutputs/RobotState/LatestAimingParameters",
-            "NT:/AdvantageKit/RealOutputs/RobotState/LatestAimingParameters/targetPosition",
-            "NT:/AdvantageKit/RealOutputs/test",
-            "NT:/AdvantageKit/RealOutputs/Fuel Simulation/Fuels",
-            "NT:/AdvantageKit/RealOutputs/Fuel Simulation/Fuels/0",
-            "NT:/AdvantageKit/RealOutputs/Fuel Simulation/Fuels/1",
-            "NT:/AdvantageKit/RealOutputs/RobotState/Drive/Pose/translation",
-            "NT:/AdvantageKit/RealOutputs/RobotState/LatestAimingParameters/hoodAngle",
-            "NT:/AdvantageKit/RealOutputs/RobotState/LatestAimingParameters/turretPosition",
-            "NT:/AdvantageKit/RealOutputs/TurretPoseTest",
-            "NT:/AdvantageKit/RealOutputs/TurretVelocityTest",
-            "NT:/AdvantageKit/RealOutputs/TurretPoseTest/translation",
-            "NT:/AdvantageKit/Subsystems/Vision/Camera0/LatestTargetObservation",
-            "NT:/AdvantageKit/Subsystems/Vision/Camera0/PoseObservations",
-            "NT:/AdvantageKit/Subsystems/Vision/Camera0/LatestTargetObservation/tx",
-            "NT:/AdvantageKit/Subsystems/Vision/Camera0/LatestTargetObservation/ty",
-            "NT:/AdvantageKit/Subsystems/Vision/Camera0/TagIds",
-            "NT:/AdvantageKit/RealOutputs/Subsystems",
-            "NT:/AdvantageKit/RealOutputs/Subsystems/Drive",
-            "NT:/AdvantageKit/RealOutputs/Subsystems/Intake",
-            "NT:/AdvantageKit/Subsystems/Intake",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/Subsystems",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/Subsystems/Drive",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Vision",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Vision/Camera0",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/Subsystems/Hood",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Intake",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/Subsystems/Turret",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Turret",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/Subsystems/Turret/TurretHeading",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/Subsystems/Intake",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/Subsystems/Flywheels",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/RobotState",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/RobotState/LatestAimingParameters",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/RobotState/LatestAimingParameters/turretPosition",
-            "NT:/AdvantageKit/Subsystems/Indexer",
-            "NT:/AdvantageKit/Subsystems/Turret",
-            "NT:/AdvantageKit/Tuning/Subsystems",
-            "NT:/AdvantageKit/Tuning/Subsystems/Turret",
-            "NT:/AdvantageKit/Tuning/Subsystems/Indexer",
-            "NT:/AdvantageKit/Tuning/Subsystems/Indexer/FF",
-            "NT:/AdvantageKit/Tuning/Subsystems/Indexer/PID",
-            "NT:/AdvantageKit/AdvantageKit",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Indexer",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/Subsystems/Indexer",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/RobotState/AimingParameters",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/RobotState/AimingParameters/LatestAimingParameters",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/RobotState/AimingParameters/LatestAimingParameters/hoodAngle",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/RobotState/AimingParameters/LatestAimingParameters/turretPosition",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Drive/Module0",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/Subsystems/Vision",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/Subsystems/Vision/Camera0",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/Subsystems/Vision/Camera0/RobotPosesAccepted",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Vision/Camera0/LatestTargetObservation",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Vision/Camera0/PoseObservations",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Vision/Camera0/PoseObservations/1",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Vision/Camera0/PoseObservations/0",
-            "NT:/AdvantageKit/AdvantageKit/PowerDistribution",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Drive",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Drive/Gyro",
-            "NT:/AdvantageKit/AdvantageKit/PowerDistribution/ChannelCurrent",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/Subsystems/Vision/Summary",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/Subsystems/Drive/Pose",
-            "NT:/AdvantageKit/AdvantageKit/RealOutputs/AimingParameters",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Flywheels",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Drive/Module1",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Drive/Module2",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Drive/Module3",
-            "NT:/AdvantageKit/AdvantageKit/Subsystems/Hood",
-            "NT:/AdvantageKit/Subsystems/Flywheels",
-            "NT:/AdvantageKit/RealOutputs/RobotState/AimingParameters",
-            "NT:/AdvantageKit/RealOutputs/RobotState/AimingParameters/LatestAimingParameters",
-            "NT:/AdvantageKit/RealOutputs/AimingParameters",
-            "NT:/AdvantageKit/RealOutputs/AimingParameters/LatestAimingParameters",
-            "NT:/AdvantageKit/RealOutputs/Subsystems/Vision",
-            "NT:/AdvantageKit/RealOutputs/Subsystems/Vision/Camera0",
-            "NT:/AdvantageKit/RealOutputs/Subsystems/Vision/Summary",
-            "NT:/AdvantageKit/PowerDistribution",
-            "NT:/AdvantageKit/RealOutputs/Subsystems/Drive/TrajectorySetpoint",
-            "NT:/AdvantageKit/RealOutputs/Subsystems/Drive/TrajectorySetpoint/translation",
-            "NT:/AdvantageKit/Subsystems/Drive",
-            "NT:/AdvantageKit/Subsystems/Drive/Module0",
-            "NT:/AdvantageKit/Subsystems/Drive/Module1",
-            "NT:/AdvantageKit/Subsystems/Drive/Module2",
-            "NT:/AdvantageKit/Subsystems/Drive/Module3",
-            "NT:/AdvantageKit/Subsystems/Vision",
-            "NT:/AdvantageKit/Subsystems/Vision/Camera0",
-            "NT:/AdvantageKit/RealOutputs/Subsystems/Drive/Pose"
+            "/RealOutputs",
+            "/Flywheels",
+            "/NetworkInputs/Subsystems",
+            "/NetworkInputs/Subsystems/Flywheels/PID",
+            "/Subsystems",
+            "/Drive",
+            "/NetworkInputs/Subsystems/Flywheels",
+            "/RealOutputs/RobotState",
+            "/RealOutputs/Subsystems/Flywheels",
+            "/RealOutputs/Subsystems/Turret",
+            "/RealOutputs/SwerveChassisSpeeds/Measured",
+            "/RealOutputs/SwerveStates/Measured",
+            "/RealOutputs/RobotState/Turret",
+            "/RealOutputs/Visualizer",
+            "/RealOutputs/RobotState/LatestAimingParameters",
+            "/RealOutputs/RobotState/LatestAimingParameters/targetPosition",
+            "/RealOutputs/test",
+            "/RealOutputs/Fuel Simulation/Fuels",
+            "/RealOutputs/Fuel Simulation/Fuels/0",
+            "/RealOutputs/Fuel Simulation/Fuels/1",
+            "/RealOutputs/RobotState/Drive/Pose/translation",
+            "/RealOutputs/RobotState/LatestAimingParameters/hoodAngle",
+            "/RealOutputs/RobotState/LatestAimingParameters/turretPosition",
+            "/RealOutputs/TurretPoseTest",
+            "/RealOutputs/TurretVelocityTest",
+            "/RealOutputs/TurretPoseTest/translation",
+            "/Subsystems/Vision/Camera0/LatestTargetObservation",
+            "/Subsystems/Vision/Camera0/PoseObservations",
+            "/Subsystems/Vision/Camera0/LatestTargetObservation/tx",
+            "/Subsystems/Vision/Camera0/LatestTargetObservation/ty",
+            "/Subsystems/Vision/Camera0/TagIds",
+            "/RealOutputs/Subsystems",
+            "/RealOutputs/Subsystems/Drive",
+            "/RealOutputs/Subsystems/Intake",
+            "/Subsystems/Intake",
+            "/AdvantageKit/RealOutputs",
+            "/AdvantageKit/RealOutputs/Subsystems",
+            "/AdvantageKit/RealOutputs/Subsystems/Drive",
+            "/AdvantageKit/Subsystems",
+            "/AdvantageKit/Subsystems/Vision",
+            "/AdvantageKit/Subsystems/Vision/Camera0",
+            "/AdvantageKit/RealOutputs/Subsystems/Hood",
+            "/AdvantageKit/Subsystems/Intake",
+            "/AdvantageKit/RealOutputs/Subsystems/Turret",
+            "/AdvantageKit/Subsystems/Turret",
+            "/AdvantageKit/RealOutputs/Subsystems/Turret/TurretHeading",
+            "/AdvantageKit/RealOutputs/Subsystems/Intake",
+            "/AdvantageKit/RealOutputs/Subsystems/Flywheels",
+            "/AdvantageKit/RealOutputs/RobotState",
+            "/AdvantageKit/RealOutputs/RobotState/LatestAimingParameters",
+            "/AdvantageKit/RealOutputs/RobotState/LatestAimingParameters/turretPosition",
+            "/Subsystems/Indexer",
+            "/Subsystems/Turret",
+            "/Tuning/Subsystems",
+            "/Tuning/Subsystems/Turret",
+            "/Tuning/Subsystems/Indexer",
+            "/Tuning/Subsystems/Indexer/FF",
+            "/Tuning/Subsystems/Indexer/PID",
+            "/AdvantageKit",
+            "/AdvantageKit/Subsystems/Indexer",
+            "/AdvantageKit/RealOutputs/Subsystems/Indexer",
+            "/AdvantageKit/RealOutputs/RobotState/AimingParameters",
+            "/AdvantageKit/RealOutputs/RobotState/AimingParameters/LatestAimingParameters",
+            "/AdvantageKit/RealOutputs/RobotState/AimingParameters/LatestAimingParameters/hoodAngle",
+            "/AdvantageKit/RealOutputs/RobotState/AimingParameters/LatestAimingParameters/turretPosition",
+            "/AdvantageKit/Subsystems/Drive/Module0",
+            "/AdvantageKit/RealOutputs/Subsystems/Vision",
+            "/AdvantageKit/RealOutputs/Subsystems/Vision/Camera0",
+            "/AdvantageKit/RealOutputs/Subsystems/Vision/Camera0/RobotPosesAccepted",
+            "/AdvantageKit/Subsystems/Vision/Camera0/LatestTargetObservation",
+            "/AdvantageKit/Subsystems/Vision/Camera0/PoseObservations",
+            "/AdvantageKit/Subsystems/Vision/Camera0/PoseObservations/1",
+            "/AdvantageKit/Subsystems/Vision/Camera0/PoseObservations/0",
+            "/AdvantageKit/PowerDistribution",
+            "/AdvantageKit/Subsystems/Drive",
+            "/AdvantageKit/Subsystems/Drive/Gyro",
+            "/AdvantageKit/PowerDistribution/ChannelCurrent",
+            "/AdvantageKit/RealOutputs/Subsystems/Vision/Summary",
+            "/AdvantageKit/RealOutputs/AimingParameters",
+            "/AdvantageKit/Subsystems/Flywheels",
+            "/AdvantageKit/Subsystems/Drive/Module1",
+            "/AdvantageKit/Subsystems/Drive/Module2",
+            "/AdvantageKit/Subsystems/Drive/Module3",
+            "/AdvantageKit/Subsystems/Hood",
+            "/Subsystems/Flywheels",
+            "/RealOutputs/RobotState/AimingParameters",
+            "/RealOutputs/RobotState/AimingParameters/LatestAimingParameters",
+            "/RealOutputs/AimingParameters",
+            "/RealOutputs/AimingParameters/LatestAimingParameters",
+            "/RealOutputs/Subsystems/Vision",
+            "/RealOutputs/Subsystems/Vision/Camera0",
+            "/RealOutputs/Subsystems/Vision/Summary",
+            "/PowerDistribution",
+            "/RealOutputs/Subsystems/Drive/TrajectorySetpoint",
+            "/RealOutputs/Subsystems/Drive/TrajectorySetpoint/translation",
+            "/Subsystems/Drive",
+            "/Subsystems/Drive/Module0",
+            "/Subsystems/Drive/Module1",
+            "/Subsystems/Drive/Module2",
+            "/Subsystems/Drive/Module3",
+            "/Subsystems/Vision",
+            "/Subsystems/Vision/Camera0",
+            "/RealOutputs/Subsystems/Drive/Pose"
           ]
         },
         "tabs": {
@@ -133,7 +132,7 @@
                 "sources": [
                   {
                     "type": "gamePiece",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Fuel Simulation/Fuels",
+                    "logKey": "/RealOutputs/Fuel Simulation/Fuels",
                     "logType": "Translation3d[]",
                     "visible": true,
                     "options": {
@@ -142,7 +141,7 @@
                   },
                   {
                     "type": "robot",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Drive/Pose",
+                    "logKey": "/RealOutputs/Subsystems/Drive/Pose",
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
@@ -151,7 +150,7 @@
                   },
                   {
                     "type": "vision",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Vision/Summary/TagPoses",
+                    "logKey": "/RealOutputs/Subsystems/Vision/Summary/TagPoses",
                     "logType": "Pose3d[]",
                     "visible": true,
                     "options": {
@@ -161,7 +160,7 @@
                   },
                   {
                     "type": "swerveStates",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Drive/DesiredModuleStatesOptimized",
+                    "logKey": "/RealOutputs/Subsystems/Drive/DesiredModuleStatesOptimized",
                     "logType": "SwerveModuleState[]",
                     "visible": true,
                     "options": {
@@ -171,7 +170,7 @@
                   },
                   {
                     "type": "swerveStates",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Drive/ModuleStates",
+                    "logKey": "/RealOutputs/Subsystems/Drive/ModuleStates",
                     "logType": "SwerveModuleState[]",
                     "visible": true,
                     "options": {
@@ -181,7 +180,7 @@
                   },
                   {
                     "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Vision/Camera0/RobotPosesAccepted",
+                    "logKey": "/RealOutputs/Subsystems/Vision/Camera0/RobotPosesAccepted",
                     "logType": "Pose3d[]",
                     "visible": true,
                     "options": {
@@ -191,7 +190,7 @@
                   },
                   {
                     "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Vision/Camera0/RobotPosesRejected",
+                    "logKey": "/RealOutputs/Subsystems/Vision/Camera0/RobotPosesRejected",
                     "logType": "Pose3d[]",
                     "visible": true,
                     "options": {
@@ -201,7 +200,7 @@
                   },
                   {
                     "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Drive/TrajectorySetpoint",
+                    "logKey": "/RealOutputs/Subsystems/Drive/TrajectorySetpoint",
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
@@ -211,7 +210,7 @@
                   },
                   {
                     "type": "cone",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Vision/CameraPose",
+                    "logKey": "/RealOutputs/Subsystems/Vision/CameraPose",
                     "logType": "Pose3d",
                     "visible": true,
                     "options": {
@@ -221,7 +220,7 @@
                   },
                   {
                     "type": "trajectory",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Drive/Trajectory",
+                    "logKey": "/RealOutputs/Subsystems/Drive/Trajectory",
                     "logType": "Pose2d[]",
                     "visible": true,
                     "options": {
@@ -231,10 +230,19 @@
                   },
                   {
                     "type": "cameraOverride",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Vision/CameraPose",
+                    "logKey": "/RealOutputs/Subsystems/Vision/CameraPose",
                     "logType": "Pose3d",
                     "visible": true,
                     "options": {}
+                  },
+                  {
+                    "type": "robot",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Drive/Pose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "Frank"
+                    }
                   }
                 ],
                 "game": "FRC:2026 Field"
@@ -244,9 +252,9 @@
                 "cameraIndex": -2,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  2.1811482549180634,
-                  3.280449144448597,
-                  -2.4410892707472622
+                  0.5777838053043616,
+                  1.3022895976903361,
+                  -0.9975739565944655
                 ],
                 "cameraTarget": [
                   0,
@@ -263,7 +271,7 @@
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupVelocityRadPerSec",
+                    "logKey": "/Subsystems/Indexer/KickupVelocityRadPerSec",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -275,7 +283,7 @@
                 "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupAppliedVolts",
+                    "logKey": "/Subsystems/Indexer/KickupAppliedVolts",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -285,7 +293,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupStatorCurrentAmps",
+                    "logKey": "/Subsystems/Indexer/KickupStatorCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -295,7 +303,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupSupplyCurrentAmps",
+                    "logKey": "/Subsystems/Indexer/KickupSupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -305,7 +313,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupTempCelsius",
+                    "logKey": "/Subsystems/Indexer/KickupTempCelsius",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -339,7 +347,7 @@
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/PowerDistribution/Voltage",
+                    "logKey": "/PowerDistribution/Voltage",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -351,7 +359,7 @@
                 "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/PowerDistribution/TotalCurrent",
+                    "logKey": "/PowerDistribution/TotalCurrent",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -361,7 +369,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Drive/Module0/DriveSupplyCurrentAmps",
+                    "logKey": "/Subsystems/Drive/Module0/DriveSupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -371,7 +379,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Drive/Module0/TurnSupplyCurrentAmps",
+                    "logKey": "/Subsystems/Drive/Module0/TurnSupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -381,7 +389,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Drive/Module1/DriveSupplyCurrentAmps",
+                    "logKey": "/Subsystems/Drive/Module1/DriveSupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -391,7 +399,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Drive/Module1/TurnSupplyCurrentAmps",
+                    "logKey": "/Subsystems/Drive/Module1/TurnSupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -401,7 +409,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Drive/Module2/DriveSupplyCurrentAmps",
+                    "logKey": "/Subsystems/Drive/Module2/DriveSupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -411,7 +419,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Drive/Module2/TurnSupplyCurrentAmps",
+                    "logKey": "/Subsystems/Drive/Module2/TurnSupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -421,7 +429,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Drive/Module3/DriveSupplyCurrentAmps",
+                    "logKey": "/Subsystems/Drive/Module3/DriveSupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -431,7 +439,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Drive/Module3/TurnSupplyCurrentAmps",
+                    "logKey": "/Subsystems/Drive/Module3/TurnSupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -441,7 +449,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Flywheels/SupplyCurrentAmps",
+                    "logKey": "/Subsystems/Flywheels/SupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -451,7 +459,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/IndexerSupplyCurrentAmps",
+                    "logKey": "/Subsystems/Indexer/IndexerSupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -461,7 +469,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupSupplyCurrentAmps",
+                    "logKey": "/Subsystems/Indexer/KickupSupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -471,7 +479,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Intake/PivotSupplyCurrentAmps",
+                    "logKey": "/Subsystems/Intake/PivotSupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -481,7 +489,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Intake/RollersSupplyCurrentAmps",
+                    "logKey": "/Subsystems/Intake/RollersSupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -491,7 +499,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Turret/SupplyCurrentAmps",
+                    "logKey": "/Subsystems/Turret/SupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -525,7 +533,7 @@
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/AimingParameters/Dist",
+                    "logKey": "/RealOutputs/AimingParameters/Dist",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -537,7 +545,7 @@
                 "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/AimingParameters/LatestAimingParameters/flywheelsRPM",
+                    "logKey": "/RealOutputs/AimingParameters/LatestAimingParameters/flywheelsRPM",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -547,7 +555,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Flywheels/VelocityRPM",
+                    "logKey": "/Subsystems/Flywheels/VelocityRPM",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -559,7 +567,7 @@
                 "discreteSources": [
                   {
                     "type": "stripes",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/AimingParameters/ShouldIdle",
+                    "logKey": "/RealOutputs/AimingParameters/ShouldIdle",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
@@ -596,7 +604,7 @@
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Intake/PivotPositionRot",
+                    "logKey": "/Subsystems/Intake/PivotPositionRot",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -606,7 +614,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Intake/PivotDesiredPosition",
+                    "logKey": "/RealOutputs/Subsystems/Intake/PivotDesiredPosition",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -618,7 +626,7 @@
                 "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Intake/PivotAppliedVolts",
+                    "logKey": "/Subsystems/Intake/PivotAppliedVolts",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -628,7 +636,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Intake/PivotStatorCurrentAmps",
+                    "logKey": "/Subsystems/Intake/PivotStatorCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -638,7 +646,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Intake/PivotSupplyCurrentAmps",
+                    "logKey": "/Subsystems/Intake/PivotSupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -650,7 +658,7 @@
                 "discreteSources": [
                   {
                     "type": "stripes",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Intake/Reverse",
+                    "logKey": "/RealOutputs/Subsystems/Intake/Reverse",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
@@ -659,7 +667,7 @@
                   },
                   {
                     "type": "stripes",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Intake/State",
+                    "logKey": "/RealOutputs/Subsystems/Intake/State",
                     "logType": "String",
                     "visible": true,
                     "options": {
@@ -691,7 +699,7 @@
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Flywheels/RealDesiredVelocity",
+                    "logKey": "/RealOutputs/Subsystems/Flywheels/RealDesiredVelocity",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -701,7 +709,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Flywheels/CurrentVelocity",
+                    "logKey": "/RealOutputs/Subsystems/Flywheels/CurrentVelocity",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -711,7 +719,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Flywheels/VelocityOffset",
+                    "logKey": "/RealOutputs/Subsystems/Flywheels/VelocityOffset",
                     "logType": "Number",
                     "visible": false,
                     "options": {
@@ -721,7 +729,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Flywheels/DesiredVelocity",
+                    "logKey": "/RealOutputs/Subsystems/Flywheels/DesiredVelocity",
                     "logType": "Number",
                     "visible": false,
                     "options": {
@@ -733,7 +741,7 @@
                 "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Flywheels/AppliedVolts",
+                    "logKey": "/Subsystems/Flywheels/AppliedVolts",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -743,7 +751,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Flywheels/BangOutput",
+                    "logKey": "/RealOutputs/Subsystems/Flywheels/BangOutput",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -753,7 +761,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Flywheels/FFOutput",
+                    "logKey": "/RealOutputs/Subsystems/Flywheels/FFOutput",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -765,7 +773,7 @@
                 "discreteSources": [
                   {
                     "type": "stripes",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Flywheels/HasDesiredVeloicty",
+                    "logKey": "/RealOutputs/Subsystems/Flywheels/HasDesiredVeloicty",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
@@ -797,7 +805,7 @@
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Turret/TurretPosition/value",
+                    "logKey": "/RealOutputs/Subsystems/Turret/TurretPosition/value",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -807,7 +815,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Turret/DesiredPosiiton/value",
+                    "logKey": "/RealOutputs/Subsystems/Turret/DesiredPosiiton/value",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -819,7 +827,7 @@
                 "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Turret/AppliedVolts",
+                    "logKey": "/Subsystems/Turret/AppliedVolts",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -829,7 +837,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Turret/SupplyCurrentAmps",
+                    "logKey": "/Subsystems/Turret/SupplyCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -839,7 +847,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Turret/StatorCurrentAmps",
+                    "logKey": "/Subsystems/Turret/StatorCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -851,7 +859,7 @@
                 "discreteSources": [
                   {
                     "type": "stripes",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Turret/HasDesiredPosition",
+                    "logKey": "/RealOutputs/Subsystems/Turret/HasDesiredPosition",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
@@ -883,7 +891,7 @@
                 "sources": [
                   {
                     "type": "states",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Drive/DesiredModuleStatesOptimized",
+                    "logKey": "/RealOutputs/Subsystems/Drive/DesiredModuleStatesOptimized",
                     "logType": "SwerveModuleState[]",
                     "visible": true,
                     "options": {
@@ -893,7 +901,7 @@
                   },
                   {
                     "type": "states",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Drive/ModuleStates",
+                    "logKey": "/RealOutputs/Subsystems/Drive/ModuleStates",
                     "logType": "SwerveModuleState[]",
                     "visible": true,
                     "options": {
@@ -903,7 +911,7 @@
                   },
                   {
                     "type": "chassisSpeeds",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Drive/DesiredVelocity",
+                    "logKey": "/RealOutputs/Subsystems/Drive/DesiredVelocity",
                     "logType": "ChassisSpeeds",
                     "visible": true,
                     "options": {
@@ -912,7 +920,7 @@
                   },
                   {
                     "type": "rotation",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Drive/Pose/rotation",
+                    "logKey": "/RealOutputs/Subsystems/Drive/Pose/rotation",
                     "logType": "Rotation2d",
                     "visible": true,
                     "options": {}
@@ -945,7 +953,7 @@
             {
               "type": 5,
               "title": "Console",
-              "controller": "NT:/AdvantageKit/RealOutputs/Console",
+              "controller": "/RealOutputs/Console",
               "controllerUUID": "y3it0duad5fa5piqhplxodni7n6lflwy",
               "renderer": {
                 "highlight": true
@@ -955,7 +963,7 @@
             {
               "type": 5,
               "title": "Command Log",
-              "controller": "NT:/AdvantageKit/RealOutputs/CommandLog",
+              "controller": "/RealOutputs/CommandLog",
               "controllerUUID": "ts160m84jkxnqi30olg2fgjlkqci3oe4",
               "renderer": {
                 "highlight": true

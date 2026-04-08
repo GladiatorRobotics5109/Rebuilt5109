@@ -244,7 +244,7 @@ public final class Constants {
         public static final Rotation2d kPivotStartingPosition = kPivotMinPosition;
         public static final Rotation2d kPivotDeployedPosition = Rotation2d.fromDegrees(95);
         public static final Rotation2d kPivotStowedPosition = kPivotStartingPosition;
-        public static final Rotation2d kPivotDeployedTolerance = Rotation2d.fromDegrees(5);
+        public static final Rotation2d kPivotDeployedTolerance = Rotation2d.fromDegrees(7.5);
         public static final double kPviotDeployedHoldingVoltage = 2.0;
 
         public static final double kRollersIntakeVoltage = 10;
