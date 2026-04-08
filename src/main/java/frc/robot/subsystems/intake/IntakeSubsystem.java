@@ -33,7 +33,7 @@ public class IntakeSubsystem extends SubsystemBase {
             default -> new IntakeIO() {};
         };
 
-        Logger.recordOutput(kLogPath + "/PivotDesiredPosition", Rotation2d.kZero);
+        Logger.recordOutput(kLogPath + "/PivotDesiredPositionRot", 0.0);
     }
 
     public void deploy() {
@@ -69,7 +69,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         switch (m_state) {
             case DEPLOYED -> {
-                Logger.recordOutput(kLogPath + "/PivotDesiredPosition", kPivotDeployedPosition);
+                Logger.recordOutput(kLogPath + "/PivotDesiredPositionRot", kPivotDeployedPosition.getRotations());
                 if (MathUtil.isNear(
                     kPivotDeployedPosition.getRotations(),
                     m_inputs.pivotPositionRot,
@@ -83,12 +83,12 @@ public class IntakeSubsystem extends SubsystemBase {
                 m_io.runRollersVoltage(m_reverse ? kRollersReverseVoltage : kRollersIntakeVoltage);
             }
             case STOWED -> {
-                Logger.recordOutput(kLogPath + "/PivotDesiredPosition", kPivotStowedPosition);
+                Logger.recordOutput(kLogPath + "/PivotDesiredPositionRot", kPivotStowedPosition.getRotations());
                 m_io.runPivotPosition(kPivotStowedPosition);
                 m_io.runRollersVoltage(0.0);
             }
             case NONE -> {
-                Logger.recordOutput(kLogPath + "/PivotDesiredPosition", Rotation2d.kZero);
+                Logger.recordOutput(kLogPath + "/PivotDesiredPositionRot", 0.0);
             }
         }
     }
