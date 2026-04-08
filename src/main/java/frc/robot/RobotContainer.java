@@ -113,8 +113,6 @@ public class RobotContainer {
         CommandScheduler.getInstance().onCommandInterrupt(
             command -> Logger.recordOutput("CommandLog", "INTERRUPT: " + command.getName())
         );
-
-        m_drive.setPose(new Pose2d(LinesVertical.neutralZoneNear, 3, Rotation2d.kZero));
     }
 
     private void configureBindings() {
