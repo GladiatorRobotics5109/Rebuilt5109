@@ -9,6 +9,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -112,6 +113,8 @@ public class RobotContainer {
         CommandScheduler.getInstance().onCommandInterrupt(
             command -> Logger.recordOutput("CommandLog", "INTERRUPT: " + command.getName())
         );
+
+        m_drive.setPose(new Pose2d(5, 3, Rotation2d.kZero));
     }
 
     private void configureBindings() {
@@ -202,9 +205,8 @@ public class RobotContainer {
             double x = RobotState.getInstance().getPose().getX();
 
             return x > LinesVertical.neutralZoneNear && x < LinesVertical.neutralZoneFar;
-        }).onTrue(Commands.runOnce(() -> m_vision.shouldUseAllTags(true))).onFalse(
-            Commands.runOnce(() -> m_vision.shouldUseAllTags(false))
-        );
+        }).onTrue(Commands.runOnce(() -> m_vision.shouldUseAllTags(true)))
+          .onFalse(Commands.runOnce(() -> m_vision.shouldUseAllTags(false)));
     }
 
     private void configureBindingsKeyboard() {
