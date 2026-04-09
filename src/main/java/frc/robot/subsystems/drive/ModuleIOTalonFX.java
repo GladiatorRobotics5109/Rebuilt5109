@@ -33,8 +33,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.generated.TunerConstants;
+
 import java.util.Queue;
 
 /**
@@ -71,6 +73,7 @@ public class ModuleIOTalonFX implements ModuleIO {
     private final StatusSignal<Voltage> driveAppliedVolts;
     private final StatusSignal<Current> driveStatorCurrent;
     private final StatusSignal<Current> driveSupplyCurrent;
+    private final StatusSignal<Temperature> driveTempCelsius;
 
     // Inputs from turn motor
     private final StatusSignal<Angle> turnAbsolutePosition;
@@ -80,6 +83,7 @@ public class ModuleIOTalonFX implements ModuleIO {
     private final StatusSignal<Voltage> turnAppliedVolts;
     private final StatusSignal<Current> turnStatorCurrent;
     private final StatusSignal<Current> turnSupplyCurrent;
+    private final StatusSignal<Temperature> turnTempCelsius;
 
     // Connection debouncers
     private final Debouncer driveConnectedDebounce = new Debouncer(0.5, Debouncer.DebounceType.kFalling);
@@ -153,6 +157,7 @@ public class ModuleIOTalonFX implements ModuleIO {
         driveAppliedVolts = driveTalon.getMotorVoltage();
         driveStatorCurrent = driveTalon.getStatorCurrent();
         driveSupplyCurrent = driveTalon.getSupplyCurrent();
+        driveTempCelsius = driveTalon.getDeviceTemp();
 
         // Create turn status signals
         turnAbsolutePosition = cancoder.getAbsolutePosition();
@@ -162,6 +167,7 @@ public class ModuleIOTalonFX implements ModuleIO {
         turnAppliedVolts = turnTalon.getMotorVoltage();
         turnStatorCurrent = turnTalon.getStatorCurrent();
         turnSupplyCurrent = turnTalon.getSupplyCurrent();
+        turnTempCelsius = turnTalon.getDeviceTemp();
 
         // Configure periodic frames
         BaseStatusSignal.setUpdateFrequencyForAll(
@@ -175,11 +181,13 @@ public class ModuleIOTalonFX implements ModuleIO {
             driveAppliedVolts,
             driveStatorCurrent,
             driveSupplyCurrent,
+            driveTempCelsius,
             turnAbsolutePosition,
             turnVelocity,
             turnAppliedVolts,
             turnStatorCurrent,
-            turnSupplyCurrent
+            turnSupplyCurrent,
+            turnTempCelsius
         );
         ParentDevice.optimizeBusUtilizationForAll(driveTalon, turnTalon);
     }
@@ -192,14 +200,16 @@ public class ModuleIOTalonFX implements ModuleIO {
             driveVelocity,
             driveAppliedVolts,
             driveStatorCurrent,
-            driveSupplyCurrent
+            driveSupplyCurrent,
+            driveTempCelsius
         );
         var turnStatus = BaseStatusSignal.refreshAll(
             turnPosition,
             turnVelocity,
             turnAppliedVolts,
             turnStatorCurrent,
-            turnSupplyCurrent
+            turnSupplyCurrent,
+            turnTempCelsius
         );
         var turnEncoderStatus = BaseStatusSignal.refreshAll(turnAbsolutePosition);
 
@@ -210,6 +220,7 @@ public class ModuleIOTalonFX implements ModuleIO {
         inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
         inputs.driveStatorCurrentAmps = driveStatorCurrent.getValueAsDouble();
         inputs.driveSupplyCurrentAmps = driveSupplyCurrent.getValueAsDouble();
+        inputs.driveTempCelsius = driveTempCelsius.getValueAsDouble();
 
         // Update turn inputs
         inputs.turnConnected = turnConnectedDebounce.calculate(turnStatus.isOK());
@@ -220,6 +231,7 @@ public class ModuleIOTalonFX implements ModuleIO {
         inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
         inputs.turnStatorCurrentAmps = turnStatorCurrent.getValueAsDouble();
         inputs.turnSupplyCurrentAmps = turnSupplyCurrent.getValueAsDouble();
+        inputs.turnTempCelsius = turnTempCelsius.getValueAsDouble();
 
         // Update odometry inputs
         inputs.odometryTimestamps = timestampQueue.stream().mapToDouble((Double value) -> value).toArray();

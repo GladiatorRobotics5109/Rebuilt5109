@@ -325,7 +325,7 @@ public class AutoCommands {
                                 Commands.waitSeconds(2),
                                 IndexerCommands.reverse(indexer),
                                 Commands.waitSeconds(1)
-                            ).raceWith(Commands.waitSeconds(2.5))
+                            ).raceWith(Commands.waitSeconds(3.5))
                         )
                     ),
                     IndexerCommands.stop(indexer),

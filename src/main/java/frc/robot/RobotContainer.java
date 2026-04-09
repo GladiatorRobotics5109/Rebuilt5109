@@ -242,7 +242,7 @@ public class RobotContainer {
         );
 
         m_autoChooser.addOption(
-            "Comp_newRight",
+            "Comp_newTrench",
             AutoCommands.newTrench(m_drive, m_turret, m_flywheels, m_indexer, m_intake)
         );
         m_autoChooser.addOption(

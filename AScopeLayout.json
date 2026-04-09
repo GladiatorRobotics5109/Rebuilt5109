@@ -1,13 +1,13 @@
 {
   "hubs": [
     {
-      "x": 0,
-      "y": 33,
-      "width": 1512,
-      "height": 949,
+      "x": -8,
+      "y": -8,
+      "width": 1552,
+      "height": 832,
       "state": {
         "sidebar": {
-          "width": 295,
+          "width": 378,
           "expanded": [
             "NT:/AdvantageKit/RealOutputs",
             "NT:/AdvantageKit/Flywheels",
@@ -112,11 +112,28 @@
             "NT:/AdvantageKit/Subsystems/Drive/Module3",
             "NT:/AdvantageKit/Subsystems/Vision",
             "NT:/AdvantageKit/Subsystems/Vision/Camera0",
-            "NT:/AdvantageKit/RealOutputs/Subsystems/Drive/Pose"
+            "NT:/AdvantageKit/RealOutputs/Subsystems/Drive/Pose",
+            "/AdvantageKit",
+            "/AdvantageKit/Subsystems",
+            "/AdvantageKit/Subsystems/Intake",
+            "/AdvantageKit/RealOutputs",
+            "/AdvantageKit/RealOutputs/Subsystems",
+            "/AdvantageKit/RealOutputs/Subsystems/Intake",
+            "/AdvantageKit/RealOutputs/Subsystems/Intake/PivotDesiredPosition",
+            "/AdvantageKit/Subsystems/Drive",
+            "/AdvantageKit/Subsystems/Drive/Module0",
+            "/AdvantageKit/Subsystems/Drive/Module1",
+            "/AdvantageKit/Subsystems/Drive/Module2",
+            "/AdvantageKit/Subsystems/Drive/Module3",
+            "/AdvantageKit/RealOutputs/Subsystems/Vision",
+            "/AdvantageKit/Subsystems/Turret",
+            "/AdvantageKit/Subsystems/Indexer",
+            "/AdvantageKit/Subsystems/Hood",
+            "/AdvantageKit/Subsystems/Flywheels"
           ]
         },
         "tabs": {
-          "selected": 1,
+          "selected": 9,
           "tabs": [
             {
               "type": 0,
@@ -244,9 +261,9 @@
                 "cameraIndex": -2,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  2.1811482549180634,
-                  3.280449144448597,
-                  -2.4410892707472622
+                  1.2623633576309394,
+                  1.6448329998992124,
+                  -1.1508390635761603
                 ],
                 "cameraTarget": [
                   0,
@@ -254,38 +271,16 @@
                   0
                 ]
               },
-              "controlsHeight": 144
+              "controlsHeight": 134
             },
             {
               "type": 1,
-              "title": "Kickup",
+              "title": "Line Graph",
               "controller": {
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupVelocityRadPerSec",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#e5b31b",
-                      "size": "normal"
-                    }
-                  }
-                ],
-                "rightSources": [
-                  {
-                    "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupAppliedVolts",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#af2437",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupStatorCurrentAmps",
+                    "logKey": "NT:/AdvantageKit/Subsystems/Drive/Module0/DrivePositionRad",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -295,17 +290,27 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupSupplyCurrentAmps",
+                    "logKey": "NT:/AdvantageKit/Subsystems/Drive/Module1/DrivePositionRad",
                     "logType": "Number",
                     "visible": true,
                     "options": {
-                      "color": "#c0b487",
+                      "color": "#e5b31b",
                       "size": "normal"
                     }
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupTempCelsius",
+                    "logKey": "NT:/AdvantageKit/Subsystems/Drive/Module2/DrivePositionRad",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Subsystems/Drive/Module3/DrivePositionRad",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -314,6 +319,7 @@
                     }
                   }
                 ],
+                "rightSources": [],
                 "discreteSources": [],
                 "leftLockedRange": null,
                 "rightLockedRange": null,
@@ -328,9 +334,9 @@
                 "leftFilter": 0,
                 "rightFilter": 0
               },
-              "controllerUUID": "mwrvdsa6dkzxymhccshv0hzgkx6jyano",
+              "controllerUUID": "x8b9pxhlnnn3ey2ejevib12t5ylrfstp",
               "renderer": null,
-              "controlsHeight": 200
+              "controlsHeight": 300
             },
             {
               "type": 1,
@@ -565,6 +571,24 @@
                     "options": {
                       "color": "#80588e"
                     }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Vision/IsUsingAllTags",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Vision/ShouldUseAllTags",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#c0b487"
+                    }
                   }
                 ],
                 "leftLockedRange": null,
@@ -606,7 +630,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Intake/PivotDesiredPosition",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Subsystems/Intake/PivotDesiredPositionRot",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -630,7 +654,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/Subsystems/Intake/PivotStatorCurrentAmps",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#2b66a2",
                       "size": "normal"
@@ -670,7 +694,7 @@
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
-                  "autoTarget": null,
+                  "autoTarget": "degrees",
                   "preset": null
                 },
                 "rightUnitConversion": {
@@ -877,6 +901,177 @@
               "controlsHeight": 200
             },
             {
+              "type": 1,
+              "title": "Kickup",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupVelocityRadPerSec",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupAppliedVolts",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupStatorCurrentAmps",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupSupplyCurrentAmps",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#c0b487",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupTempCelsius",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "mwrvdsa6dkzxymhccshv0hzgkx6jyano",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Motor Temps",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Subsystems/Turret/TempCelsius",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Subsystems/Intake/RollersTempCelsius",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Subsystems/Intake/PivotTempCelsius",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/KickupTempCelsius",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Subsystems/Indexer/IndexerTempCelsius",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Subsystems/Hood/TempCelsius",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#c0b487",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Subsystems/Flywheels/TempCelsius",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#858584",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "fa94jbdgjstgrryryhuotn49kb4sheaf",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
               "type": 9,
               "title": "Swerve",
               "controller": {
@@ -941,6 +1136,20 @@
               "controllerUUID": "fijtaow8x67epw0spazqra80tbpbtol1",
               "renderer": null,
               "controlsHeight": 85
+            },
+            {
+              "type": 9,
+              "title": "Swerve",
+              "controller": {
+                "sources": [],
+                "maxSpeed": 5,
+                "sizeX": 0.65,
+                "sizeY": 0.65,
+                "orientation": 1
+              },
+              "controllerUUID": "qikc5cg6e2zr1cwyugdyk5y5pwzjnexh",
+              "renderer": null,
+              "controlsHeight": 200
             },
             {
               "type": 5,
