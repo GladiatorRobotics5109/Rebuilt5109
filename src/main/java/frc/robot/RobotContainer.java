@@ -11,6 +11,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -33,6 +34,8 @@ import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.Conversions;
 import frc.robot.util.Visualizer;
+
+import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -201,7 +204,16 @@ public class RobotContainer {
         new Trigger(() -> {
             double x = RobotState.getInstance().getPose().getX();
 
-            return x > LinesVertical.neutralZoneNear && x < LinesVertical.neutralZoneFar;
+            Optional<Alliance> all = DriverStation.getAlliance();
+            if (all.isEmpty()) { 
+                return false;
+            }
+            else if (all.get() == Alliance.Blue) {
+                return x > LinesVertical.neutralZoneNear;
+            }
+            else {
+                return x < LinesVertical.neutralZoneFar;
+            }
         }).onTrue(Commands.runOnce(() -> m_vision.shouldUseAllTags(true)))
             .onFalse(Commands.runOnce(() -> m_vision.shouldUseAllTags(false)));
     }
