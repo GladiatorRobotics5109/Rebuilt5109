@@ -74,7 +74,6 @@ public class IntakeSubsystem extends SubsystemBase {
                     m_inputs.pivotPositionRot,
                     kPivotDeployedTolerance.getRotations()
                 )) {
-                    System.out.println("YES");
                     m_io.runPivotVoltage(kPviotDeployedHoldingVoltage);
                 }
                 else {
@@ -85,7 +84,9 @@ public class IntakeSubsystem extends SubsystemBase {
             case STOWED -> {
                 Logger.recordOutput(kLogPath + "/PivotDesiredPositionRot", kPivotStowedPosition.getRotations());
                 m_io.runPivotPosition(kPivotStowedPosition);
+                if (MathUtil.isNear(kPivotStowedPosition.getRotations(), m_inputs.pivotPositionRot, kPivotDeployedTolerance.getRotations())) {
                 m_io.runRollersVoltage(0.0);
+                }
             }
             case NONE -> {
                 Logger.recordOutput(kLogPath + "/PivotDesiredPositionRot", 0.0);
