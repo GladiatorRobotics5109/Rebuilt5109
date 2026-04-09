@@ -89,7 +89,8 @@ public class TunerConstants {
     // private static final Distance kWheelRadius = Inches.of(2);
     // private static final Distance kWheelRadius = Meters.of(0.0509912);
     // private static final Distance kWheelRadius = Inches.of(1.9);
-    private static final Distance kWheelRadius = Meters.of(0.050995459);
+    // private static final Distance kWheelRadius = Meters.of(0.050995459);
+    private static final Distance kWheelRadius = Meters.of(0.05164794195206578578293399878832);
 
     private static final boolean kInvertLeftSide = false;
     private static final boolean kInvertRightSide = true;
