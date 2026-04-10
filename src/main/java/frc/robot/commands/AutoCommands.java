@@ -319,13 +319,13 @@ public class AutoCommands {
                             IntakeCommands.stow(intake)
                         ),
                         Commands.sequence(
-                            Commands.waitSeconds(9),
+                            Commands.waitSeconds(10),
                             Commands.repeatingSequence(
                                 IndexerCommands.index(indexer),
                                 Commands.waitSeconds(2),
                                 IndexerCommands.reverse(indexer),
                                 Commands.waitSeconds(1)
-                            ).raceWith(Commands.waitSeconds(3.5))
+                            ).raceWith(Commands.waitSeconds(5.5))
                         )
                     ),
                     IndexerCommands.stop(indexer),
