@@ -137,6 +137,8 @@ public class ModuleIOTalonFX implements ModuleIO {
         turnConfig.MotorOutput.Inverted = constants.SteerMotorInverted
             ? InvertedValue.Clockwise_Positive
             : InvertedValue.CounterClockwise_Positive;
+        turnConfig.CurrentLimits.SupplyCurrentLimit = 30;
+        turnConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         tryUntilOk(5, () -> turnTalon.getConfigurator().apply(turnConfig, 0.25));
 
         // Configure CANCoder
