@@ -287,7 +287,7 @@ public final class Constants {
         public static double kTurretVelocityThresholdRadPerSec = Conversions.degreesToRadians(20);
         public static double kRotationErrorToleranceRad = Conversions.degreesToRadians(10);
 
-        public static boolean kEnableDynamicTagFilter = true;
+        public static boolean kEnableDynamicTagFilter = false;
     }
 
     public static final class AimingConstants {

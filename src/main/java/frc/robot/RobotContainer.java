@@ -205,7 +205,7 @@ public class RobotContainer {
             double x = RobotState.getInstance().getPose().getX();
 
             Optional<Alliance> all = DriverStation.getAlliance();
-            if (all.isEmpty()) { 
+            if (all.isEmpty()) {
                 return false;
             }
             else if (all.get() == Alliance.Blue) {
