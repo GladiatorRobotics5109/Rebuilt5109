@@ -315,11 +315,11 @@ public class AutoCommands {
                         Commands.sequence(
                             Commands.waitSeconds(0.91),
                             IntakeCommands.deploy(intake),
-                            Commands.waitSeconds(11.5),
+                            Commands.waitSeconds(9.5),
                             IntakeCommands.stow(intake)
                         ),
                         Commands.sequence(
-                            Commands.waitSeconds(8.5),
+                            Commands.waitSeconds(9),
                             Commands.repeatingSequence(
                                 IndexerCommands.index(indexer),
                                 Commands.waitSeconds(2),
