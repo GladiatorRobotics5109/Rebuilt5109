@@ -8,7 +8,10 @@ import frc.robot.Constants.Mode;
 import frc.robot.RobotState;
 import frc.robot.util.TolerancedBangBang;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.function.DoubleSupplier;
@@ -26,6 +29,11 @@ public class FlywheelsSubsystem extends SubsystemBase {
     @Accessors(fluent = true)
     @Getter
     private boolean m_hasDesiredVelocity;
+
+    @Getter
+    @Setter
+    @AutoLogOutput(key = kLogPath + "/VelocityOffset")
+    private double m_velocityOffset = 0.0;
 
     public FlywheelsSubsystem() {
         m_io = switch (Constants.kCurrentMode) {
@@ -69,9 +77,16 @@ public class FlywheelsSubsystem extends SubsystemBase {
             stop();
         }
 
-        double desired = m_desiredVelocity.getAsDouble();
+        double desired = Math.max(m_desiredVelocity.getAsDouble() + m_velocityOffset, 0.0);
+        Logger.recordOutput(kLogPath + "/RealDesiredVelocity", desired);
         if (m_hasDesiredVelocity) {
-            m_io.setVoltage(12 * m_bang.calculate(m_inputs.velocityRPM, desired) + m_ff.calculate(desired));
+            double bang = 12 * m_bang.calculate(m_inputs.velocityRPM, desired);
+            double ff = m_ff.calculate(desired);
+            // Logger.recordOutput(kLogPath + "/control_desired", desired);
+            // Logger.recordOutput(kLogPath + "/control_velocity", m_inputs.velocityRPM);
+            Logger.recordOutput(kLogPath + "/BangOutput", bang);
+            Logger.recordOutput(kLogPath + "/FFOutput", ff);
+            m_io.setVoltage(bang + ff);
         }
 
         RobotState.getInstance().updateFlywheels(

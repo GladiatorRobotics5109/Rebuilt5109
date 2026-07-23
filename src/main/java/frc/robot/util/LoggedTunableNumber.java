@@ -22,7 +22,7 @@ import java.util.function.DoubleSupplier;
  */
 @SuppressWarnings("unused")
 public class LoggedTunableNumber implements DoubleSupplier {
-    private static final String tableKey = "";
+    private static final String tableKey = "Tuning";
 
     private final String key;
     private boolean hasDefault = false;

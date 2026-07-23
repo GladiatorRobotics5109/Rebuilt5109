@@ -7,10 +7,18 @@ import static frc.robot.Constants.IndexerConstants.*;
 
 public class IndexerCommands {
     public static Command index(IndexerSubsystem indexer) {
-        return indexer.startEnd(() -> indexer.runVoltage(kIndexVoltage), indexer::stop);
+        return indexer.runOnce(() -> indexer.runVoltage(kIndexerIndexVoltage, kKickupIndexVoltage)).withName(
+            "IndexerCommands::index"
+        );
+    }
+
+    public static Command reverse(IndexerSubsystem indexer) {
+        return indexer.runOnce(() -> indexer.runVoltage(kIndexerReverseVoltage, kKickupReverseVoltage)).withName(
+            "IndexerCommands::reverse"
+        );
     }
 
     public static Command stop(IndexerSubsystem indexer) {
-        return indexer.runOnce(indexer::stop);
+        return indexer.runOnce(indexer::stop).withName("IndexerCommands::stop");
     }
 }

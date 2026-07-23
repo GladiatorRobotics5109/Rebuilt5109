@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -30,7 +31,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-import static frc.robot.Constants.DriveCommandsConstants.*;
+
+import static frc.robot.Constants.DriveConstants.*;
 
 public class DriveCommands {
     private DriveCommands() {}
@@ -49,14 +51,19 @@ public class DriveCommands {
             .getTranslation();
     }
 
+    public static Command test(DoubleSupplier d) {
+        return Commands.print("HELLO " + d.getAsDouble());
+    }
+
     /**
      * Field relative drive command using two joysticks (controlling linear and angular velocities).
      */
     public static Command joystickDrive(
-        DriveSubsystem drive,
         DoubleSupplier xSupplier,
         DoubleSupplier ySupplier,
-        DoubleSupplier omegaSupplier
+        DoubleSupplier omegaSupplier,
+        DoubleSupplier slowSupplier,
+        DriveSubsystem drive
     ) {
         return Commands.run(
             () -> {
@@ -73,10 +80,19 @@ public class DriveCommands {
                 omega = Math.copySign(omega * omega, omega);
 
                 // Convert to field relative speeds & send command
+                double slow = slowSupplier.getAsDouble();
+                // double slow = 0;
                 ChassisSpeeds speeds = new ChassisSpeeds(
-                    linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                    linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                    omega * drive.getMaxAngularSpeedRadPerSec()
+                    linearVelocity.getX()
+                        * MathUtil.interpolate(DriveConstants.kDefaultDriveSpeed, DriveConstants.kSlowDriveSpeed, slow),
+                    linearVelocity.getY()
+                        * MathUtil.interpolate(DriveConstants.kDefaultDriveSpeed, DriveConstants.kSlowDriveSpeed, slow),
+                    omega
+                        * MathUtil.interpolate(
+                            DriveConstants.kDefaultRotationSpeed,
+                            DriveConstants.kSlowRotationSpeed,
+                            slow
+                        )
                 );
                 boolean isFlipped = DriverStation.getAlliance().isPresent()
                     && DriverStation.getAlliance().get() == Alliance.Red;
@@ -103,10 +119,11 @@ public class DriveCommands {
      */
     public static Command keyboardDrive(DriveSubsystem drive, GenericHID keyboard) {
         return joystickDrive(
-            drive,
+            () -> 0.0,
             () -> -keyboard.getRawAxis(1),
             () -> -keyboard.getRawAxis(0),
-            () -> -keyboard.getRawAxis(2)
+            () -> -keyboard.getRawAxis(2),
+            drive
         );
     }
 
@@ -124,10 +141,10 @@ public class DriveCommands {
 
         // Create PID controller
         ProfiledPIDController angleController = new ProfiledPIDController(
-            kAngleP,
+            kDriveToPoseAngleP,
             0.0,
-            kAngleD,
-            new TrapezoidProfile.Constraints(kAngleMaxVelocity, kAngleMaxAcceleration)
+            kDriveToPoseAngleD,
+            new TrapezoidProfile.Constraints(kDriveToPoseAngleMaxVelocity, kDriveToPoseAngleMaxAcceleration)
         );
         angleController.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -317,6 +334,10 @@ public class DriveCommands {
                     )
             )
         );
+    }
+
+    public static Command driveToPose(Supplier<Pose2d> target, DriveSubsystem drive) {
+        return new DriveToPose(target, drive);
     }
 
     private static class WheelRadiusCharacterizationState {

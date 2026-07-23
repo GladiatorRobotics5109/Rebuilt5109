@@ -1,8 +1,5 @@
 package frc.robot.subsystems.hood;
 
-import static frc.robot.Constants.IndexerConstants.kId;
-import static frc.robot.Constants.IndexerConstants.kLogPath;
-
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -47,7 +44,7 @@ public class HoodSubsystem extends SubsystemBase {
 
     public HoodSubsystem() {
         m_io = switch (Constants.kCurrentMode) {
-            case REAL -> new HoodIOTalonFX(kId, Constants.kCANBusRio);
+            // case REAL -> new HoodIOTalonFX(kId, Constants.kCANBusRio);
             case SIM -> new HoodIOSim();
             default -> new HoodIO() {};
         };

@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.*;
@@ -9,7 +11,10 @@ import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.FieldConstants.AprilTagLayoutType;
 import frc.robot.FieldConstants.LinesHorizontal;
 import frc.robot.FieldConstants.LinesVertical;
-import frc.robot.util.AllianceFlip;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.drive.DriveSubsystem;
+import frc.robot.util.Flip;
+import frc.robot.util.Conversions;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -19,25 +24,51 @@ import frc.robot.util.AllianceFlip;
 public final class Constants {
     public static final Mode kSimMode = Mode.SIM;
     public static final Mode kCurrentMode = RobotBase.isReal() ? Mode.REAL : kSimMode;
-    public static final boolean kTuningMode = true;
-    public static final boolean kSimShouldUseKeyboard = kCurrentMode == Mode.SIM && true;
+    public static final boolean kTuningMode = false;
+    public static final boolean kSimShouldUseKeyboard = kCurrentMode == Mode.SIM && false;
 
     public static final CANBus kCANBusRio = CANBus.roboRIO();
     public static final CANBus kCANBusCANivore = new CANBus("drivetrain");
 
+    public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
+
     /** Whether to schedule the auto aim commands as each subsystem's default command */
     public static final boolean kEnableAutoAimAsDefault = true;
 
-    public static final class DriveCommandsConstants {
+    public static final class DriveConstants {
         public static final double kDeadband = 0.1;
-        public static final double kAngleP = 5.0;
-        public static final double kAngleD = 0.4;
-        public static final double kAngleMaxVelocity = 8.0;
-        public static final double kAngleMaxAcceleration = 20.0;
+
+        public static final double kDriveToPoseAngleP = 5.0;
+        public static final double kDriveToPoseAngleD = 0.4;
+        public static final double kDriveToPoseAngleMaxVelocity = 8.0;
+        public static final double kDriveToPoseAngleMaxAcceleration = 20.0;
+
+        public static final double kDriveToPoseXP = 5.0;
+        public static final double kDriveToPoseXD = 0.4;
+        public static final double kDriveToPoseXMaxVelocity = 2.0;
+        public static final double kDriveToPoseXMaxAcceleration = 10.0;
+
+        public static final double kDriveToPoseYP = 5.0;
+        public static final double kDriveToPoseYD = 0.4;
+        public static final double kDriveToPoseYMaxVelocity = 2.0;
+        public static final double kDriveToPoseYMaxAcceleration = 10.0;
+
+        public static final double kDriveToPoseToleranceX = Conversions.inchesToMeters(4);
+        public static final double kDriveToPoseToleranceY = Conversions.inchesToMeters(4);
+        public static final double kDriveToPoseToleranceAngle = Conversions.degreesToRadians(10);
+
         public static final double kFFStartDelay = 2.0; // Secs
         public static final double kFFRampRate = 0.1; // Volts/Sec
+
         public static final double kWheelRadiusMaxVelocity = 0.25; // Rad/Sec
         public static final double kWheelRadiusRampRate = 0.05; // Rad/Sec^2
+
+        public static final double kDefaultDriveSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        public static final double kSlowDriveSpeed = 1;
+
+        public static final double kDefaultRotationSpeed = kDefaultDriveSpeed / DriveSubsystem.DRIVE_BASE_RADIUS;
+        public static final double kSlowRotationSpeed = Conversions.rotationsToRadians(1);
     }
 
     public static final class FlywheelsConstants {
@@ -47,32 +78,33 @@ public final class Constants {
         public static final double kStatorCurrentLimit = 0.0;
         public static final boolean kStatorCurrentLimitEnable = false;
         public static final double kSupplyCurrentLimit = 40.0;
-        public static final boolean kSupplyCurrentLimitEnable = false;
+        public static final boolean kSupplyCurrentLimitEnable = true;
         public static final double kGearRatio = 1.0;
         public static final boolean kInverted = true;
 
         public static final double kShootRPM = 5500;
         public static final double kIdleRPM = 1000;
 
-        public static final double kIdleDistThresholdMeters = 5.0;
+        public static final double kIdleDistThresholdMeters = 7.0;
         public static final double kIdleDistDebounce = 0.5;
 
-        public static final double kS = 0.19;
-        public static final double kV = 0.018;
+        public static final double kS = 0.188;
+        public static final double kV = 0.00188;
         public static final double kA = 0.0;
         public static final double kBangBangTolerance = 75;
 
         public static final double kSimMOI = 0.0004475;
 
         public static final double kSimShooterWheelRadius = Units.inchesToMeters(2);
-        public static final double kSimShooterEfficiency = 0.365;
+        // public static final double kSimShooterEfficiency = 0.365;
+        public static final double kSimShooterEfficiency = 0.35;
         public static final double kSimShootRate = 5;
     }
 
     public static final class TurretConstants {
         public static final String kLogPath = "Subsystems/Turret";
 
-        public static final int kId = 0;
+        public static final int kId = 5;
         public static final double kStatorCurrentLimit = 0.0;
         public static final boolean kStatorCurrentLimitEnable = false;
         public static final double kSupplyCurrentLimit = 40.0;
@@ -80,16 +112,25 @@ public final class Constants {
         public static final double kGearRatio = (48.0 / 10.0) * (100.0 / 10.0);
         public static final boolean kInverted = false;
 
-        public static final double kP = 0.0;
+        public static final double kP = 500.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
-        public static final double kS = 0.0;
-        public static final double kV = 0.0;
+        public static final double kS = 0.188;
+        public static final double kV = 4.2;
         public static final double kA = 0.0;
 
-        public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 0.0;
-        public static final double kMotionMagicCruiseVelocityRadPerSec = 0.0;
+        // public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 30;
+        // public static final double kMotionMagicCruiseVelocityRadPerSec = 30;
+        public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 40;
+        public static final double kMotionMagicCruiseVelocityRadPerSec = 30;
+
+        public static final Rotation2d kMaxPosition = Rotation2d.kCCW_Pi_2;
+        public static final Rotation2d kMinPosition = Rotation2d.kCW_Pi_2;
+
+        public static final Rotation2d kRightTrenchPosition = Rotation2d.fromDegrees(-10);
+        public static final Rotation2d kLeftTrenchPosition = kRightTrenchPosition.times(-1);
+        public static final Rotation2d kOutpostPosition = Rotation2d.fromDegrees(15);
 
         // Defined as origin of the robot to the bottom edge of the moving turret assembly
         public static final Transform3d kRobotToTurret = new Transform3d(
@@ -103,27 +144,25 @@ public final class Constants {
     public static final class HoodConstants {
         public static final String kLogPath = "Subsystems/Hood";
 
-        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20);
+        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(40);
         public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(55);
 
         public static final double kHoodAutoStowThreshold = Units.inchesToMeters(20);
-
-        // TO-DO: CHANGE THE GEAR RATIO
 
         public static final int kId = 50;
         public static final double kStatorCurrentLimit = 0.0;
         public static final boolean kStatorCurrentLimitEnable = false;
         public static final double kSupplyCurrentLimit = 40.0;
         public static final boolean kSupplyCurrentLimitEnable = true;
-        public static final double kGearRatio = 4.0;
-        public static final boolean kInverted = false;
+        public static final double kGearRatio = 25.0 * 248.0 / 18.0;
+        public static final boolean kInverted = true;
 
-        public static final double kP = 0.0;
+        public static final double kP = 5.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
-        public static final double kMotionMagicCruiseVelocityRadPerSec = 0.0;
-        public static final double kMotionMagicCruiseAccelerationRadPerSecSq = 0.0;
+        public static final double kMotionMagicCruiseVelocityRadPerSec = Conversions.degreesToRadians(90);
+        public static final double kMotionMagicCruiseAccelerationRadPerSecSq = Conversions.degreesToRadians(90);
 
         public static final double kS = 0.0;
         public static final double kV = 0.0;
@@ -138,17 +177,26 @@ public final class Constants {
     public static final class IndexerConstants {
         public static final String kLogPath = "Subsystems/Indexer";
 
-        public static final double kIndexVoltage = 12.0;
+        public static final double kIndexerIndexVoltage = 12.0;
+        // public static final double kKickupIndexVoltage = 6.0;
+        public static final double kKickupIndexVoltage = 12.0;
 
-        public static final int kId = 20;
-        public static final double kGearRatio = 3.0;
-        public static final boolean kInverted = false;
+        public static final double kIndexerReverseVoltage = -9.0;
+        public static final double kKickupReverseVoltage = 0.0;
+
+        public static final int kIndexerId = 20;
+        public static final int kKickupId = 21;
+        public static final double kIndexerGearRatio = 3.0;
+        public static final double kKickupGearRatio = 3.0;
+        public static final boolean kInverted = true;
 
         public static final double kStatorCurrentLimit = 60.0;
-        public static final boolean kStatorCurrentLimitEnable = true;
+        public static final boolean kStatorCurrentLimitEnable = false;
 
         public static final double kSupplyCurrentLimit = 40.0;
         public static final boolean kSupplyCurrentLimitEnable = true;
+
+        public static final double kKickupCurrentLimit = 30.0;
 
         public static final double kSimMOI = 0.0002;
 
@@ -156,11 +204,58 @@ public final class Constants {
         public static final double kV = 0.0;
     }
 
+    public static final class IntakeConstants {
+        public static final String kLogPath = "Subsystems/Intake";
+
+        public static final int kRollersId = 27;
+        public static final int kPivotId = 26;
+
+        public static final double kRollersStatorCurrentLimit = 0.0;
+        public static final boolean kRollersStatorCurrentLimitEnable = false;
+
+        public static final double kRollersSupplyCurrentLimit = 40.0;
+        public static final boolean kRollersSupplyCurrentLimitEnable = true;
+
+        public static final double kPivotStatorCurrentLimit = 30.0;
+        public static final boolean kPivotStatorCurrentLimitEnable = true;
+
+        public static final double kPivotSupplyCurrentLimit = 40.0;
+        public static final boolean kPivotSupplyCurrentLimitEnable = true;
+
+        public static final double kPivotGearRatio = 9 * 5 * 2;
+
+        public static final boolean kPivotInvert = false;
+        public static final boolean kPivotBrake = true;
+
+        public static final double kPivotP = 35; // V / rot
+        public static final double kPivotI = 0.0;
+        public static final double kPivotD = 0.0;
+
+        public static final double kPivotS = 0.0;
+        public static final double kPivotV = 0.0;
+
+        public static final double kRollersGearRatio = 3;
+
+        public static final boolean kRollersInvert = true;
+        public static final boolean kRollersBrake = false;
+
+        public static final Rotation2d kPivotMaxPosition = Rotation2d.fromDegrees(100);
+        public static final Rotation2d kPivotMinPosition = Rotation2d.fromDegrees(-22.65);
+        public static final Rotation2d kPivotStartingPosition = kPivotMinPosition;
+        public static final Rotation2d kPivotDeployedPosition = Rotation2d.fromDegrees(95);
+        public static final Rotation2d kPivotStowedPosition = kPivotStartingPosition;
+        public static final Rotation2d kPivotDeployedTolerance = Rotation2d.fromDegrees(7.5);
+        public static final double kPviotDeployedHoldingVoltage = 2.0;
+
+        public static final double kRollersIntakeVoltage = 10;
+        public static final double kRollersReverseVoltage = -10;
+    }
+
     public static final class VisionConstants {
         public static final String kLogPath = "Subsystems/Vision";
         public static final String kCamera1Name = "limelight-one";
 
-        public static final AprilTagFieldLayout kAprilTagLayout = AprilTagLayoutType.OFFICIAL.getLayout();;
+        public static final AprilTagFieldLayout kAprilTagLayout = AprilTagLayoutType.OFFICIAL.getLayout();
 
         // Robot to camera transforms
         public static Transform3d kTurretToCamera1 = new Transform3d(
@@ -176,23 +271,28 @@ public final class Constants {
 
         // Standard deviation baselines, for 1 meter distance and 1 tag
         // (Adjusted automatically based on distance and # of tags)
-        public static final double kLinearStdDevBaseline = 0.02; // Meters
-        public static final double kAngularStdDevBaseline = 0.06; // Radians
+        public static final double kLinearStdDevBaseline = 0.04; // Meters
+        public static final double kAngularStdDevBaseline = 0.1; // Radians
 
         // Standard deviation multipliers for each camera
         // (Adjust to trust some cameras more than others)
         public static final double[] kCameraStdDevFactors = new double[] {
-            1.0, // Camera 0
+            2.0, // Camera 0
         };
 
         // Multipliers to apply for MegaTag 2 observations
         public static final double kLinearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
-        public static final double kAngularStdDevMegatag2Factor = 0.5; // No rotation data available
-        // public static final double kAngularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
+        public static final double kAngularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
+
+        public static double kTurretVelocityThresholdRadPerSec = Conversions.degreesToRadians(20);
+        public static double kRotationErrorToleranceRad = Conversions.degreesToRadians(10);
+
+        public static boolean kEnableDynamicTagFilter = false;
     }
 
     public static final class AimingConstants {
-        public static final double kDriveLookaheadTime = 0.1;
+        public static final double kDriveTranslationLookaheadTime = 0.75;
+        public static final double kDriveRotationLookaheadTime = 0.1;
 
         public static final InterpolatingDoubleTreeMap kHubFlywheelsRPMs = new InterpolatingDoubleTreeMap();
         public static final InterpolatingDoubleTreeMap kShuttleFlywheelsRPMs = new InterpolatingDoubleTreeMap();
@@ -201,13 +301,18 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap kShuttleHoodPitch = new InterpolatingDoubleTreeMap();
 
         static {
-            kHubFlywheelsRPMs.put(1.4, 2250.0);
-            kHubFlywheelsRPMs.put(4.1, 4050.0);
+            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(80.93), 2700.0);
+            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(131.0), 3350.0);
+            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(157.4), 3620.0);
+            kHubFlywheelsRPMs.put(Conversions.inchesToMeters(264.5), 4150.0);
 
-            kShuttleFlywheelsRPMs.put(1.0, 5500.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(80.93), 2800.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(131.0), 3550.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(157.4), 3600.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(264.5), 4200.0);
+            kShuttleFlywheelsRPMs.put(Conversions.inchesToMeters(373), 4700.0);
 
             kHubHoodPitch.put(1.0, HoodConstants.kMaxAngle.getRadians());
-
             kShuttleHoodPitch.put(1.0, HoodConstants.kMinAngle.getRadians());
         }
 
@@ -222,14 +327,16 @@ public final class Constants {
         );
 
         public static final Translation2d kShuttleRedTop = new Translation2d(
-            AllianceFlip.flipX(kShuttleBlueTop.getX()),
+            Flip.flipX(kShuttleBlueTop.getX()),
             LinesHorizontal.center / 4
         );
 
         public static final Translation2d kShuttleRedBottom = new Translation2d(
-            AllianceFlip.flipX(kShuttleBlueBottom.getX()),
+            Flip.flipX(kShuttleBlueBottom.getX()),
             LinesHorizontal.center / 4 * 3
         );
+
+        public static final double kTrenchFlywheelsVelocityRPM = 3410.0;
     }
 
     public static enum Mode {

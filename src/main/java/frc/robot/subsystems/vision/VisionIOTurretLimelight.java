@@ -14,7 +14,9 @@ import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
+import frc.robot.RobotState;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.util.Conversions;
 import frc.robot.util.LimelightHelpers;
 
 import java.util.HashSet;
@@ -61,7 +63,7 @@ public class VisionIOTurretLimelight implements VisionIO {
         megatag1Subscriber = table.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[] {});
         megatag2Subscriber = table.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[] {});
 
-        LimelightHelpers.SetIMUMode(this.name, 4);
+        LimelightHelpers.SetIMUAssistAlpha(this.name, 0.005);
     }
 
     @Override
@@ -81,18 +83,28 @@ public class VisionIOTurretLimelight implements VisionIO {
         // );
         Transform3d robotToCamera = this.robotToCamera.get();
         Logger.recordOutput(VisionConstants.kLogPath + "/RobotToCamera", robotToCamera);
-        // Pose3d robotPose = Conversions.toPose3d(RobotState.getInstance().getPose());
-        // Logger.recordOutput(VisionConstants.kLogPath + "/CameraPose", robotPose.plus(robotToCamera));
+        Pose3d robotPose = Conversions.toPose3d(RobotState.getInstance().getPose());
+        Logger.recordOutput(VisionConstants.kLogPath + "/CameraPose", robotPose.plus(robotToCamera));
         LimelightHelpers.setCameraPose_RobotSpace(
             name,
             robotToCamera.getX(),
             robotToCamera.getY(),
             robotToCamera.getZ(),
-            robotToCamera.getRotation().getX(),
-            robotToCamera.getRotation().getY(),
-            robotToCamera.getRotation().getZ()
+            Conversions.radiansToDegrees(robotToCamera.getRotation().getX()),
+            Conversions.radiansToDegrees(robotToCamera.getRotation().getY()),
+            Conversions.radiansToDegrees(robotToCamera.getRotation().getZ())
         );
-        LimelightHelpers.SetRobotOrientation(name, rotationSupplier.get().getDegrees(), 0, 0, 0, 0, 0);
+
+        LimelightHelpers.SetIMUMode(this.name, 1);
+        // if (DriverStation.isDisabled()) {
+        //     LimelightHelpers.SetIMUMode(this.name, 1);
+        // }
+        // else {
+        //     LimelightHelpers.SetIMUMode(this.name, 4);
+        // }
+
+        double deg = rotationSupplier.get().getDegrees();
+        LimelightHelpers.SetRobotOrientation(name, deg, 0, 0, 0, 0, 0);
         NetworkTableInstance.getDefault()
             .flush(); // Increases network traffic but recommended by Limelight
 
@@ -104,28 +116,28 @@ public class VisionIOTurretLimelight implements VisionIO {
             for (int i = 11; i < rawSample.value.length; i += 7) {
                 tagIds.add((int)rawSample.value[i]);
             }
-            // poseObservations.add(
-            //     new PoseObservation(
-            //         // Timestamp, based on server timestamp of publish and latency
-            //         rawSample.timestamp * 1.0e-6 - rawSample.value[6] * 1.0e-3,
+            poseObservations.add(
+                new PoseObservation(
+                    // Timestamp, based on server timestamp of publish and latency
+                    rawSample.timestamp * 1.0e-6 - rawSample.value[6] * 1.0e-3,
 
-            //         // 3D pose estimate
-            //         parsePose(rawSample.value),
+                    // 3D pose estimate
+                    parsePose(rawSample.value),
 
-            //         // Ambiguity, using only the first tag because ambiguity isn't applicable for
-            //         // multitag
-            //         rawSample.value.length >= 18 ? rawSample.value[17] : 0.0,
+                    // Ambiguity, using only the first tag because ambiguity isn't applicable for
+                    // multitag
+                    rawSample.value.length >= 18 ? rawSample.value[17] : 0.0,
 
-            //         // Tag count
-            //         (int)rawSample.value[7],
+                    // Tag count
+                    (int)rawSample.value[7],
 
-            //         // Average tag distance
-            //         rawSample.value[9],
+                    // Average tag distance
+                    rawSample.value[9],
 
-            //         // Observation type
-            //         PoseObservationType.MEGATAG_1
-            //     )
-            // );
+                    // Observation type
+                    PoseObservationType.MEGATAG_1
+                )
+            );
         }
         for (var rawSample : megatag2Subscriber.readQueue()) {
             if (rawSample.value.length == 0) continue;
@@ -167,6 +179,11 @@ public class VisionIOTurretLimelight implements VisionIO {
         for (int id : tagIds) {
             inputs.tagIds[i++] = id;
         }
+    }
+
+    @Override
+    public void setTagFilter(int[] tags) {
+        LimelightHelpers.SetFiducialIDFiltersOverride(this.name, tags);
     }
 
     /** Parses the 3D pose from a Limelight botpose array. */

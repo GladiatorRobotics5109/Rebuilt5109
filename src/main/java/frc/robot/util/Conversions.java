@@ -19,6 +19,18 @@ public class Conversions {
         return TurretConstants.kRobotToTurret.plus(turretToCamera);
     }
 
+    public Pose3d robotPoseToTurretPose(Pose2d robot, Rotation2d turretAngle, Rotation2d hoodAngle) {
+        Translation3d robotTranslation = toTranslation3d(robot.getTranslation());
+        Translation3d translation = robotTranslation.plus(
+            TurretConstants.kRobotToTurret.getTranslation().rotateBy(new Rotation3d(robot.getRotation()))
+        );
+
+        return new Pose3d(
+            translation,
+            new Rotation3d(0.0, hoodAngle.getRadians(), robot.getRotation().getRadians() + turretAngle.getRadians())
+        );
+    }
+
     public Pose3d toPose3d(Pose2d pose2d) {
         return new Pose3d(
             pose2d.getX(),
@@ -28,7 +40,35 @@ public class Conversions {
         );
     }
 
+    public Translation3d toTranslation3d(Translation2d translation2d) {
+        return new Translation3d(
+            translation2d.getX(),
+            translation2d.getY(),
+            0.0
+        );
+    }
+
     public double radiansToRotations(double rad) {
         return Units.radiansToRotations(rad);
+    }
+
+    public double rotationsToRadians(double rot) {
+        return Units.rotationsToRadians(rot);
+    }
+
+    public double radiansToDegrees(double rad) {
+        return Units.radiansToDegrees(rad);
+    }
+
+    public double rotationsPerMinuteToRadiansPerSecond(double rpm) {
+        return Units.rotationsPerMinuteToRadiansPerSecond(rpm);
+    }
+
+    public double inchesToMeters(double in) {
+        return Units.inchesToMeters(in);
+    }
+
+    public double degreesToRadians(double deg) {
+        return Units.degreesToRadians(deg);
     }
 }

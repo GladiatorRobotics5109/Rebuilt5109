@@ -16,9 +16,11 @@ public interface TurretIO {
 
     default void updateInputs(TurretIO.TurretIOInputs inputs) {}
 
-    default void setPosition(double positionRad) {}
+    default void runPosition(double positionRad) {}
 
-    default void setVoltage(double volts) {}
+    default void runVoltage(double volts) {}
+
+    default void setPosition(double positionRad) {}
 
     default void setPID(double p, double i, double d) {}
 

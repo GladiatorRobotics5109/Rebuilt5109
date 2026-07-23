@@ -33,7 +33,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -152,7 +151,7 @@ public class DriveSubsystem extends SubsystemBase {
             this::runVelocity,
             new PPHolonomicDriveController(
                 new PIDConstants(5.0, 0.0, 0.0),
-                new PIDConstants(5.0, 0.0, 0.0)
+                new PIDConstants(0.1, 0.0, 0.0)
             ),
             PP_CONFIG,
             () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
@@ -205,8 +204,9 @@ public class DriveSubsystem extends SubsystemBase {
 
         // Log empty setpoint states when disabled
         if (DriverStation.isDisabled()) {
-            Logger.recordOutput("Subsystems/Drive/ModuleSetpoints", new SwerveModuleState[] {});
-            Logger.recordOutput("Subsystems/Drive/ModuleSetpointsOptimized", new SwerveModuleState[] {});
+            Logger.recordOutput("Subsystems/Drive/DesiredModuleStates", new SwerveModuleState[] {});
+            Logger.recordOutput("Subsystems/Drive/DesiredModuleStatesOptimized", new SwerveModuleState[] {});
+            Logger.recordOutput("Subsystems/Drive/ModuleStates", new SwerveModuleState[] {});
         }
 
         // Update odometry
@@ -245,6 +245,8 @@ public class DriveSubsystem extends SubsystemBase {
         gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.kCurrentMode != Mode.SIM);
 
         RobotState.getInstance().updateDrive(getPose(), getChassisSpeeds());
+
+        Logger.recordOutput("Subsystems/Drive/ModuleStates", getModuleStates());
     }
 
     /**
@@ -373,12 +375,12 @@ public class DriveSubsystem extends SubsystemBase {
         );
 
         Pose3d tag = FieldConstants.AprilTagLayoutType.OFFICIAL.getLayout().getTagPose(13).get();
-        Logger.recordOutput("DeltaX", tag.getX() - visionRobotPoseMeters.getX());
-        Logger.recordOutput("DeltaY", tag.getY() - visionRobotPoseMeters.getY());
-        Logger.recordOutput(
-            "DeltaRot",
-            Units.radiansToDegrees(tag.getRotation().getZ() - visionRobotPoseMeters.getRotation().getRadians())
-        );
+        // Logger.recordOutput("DeltaX", tag.getX() - visionRobotPoseMeters.getX());
+        // Logger.recordOutput("DeltaY", tag.getY() - visionRobotPoseMeters.getY());
+        // Logger.recordOutput(
+        //     "DeltaRot",
+        //     Units.radiansToDegrees(tag.getRotation().getZ() - visionRobotPoseMeters.getRotation().getRadians())
+        // );
     }
 
     /** Returns the maximum linear speed in meters per sec. */

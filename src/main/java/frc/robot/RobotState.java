@@ -12,11 +12,15 @@ import frc.robot.Constants.FlywheelsConstants;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.FieldConstants.Hub;
 import frc.robot.FieldConstants.LinesHorizontal;
-import frc.robot.util.AllianceFlip;
+import frc.robot.util.Flip;
 import lombok.AccessLevel;
 import lombok.Getter;
 
 import lombok.Setter;
+import lombok.experimental.Accessors;
+
+import java.util.Optional;
+
 import org.littletonrobotics.junction.Logger;
 
 @Getter
@@ -25,6 +29,12 @@ public class RobotState {
 
     public static void init() {
         s_instance = new RobotState();
+
+        // Log empty AimingParameters on initialization to avoid loop overruns
+        Logger.recordOutput(
+            "RobotState/AimingParameters/LatestAimingParameters",
+            new AimingParameters(Rotation2d.kZero, 0.0, Rotation2d.kZero)
+        );
     }
 
     public static RobotState getInstance() { return s_instance; }
@@ -54,6 +64,9 @@ public class RobotState {
     private double m_flywheelsVelocity;
     private double m_flywheelsDesiredVelocity;
     private boolean m_flywheelsHasDesiredVelocity;
+    @Setter
+    @Accessors(fluent = true)
+    private boolean m_flywheelsShouldDisableAutoAim;
 
     // -- Turret State --
 
@@ -61,6 +74,7 @@ public class RobotState {
     private Rotation2d m_turretPosition;
     /** Field relative turret position */
     private Rotation2d m_turretHeading;
+    private double m_turretVelocityRadPerSec;
 
     // -- Hood State --
     private Rotation2d m_hoodAngle;
@@ -72,11 +86,8 @@ public class RobotState {
         if (m_latestAimingParameters != null)
             return m_latestAimingParameters;
 
-        // m_latestAimingParameters = new AimingParameters(Rotation2d.kZero, 0, Rotation2d.kZero);
-        // return m_latestAimingParameters;
-
         Translation2d target = switch (m_fuelStrategy) {
-            case HUB -> AllianceFlip.apply(Hub.topCenterPoint).toTranslation2d();
+            case HUB -> Flip.apply(Hub.topCenterPoint).toTranslation2d();
             case SHUTTLE -> {
                 if (m_pose.getY() >= LinesHorizontal.center) {
                     yield DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
@@ -92,11 +103,11 @@ public class RobotState {
         };
 
         Pose2d predicted = new Pose2d(
-            m_pose.getX() + m_velocityFieldRelative.vxMetersPerSecond * AimingConstants.kDriveLookaheadTime,
-            m_pose.getY() + m_velocityFieldRelative.vyMetersPerSecond * AimingConstants.kDriveLookaheadTime,
+            m_pose.getX() + m_velocityFieldRelative.vxMetersPerSecond * AimingConstants.kDriveTranslationLookaheadTime,
+            m_pose.getY() + m_velocityFieldRelative.vyMetersPerSecond * AimingConstants.kDriveTranslationLookaheadTime,
             Rotation2d.fromRadians(
                 m_pose.getRotation().getRadians()
-                    + m_velocityFieldRelative.omegaRadiansPerSecond * AimingConstants.kDriveLookaheadTime
+                    + m_velocityFieldRelative.omegaRadiansPerSecond * AimingConstants.kDriveRotationLookaheadTime
             )
         );
 
@@ -114,18 +125,36 @@ public class RobotState {
         );
         double flywheelsRPM;
         if (m_fuelStrategy == FuelStrategy.HUB) {
-            flywheelsRPM = m_idleDebouncer.calculate(dist < FlywheelsConstants.kIdleDistThresholdMeters)
-                ? AimingConstants.kHubFlywheelsRPMs.get(dist)
-                : FlywheelsConstants.kIdleRPM;
+            boolean shouldIdle = shouldIdle();
+            Logger.recordOutput("AimingParameters/ShouldIdle", shouldIdle);
+            flywheelsRPM = shouldIdle
+                ? FlywheelsConstants.kIdleRPM
+                : AimingConstants.kHubFlywheelsRPMs.get(dist);
         }
         else {
             flywheelsRPM = AimingConstants.kShuttleFlywheelsRPMs.get(dist);
         }
 
         m_latestAimingParameters = new AimingParameters(targetPosition, flywheelsRPM, pitch);
-        Logger.recordOutput("RobotState/LatestAimingParameters", m_latestAimingParameters);
+        Logger.recordOutput("AimingParameters/LatestAimingParameters", m_latestAimingParameters);
+        Logger.recordOutput("AimingParameters/Target", target);
+        Logger.recordOutput("AimingParameters/Predicted", predicted);
+        Logger.recordOutput("AimingParameters/Delta", delta);
+        Logger.recordOutput("AimingParameters/Dist", dist);
 
         return m_latestAimingParameters;
+    }
+
+    private boolean shouldIdle() {
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isEmpty())
+            return false;
+
+        return m_idleDebouncer.calculate(switch (alliance.get()) {
+            case Blue -> m_pose.getX()
+                > FieldConstants.LinesVertical.allianceZone + FieldConstants.LinesVertical.neutralZoneNear;
+            case Red -> m_pose.getX() < FieldConstants.LinesVertical.neutralZoneFar;
+        });
     }
 
     public void updateDrive(Pose2d pose, ChassisSpeeds velocity) {
@@ -143,10 +172,12 @@ public class RobotState {
         m_flywheelsHasDesiredVelocity = hasDesiredVelocity;
     }
 
-    public void updateTurret(Rotation2d turretPosition) {
+    public void updateTurret(Rotation2d turretPosition, double turretVelocityRadPerSec) {
         m_turretPosition = turretPosition;
 
         m_turretHeading = getRotation().plus(m_turretPosition);
+
+        m_turretVelocityRadPerSec = turretVelocityRadPerSec;
     }
 
     public void updateHood(Rotation2d hoodAngle) {
@@ -171,7 +202,7 @@ public class RobotState {
         Logger.recordOutput("Subsystems/Drive/Velocity", m_velocity);
         Logger.recordOutput("Subsystems/Drive/DesiredVelocity", m_desiredVelocity);
 
-        Logger.recordOutput("Subsystems/Flywheels/Velocity", m_flywheelsVelocity);
+        Logger.recordOutput("Subsystems/Flywheels/CurrentVelocity", m_flywheelsVelocity);
         Logger.recordOutput("Subsystems/Flywheels/DesiredVelocity", m_flywheelsDesiredVelocity);
         Logger.recordOutput("Subsystems/Flywheels/HasDesiredVeloicty", m_flywheelsHasDesiredVelocity);
 
