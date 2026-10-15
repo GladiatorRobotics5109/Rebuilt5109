@@ -41,10 +41,14 @@ public class AutoCommands {
     private static PathPlannerPath kNewCenter1;
     private static PathPlannerPath kNewCenter2;
 
+    private static PathPlannerPath kTestTrench;
+
     private static PathPlannerPath kNewRight1Mirrored;
     private static PathPlannerPath kNewRight2Mirrored;
     private static PathPlannerPath kNewCenter1Mirrored;
     private static PathPlannerPath kNewCenter2Mirrored;
+
+    private static PathPlannerPath kTestTrenchMirrord;
 
     private static final LoggedTunableNumber s_flywheelsVelocity = new LoggedTunableNumber(
         "TestFlywheelsVelocityRPM",
@@ -69,10 +73,14 @@ public class AutoCommands {
             kNewCenter1 = PathPlannerPath.fromChoreoTrajectory("NewCenter_1");
             kNewCenter2 = PathPlannerPath.fromChoreoTrajectory("NewCenter_2");
 
+            kTestTrench = PathPlannerPath.fromChoreoTrajectory("trenchTest1");
+
             kNewRight1Mirrored = kNewRight1.mirrorPath();
             kNewRight2Mirrored = kNewRight2.mirrorPath();
             kNewCenter1Mirrored = kNewCenter1.mirrorPath();
             kNewCenter2Mirrored = kNewCenter2.mirrorPath();
+
+            kTestTrenchMirrord = kTestTrench.mirrorPath();
         }
         catch (IOException | ParseException e) {
             DriverStation.reportError("Failed to load PathPlannerPath", e.getStackTrace());
@@ -289,6 +297,35 @@ public class AutoCommands {
         ).withName("AutoCommands::preloadAndCenterRight");
     }
 
+    public static Command trenchTest(
+        DriveSubsystem drive,
+        TurretSubsystem turret,
+        FlywheelsSubsystem flywheels,
+        IndexerSubsystem indexer,
+        IntakeSubsystem intake
+    ) {
+        return Commands.sequence(
+            Commands.either(
+                prefix(kTestTrench, Rotation2d.kZero, drive, turret),
+                prefix(kTestTrenchMirrord, Rotation2d.kZero, drive, turret),
+                s_isRight
+            ),
+            Commands.parallel(
+                TurretCommands.autoAim(turret),
+                FlywheelsCommands.autoAim(flywheels),
+                Commands.sequence(
+                    Commands.parallel(
+                        Commands.either(
+                            AutoBuilder.followPath(kNewRight1),
+                            AutoBuilder.followPath(kNewRight1Mirrored),
+                            s_isRight
+                        )
+                    )
+                )
+            )
+        ).withName("AutoCommands::TrenchTest1");
+    }
+
     public static Command newTrench(
         DriveSubsystem drive,
         TurretSubsystem turret,
@@ -313,10 +350,10 @@ public class AutoCommands {
                             s_isRight
                         ),
                         Commands.sequence(
-                            Commands.waitSeconds(0.91),
+                            Commands.waitSeconds(1.35),
                             IntakeCommands.deploy(intake),
                             Commands.waitSeconds(9.5),
-                            IntakeCommands.stow(intake)
+                            IntakeCommands.stop(intake))
                         ),
                         Commands.sequence(
                             Commands.waitSeconds(10),
@@ -324,7 +361,7 @@ public class AutoCommands {
                                 IndexerCommands.index(indexer),
                                 Commands.waitSeconds(2),
                                 IndexerCommands.reverse(indexer),
-                                Commands.waitSeconds(1)
+                                Commands.waitSeconds(0.5)
                             ).raceWith(Commands.waitSeconds(5.5))
                         )
                     ),
@@ -339,7 +376,7 @@ public class AutoCommands {
                             Commands.waitSeconds(1.7),
                             IntakeCommands.deploy(intake),
                             Commands.waitSeconds(10.6),
-                            IntakeCommands.stow(intake)
+                            IntakeCommands.stop(intake)
                         ),
                         Commands.sequence(
                             Commands.waitSeconds(9.6),
@@ -347,7 +384,7 @@ public class AutoCommands {
                         )
                     )
                 )
-            )
+            
         ).withName("AutoCommands::newTrench");
     }
 
