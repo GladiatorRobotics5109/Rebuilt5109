@@ -45,6 +45,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void stop() {
         m_state = IntakeState.NONE;
+        runRollersVoltage(0.0);
     }
 
     public void runPivotVoltage(double volts) {
