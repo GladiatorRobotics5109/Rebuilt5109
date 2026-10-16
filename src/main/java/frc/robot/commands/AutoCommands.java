@@ -353,7 +353,7 @@ public class AutoCommands {
                             Commands.waitSeconds(1.35),
                             IntakeCommands.deploy(intake),
                             Commands.waitSeconds(9.5),
-                            IntakeCommands.stop(intake))
+                            IntakeCommands.stop(intake)
                         ),
                         Commands.sequence(
                             Commands.waitSeconds(10),
@@ -384,6 +384,7 @@ public class AutoCommands {
                         )
                     )
                 )
+            )
             
         ).withName("AutoCommands::newTrench");
     }
