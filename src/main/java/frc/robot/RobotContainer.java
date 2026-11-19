@@ -29,7 +29,6 @@ import frc.robot.subsystems.flywheels.FlywheelsSubsystem;
 import frc.robot.subsystems.hood.HoodSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
-import frc.robot.subsystems.intake.IntakeSubsystem.IntakeState;
 import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.Conversions;
@@ -171,27 +170,12 @@ public class RobotContainer {
         //     })
         // );
 
-        m_driverController.povUp().whileTrue(IntakeCommands.testPivot(m_intake, () -> -2));
-        m_driverController.povDown().whileTrue(IntakeCommands.testPivot(m_intake, () -> 2));
-
         m_driverController.povRight().onTrue(
             Commands.runOnce(() -> m_flywheels.setVelocityOffset(m_flywheels.getVelocityOffset() + 50))
         );
         m_driverController.povLeft().onTrue(
             Commands.runOnce(() -> m_flywheels.setVelocityOffset(m_flywheels.getVelocityOffset() - 50))
         );
-
-        m_driverController.L1().onTrue(
-            Commands.either(
-                IntakeCommands.deploy(m_intake),
-                IntakeCommands.stow(m_intake),
-                () -> m_intake.getState() != IntakeState.DEPLOYED
-            )
-        );
-
-        m_driverController.R1()
-            .onTrue(Commands.runOnce(() -> m_intake.setReverse(true)))
-            .onFalse(Commands.runOnce(() -> m_intake.setReverse(false)));
 
         m_operatorController.povRight().onTrue(
             Commands.runOnce(() -> m_flywheels.setVelocityOffset(m_flywheels.getVelocityOffset() + 50))
