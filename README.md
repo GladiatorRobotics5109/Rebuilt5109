@@ -1,6 +1,20 @@
 # Rebuilt 5109
 5109's 2026 FRC Robot Code
 
+# Intake Subsystem Description
+The intake subsystem consists of 2 motors:
+- 1 Kraken x60 on a 90:1 gearbox that controls the pivot of the intake.
+- 1 Kraken x44 on a 3:1 gearbox that controls the rolls of the intake.
+
+The intake must be able to be deployed and stowed.
+
+Deploying the intake consists of: 
+- Setting the position of the pivot to ```IntakeConstants.kPivotDeployedPosition```
+- Setting the rollers voltage to ```IntakeConstants.kRollersIntakeVoltage```
+
+Stowing the intake consists of:
+- Setting the position of the pivot to ```IntakeConstants.kPivotStowedPosition```
+- Setting the rollers voltage to ```0```
 
 # Task 1
 Reimplement:
